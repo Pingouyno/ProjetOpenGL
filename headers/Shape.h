@@ -1,0 +1,58 @@
+#ifndef SHAPE_CLASS_H
+#define SHAPE_CLASS_H
+
+#include<vector>
+using namespace std;
+#include<iterator>
+#include<iostream>
+#include"Camera.h"
+
+class Shape{
+    public:
+        static vector<Shape*> shapes;
+        static const vector<float> DEFAULT_COLOR;
+        static const vector<float> DEFAULT_TEXMAP;
+        static const vector<float> NO_TEXMAP;
+
+        //true si on a créé une nouvelle entité depuis le dernier rendering
+        static bool newShapeCreated;
+
+        vector<float> pos;
+        vector<float> color;
+        vector<float> texMap;
+        bool active = false;
+        bool isRenderingColor;
+        int indexInVertices = -1;
+        int indexInIndices = -1;
+
+        Shape(){
+            newShapeCreated = true;
+        }
+
+        virtual void spawn();
+
+        virtual void despawn();
+
+        virtual void moveTo(float x, float y, float z);
+
+        const void moveTo(float (&pos)[3]);
+
+        virtual void render();
+
+        virtual bool isColliding(Camera Camera);
+
+        virtual void setSize(float size);
+
+        static void renderActiveShapes();
+
+        static Shape* checkCameraCollidingAnyShape(Camera Camera);
+
+    protected:
+        void initIndices();
+        void initVertices();
+        void refreshGLVertices();
+        void generate();
+
+};
+
+#endif
