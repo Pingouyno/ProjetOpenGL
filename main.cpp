@@ -6,8 +6,8 @@
 using namespace std;
 #include<chrono>
 using namespace std::chrono;
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include"libraries/include/GLAD/glad.h"
+#include"libraries/include/glfw/glfw3.h"
 #include"libraries/include/stb/stb_image.h"
 #include"libraries/include/glm/glm.hpp"
 #include"libraries/include/glm/gtc/matrix_transform.hpp"
