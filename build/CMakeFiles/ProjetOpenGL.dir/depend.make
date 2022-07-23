@@ -231,6 +231,7 @@ CMakeFiles/ProjetOpenGL.dir/main.cpp.o: ../main.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../headers/Camera.h
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../headers/Shape.h
+CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../headers/Texture.h
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../headers/shaderClass.h
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/common.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/detail/_fixes.hpp
@@ -444,12 +445,14 @@ CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/vec2.
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/vec3.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/vec4.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/glm/vector_relational.hpp
+CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../libraries/include/stb/stb_image.h
 CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o: ../sources/Camera.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/Camera.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/Cube.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/GlobalArrays.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/Shape.h
+CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/Texture.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../headers/shaderClass.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/common.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/detail/_fixes.hpp
@@ -663,6 +666,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/vec2.hp
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/vec3.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/vec4.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/glm/vector_relational.hpp
+CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../libraries/include/stb/stb_image.h
 CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o: ../sources/Cube.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o: ../headers/EBO.h
@@ -671,6 +675,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o: ../sources/EBO.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../headers/Camera.h
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../headers/GlobalArrays.h
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../headers/Shape.h
+CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../headers/Texture.h
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../headers/shaderClass.h
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm/common.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm/detail/_fixes.hpp
@@ -884,11 +889,13 @@ CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm/vec3.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm/vec4.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/glm/vector_relational.hpp
+CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../libraries/include/stb/stb_image.h
 CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o: ../sources/GlobalArrays.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../headers/Camera.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../headers/Cube.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../headers/Shape.h
+CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../headers/Texture.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../headers/shaderClass.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/common.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/detail/_fixes.hpp
@@ -1102,6 +1109,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/vec2.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/vec3.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/vec4.hpp
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/glm/vector_relational.hpp
+CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../libraries/include/stb/stb_image.h
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../sources/Shape.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o: ../headers/Texture.h

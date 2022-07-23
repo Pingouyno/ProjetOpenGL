@@ -2,6 +2,24 @@
 #include"../headers/GlobalArrays.h"
 #include<GLFW/glfw3.h>
 
+//coordonnées de texture pour chacune des 8 vertices
+const vector<float> Cube::CUBE_TEXMAP(
+    {
+        0.1f,
+    }
+);
+
+Cube::Cube(vector<float> &pos, float &size, Texture* tex)
+{
+    this->pos.insert(this->pos.end(), pos.begin(), pos.end());
+    this->size = size;
+    this->color.insert(this->color.end(), DEFAULT_COLOR.begin(), DEFAULT_COLOR.end());
+    this->tex = tex;
+    texMap.insert(texMap.end(), DEFAULT_TEXMAP.begin(), DEFAULT_TEXMAP.end());
+    shapes.push_back(this);
+    generate(); 
+}
+
 Cube::Cube(vector<float> &pos, float &size, vector<float> &color)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
@@ -17,7 +35,7 @@ Cube::Cube(vector<float> &pos, float &size)
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->size = size;
     this->color.insert(this->color.end(), DEFAULT_COLOR.begin(), DEFAULT_COLOR.end());
-    texMap.insert(texMap.end(), DEFAULT_TEXMAP.begin(), DEFAULT_TEXMAP.end());
+    texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
     shapes.push_back(this);
     generate();
 }
@@ -43,7 +61,12 @@ void Cube::moveTo(float x, float y, float z)
 
 void Cube::render()
 {
-    glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+    if (hasTexture())
+    {
+        (*tex).Bind();
+        glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+        (*tex).Unbind();
+    }else glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
 bool Cube::isColliding(Camera camera)

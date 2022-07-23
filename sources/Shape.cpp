@@ -3,9 +3,9 @@
 #include<vector>
 #include"../headers/Camera.h"
 
-const std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.8, 0.2f});
-const std::vector<float> Shape::DEFAULT_TEXMAP({0, 1.0f});
-const std::vector<float> Shape::NO_TEXMAP({0, 0});
+const std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
+const std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
+const std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
 bool Shape::newShapeCreated = false;
 
@@ -43,6 +43,11 @@ bool Shape::isColliding(Camera Camera)
 void Shape::setSize(float size)
 {
     cout << "\n\n**ATTENTION : FONCTION \"Shape::setSize()\" NON REDÉFINIE!**\n\n";
+}
+
+bool Shape::hasTexture()
+{
+    return this->tex != nullptr;
 }
 
 //Render toutes les entités, et désactive "newShapeCreated"

@@ -70,7 +70,7 @@ void Camera::checkCamMovement(GLFWwindow* window)
 	{
 		Position += speed * fact * -Up;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && isInCreative)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && isInCreative || !isInAir)
 	{
 		speed = FAST_SPEED;
 	}

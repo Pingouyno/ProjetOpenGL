@@ -49,6 +49,8 @@ iostream
 -
 Camera.h
 /home/will/Prog/CPP/ProjetOpenGL/headers/Camera.h
+Texture.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Texture.h
 
 /home/will/Prog/CPP/ProjetOpenGL/headers/Texture.h
 glad/glad.h
@@ -1675,4 +1677,34 @@ headers/GlobalArrays.h
 /home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
 headers/Cube.h
 /home/will/Prog/CPP/ProjetOpenGL/headers/Cube.h
+
+/home/will/Prog/CPP/ProjetOpenGL/sources/Camera.cpp
+../headers/Camera.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Camera.h
+../headers/Shape.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
+fstream
+-
+
+/home/will/Prog/CPP/ProjetOpenGL/sources/Cube.cpp
+../headers/Cube.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Cube.h
+../headers/GlobalArrays.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
+GLFW/glfw3.h
+-
+
+/home/will/Prog/CPP/ProjetOpenGL/sources/GlobalArrays.cpp
+../headers/GlobalArrays.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
+
+/home/will/Prog/CPP/ProjetOpenGL/sources/Shape.cpp
+../headers/Shape.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
+../headers/Cube.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Cube.h
+vector
+-
+../headers/Camera.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Camera.h
 

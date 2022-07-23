@@ -118,11 +118,11 @@ int main()
 	targetTime += milliseconds(FRAME_MILLI);
 
 
-	vector<float> cubeColor = Shape::DEFAULT_COLOR;
+	vector<float> cubeColor({1.0f, 0.5f, 0.5f});
 
 	vector<float> pos({2.3f, 2.2f, 2.5f});
 	float size = 2.0f;
-	Cube c1(pos, size, cubeColor);
+	Cube c1(pos, size, &grass_png);
 
 	vector<float> pos2({-10.3f, 10.2f, -10.5f});
 	float size2 = 1.0f;
@@ -134,7 +134,7 @@ int main()
 
 	vector<float> pos4({5.0f, -5.0f, 5.0f});
 	float size4 = 10.0f;
-	Cube c4(pos4, size4, cubeColor);
+	Cube c4(pos4, size4, &deux_png);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -154,6 +154,7 @@ int main()
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		 
+		/*Déplacer la pyramide
 		{
 			int arr[5] = {0, 8, 16, 24, 32};
 			float distX = camera.Position.x - ((vertices[arr[0]] + vertices[arr[2]]) / 2);
@@ -165,11 +166,12 @@ int main()
 				vertices[arr[i] + 2] += 0.008f * factZ;
 			}
 		}
+		*/
 
 		reloadVerticesInVBO(VBO1);
 		reloadIndicesInEBO(EBO1);
-		//doRenderLogic(window, seed);
-
+	
+		/*dessiner les valeurs hard-codées
 		deux_png.Bind();
 		glDrawElements(GL_TRIANGLES, 6*3,  GL_UNSIGNED_INT, 0);
 		
@@ -181,12 +183,18 @@ int main()
 		grass_png.Bind();
 		glDrawElements(GL_TRIANGLES, 2*3, GL_UNSIGNED_INT, (void*)(8*3*sizeof(int)));
 
+		
 		//grass_png.Unbind();
 
 		c1.moveTo(c1.pos[0] - 0.01f, c1.pos[1], c1.pos[2]);
 		c2.setSize(c2.size + 0.001f);
+		*/
+
+		grass_png.Bind();
 
 		Shape::renderActiveShapes();
+
+		grass_png.Unbind();
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -208,6 +216,9 @@ int main()
 	VBO1.Delete();
 	EBO1.Delete();
 	deux_png.Delete();
+	flag_png.Delete();
+	grass_png.Delete();
+	
 	shaderProgram.Delete();
 
 	// Delete window before ending the program

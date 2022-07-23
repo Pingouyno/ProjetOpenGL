@@ -6,6 +6,7 @@ using namespace std;
 #include<iterator>
 #include<iostream>
 #include"Camera.h"
+#include"Texture.h"
 
 class Shape{
     public:
@@ -17,6 +18,8 @@ class Shape{
         //true si on a créé une nouvelle entité depuis le dernier rendering
         static bool newShapeCreated;
 
+
+        //variables à utiliser et redéfinir 
         vector<float> pos;
         vector<float> color;
         vector<float> texMap;
@@ -24,6 +27,7 @@ class Shape{
         bool isRenderingColor;
         int indexInVertices = -1;
         int indexInIndices = -1;
+        Texture* tex = nullptr;
 
         Shape(){
             newShapeCreated = true;
@@ -42,6 +46,8 @@ class Shape{
         virtual bool isColliding(Camera Camera);
 
         virtual void setSize(float size);
+
+        bool hasTexture();
 
         static void renderActiveShapes();
 
