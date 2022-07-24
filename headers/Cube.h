@@ -15,10 +15,11 @@ class Cube : public Shape
 
         float size;
 
+        void initCube(vector<float> &pos, float &size, vector<float> &color, Texture* tex);
         Cube(vector<float> &pos, float &size, Texture* texture);
         Cube(vector<float> &pos, float &size, vector<float> &color);
         Cube(vector<float> &pos, float &size);
-
+        
         void spawn();
         void despawn();
         void moveTo(float x, float y, float z);

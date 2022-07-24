@@ -11,9 +11,9 @@ using namespace std;
 class Shape{
     public:
         static vector<Shape*> shapes;
-        static const vector<float> DEFAULT_COLOR;
-        static const vector<float> DEFAULT_TEXMAP;
-        static const vector<float> NO_TEXMAP;
+        static vector<float> DEFAULT_COLOR;
+        static vector<float> DEFAULT_TEXMAP;
+        static vector<float> NO_TEXMAP;
 
         //true si on a créé une nouvelle entité depuis le dernier rendering
         static bool newShapeCreated;

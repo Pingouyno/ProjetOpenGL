@@ -34,39 +34,35 @@ const vector<float> Cube::CUBE_TEXMAP(
     x + size, y + size, z          //7 Top near right
 */
 
-Cube::Cube(vector<float> &pos, float &size, Texture* tex)
-{
-    this->pos.insert(this->pos.end(), pos.begin(), pos.end());
-    this->size = size;
-    this->color.insert(this->color.end(), DEFAULT_COLOR.begin(), DEFAULT_COLOR.end());
-    this->tex = tex;
-    texMap.insert(texMap.end(), CUBE_TEXMAP.begin(), CUBE_TEXMAP.end());
-    shapes.push_back(this);
-    generate(); 
-}
-
-Cube::Cube(vector<float> &pos, float &size, vector<float> &color)
+void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Texture* tex)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->size = size;
     this->color.insert(this->color.end(), color.begin(), color.end());
-    //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
-    for(int i = 0 ; i < VERTICE_COUNT ; i++)
-        texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
+    this->tex = tex;
+    if (this->tex == nullptr)
+        //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
+        for(int i = 0 ; i < VERTICE_COUNT ; i++)
+            texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
+    else
+        texMap.insert(texMap.end(), CUBE_TEXMAP.begin(), CUBE_TEXMAP.end());
     shapes.push_back(this);
-    generate();
+    generate(); 
+}
+
+Cube::Cube(vector<float> &pos, float &size, Texture* tex)
+{
+    initCube(pos, size, DEFAULT_COLOR, tex);
+}
+
+Cube::Cube(vector<float> &pos, float &size, vector<float> &color)
+{
+    initCube(pos, size, color, nullptr);
 }
 
 Cube::Cube(vector<float> &pos, float &size)
 {
-    this->pos.insert(this->pos.end(), pos.begin(), pos.end());
-    this->size = size;
-    this->color.insert(this->color.end(), DEFAULT_COLOR.begin(), DEFAULT_COLOR.end());
-    //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
-    for(int i = 0 ; i < VERTICE_COUNT ; i++)
-        texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
-    shapes.push_back(this);
-    generate();
+    initCube(pos, size, DEFAULT_COLOR, nullptr);
 }
 
 void Cube::spawn()
