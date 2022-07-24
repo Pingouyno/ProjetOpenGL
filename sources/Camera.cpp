@@ -151,7 +151,11 @@ void Camera::checkMouseMovement(GLFWwindow* window)
         //Gère le mouvement de caméra via clavier, b = x et g = y
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
-        Orientation = glm::rotate(Orientation, glm::radians(-VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
+        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(-VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
+		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			Orientation = newOrient;
+		}
 	}
         //Gère le mouvement de caméra via clavier, b = x et g = y
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)

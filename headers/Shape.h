@@ -18,8 +18,15 @@ class Shape{
         //true si on a créé une nouvelle entité depuis le dernier rendering
         static bool newShapeCreated;
 
+        Shape(){
+            newShapeCreated = true;
+        }
 
-        //variables à utiliser et redéfinir 
+        //variables/fonctions à utiliser et redéfinir;
+
+        static int VERTICE_COUNT;
+        static int INDICE_COUNT; 
+        static vector<float> SHAPE_TEXMAP;
         vector<float> pos;
         vector<float> color;
         vector<float> texMap;
@@ -31,29 +38,12 @@ class Shape{
         int indexInIndices = -1;
         Texture* tex = nullptr;
 
-        Shape(){
-            newShapeCreated = true;
-        }
-
         virtual void spawn();
-
         virtual void despawn();
-
-        virtual void moveTo(float x, float y, float z);
-
-        const void moveTo(float (&pos)[3]);
-
+        virtual void moveTo(float &x, float &y, float &z);
         virtual void render();
-
-        virtual bool isColliding(Camera Camera);
-
-        virtual void setSize(float size);
-
-        bool hasTexture();
-
-        static void renderActiveShapes();
-
-        static Shape* checkCameraCollidingAnyShape(Camera Camera);
+        virtual bool isColliding(Camera &camera);
+        virtual void setSize(float &size);
 
     protected:
         void initIndices();
@@ -61,6 +51,13 @@ class Shape{
         void refreshGLVertices();
         void generate();
 
+    //fonctions reliées à Shape, ne PAS redéfinir
+    public:
+        static void renderActiveShapes();
+        static Shape* checkCameraCollidingAnyShape(Camera &Camera);
+
+        void moveTo(float (&pos)[3]);
+        bool hasTexture();
 };
 
 #endif

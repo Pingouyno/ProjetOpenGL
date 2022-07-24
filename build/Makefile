@@ -277,6 +277,33 @@ sources/GlobalArrays.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.s
 .PHONY : sources/GlobalArrays.cpp.s
 
+sources/Quad.o: sources/Quad.cpp.o
+
+.PHONY : sources/Quad.o
+
+# target to build an object file
+sources/Quad.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o
+.PHONY : sources/Quad.cpp.o
+
+sources/Quad.i: sources/Quad.cpp.i
+
+.PHONY : sources/Quad.i
+
+# target to preprocess a source file
+sources/Quad.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.i
+.PHONY : sources/Quad.cpp.i
+
+sources/Quad.s: sources/Quad.cpp.s
+
+.PHONY : sources/Quad.s
+
+# target to generate assembly for a file
+sources/Quad.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.s
+.PHONY : sources/Quad.cpp.s
+
 sources/Shape.o: sources/Shape.cpp.o
 
 .PHONY : sources/Shape.o
@@ -490,6 +517,9 @@ help:
 	@echo "... sources/GlobalArrays.o"
 	@echo "... sources/GlobalArrays.i"
 	@echo "... sources/GlobalArrays.s"
+	@echo "... sources/Quad.o"
+	@echo "... sources/Quad.i"
+	@echo "... sources/Quad.s"
 	@echo "... sources/Shape.o"
 	@echo "... sources/Shape.i"
 	@echo "... sources/Shape.s"

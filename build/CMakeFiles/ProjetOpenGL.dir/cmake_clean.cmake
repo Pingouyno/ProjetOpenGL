@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o"

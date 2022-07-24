@@ -21,6 +21,7 @@ using namespace std::chrono;
 #include"headers/Camera.h"
 #include"headers/GlobalArrays.h"
 #include"headers/Cube.h"
+#include"headers/Quad.h"
 
 const int width = 1920;
 const int heigth = 1080;
@@ -136,6 +137,20 @@ int main()
 	vector<float> pos4({5.0f, -5.0f, 5.0f});
 	float size4 = 10.0f;
 	Cube c4(pos4, size4, &flag_png);
+
+	vector<float> pos5({-10.0f, -10.0f, -10.0f});
+	float size5 = 10.0f;
+	
+	for (int x = 0 ; x < 10 ; x++)
+	{
+		for (int z = 0 ; z < 10 ; z++)
+			{
+				new Quad(pos5, size5, &grass_png);
+				pos5[0] += size5 + 1.0f;
+			}
+		pos5[2] += size5 + 1.0f;
+		pos5[0] -= 10 * (size5 + 1.0f);
+	}
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))

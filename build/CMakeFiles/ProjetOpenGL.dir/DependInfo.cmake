@@ -18,6 +18,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/will/Prog/CPP/ProjetOpenGL/sources/Cube.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o"
   "/home/will/Prog/CPP/ProjetOpenGL/sources/EBO.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o"
   "/home/will/Prog/CPP/ProjetOpenGL/sources/GlobalArrays.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o"
+  "/home/will/Prog/CPP/ProjetOpenGL/sources/Quad.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o"
   "/home/will/Prog/CPP/ProjetOpenGL/sources/Shape.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
   "/home/will/Prog/CPP/ProjetOpenGL/sources/Texture.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"
   "/home/will/Prog/CPP/ProjetOpenGL/sources/VAO.cpp" "/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o"

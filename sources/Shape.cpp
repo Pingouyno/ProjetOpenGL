@@ -2,6 +2,7 @@
 #include"../headers/Cube.h"
 #include<vector>
 #include"../headers/Camera.h"
+#include"../headers/GlobalArrays.h"
 
 std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
@@ -19,14 +20,9 @@ void Shape::despawn()
     cout << "\n\n**ATTENTION : FONCTION \"Shape::despawn()\" NON REDÉFINIE!**\n\n";
 }
 
-void Shape::moveTo(float x, float y, float z)
+void Shape::moveTo(float &x, float &y, float &z)
 {
     cout << "\n\n**ATTENTION : FONCTION \"Shape::moveTo()\" NON REDÉFINIE!**\n\n";
-}
-
-const void Shape::moveTo(float (&pos)[3])
-{
-    moveTo(pos[0], pos[1], pos[2]);
 }
 
 void Shape::render()
@@ -34,21 +30,18 @@ void Shape::render()
     cout << "\n\n**ATTENTION : FONCTION \"Shape::render()\" NON REDÉFINIE!**\n\n";
 }
 
-bool Shape::isColliding(Camera Camera)
+bool Shape::isColliding(Camera &Camera)
 {
     cout << "\n\n**ATTENTION : FONCTION \"Shape::isColliding()\" NON REDÉFINIE!**\n\n";
     return false;
 }
 
-void Shape::setSize(float size)
+void Shape::setSize(float &size)
 {
     cout << "\n\n**ATTENTION : FONCTION \"Shape::setSize()\" NON REDÉFINIE!**\n\n";
 }
 
-bool Shape::hasTexture()
-{
-    return this->tex != nullptr;
-}
+//**FIN ATTRIBUTS D'HÉRITAGE
 
 //Render toutes les entités, et désactive "newShapeCreated"
 void Shape::renderActiveShapes()
@@ -64,7 +57,7 @@ void Shape::renderActiveShapes()
     newShapeCreated = false;
 }
 
-Shape* Shape::checkCameraCollidingAnyShape(Camera camera)
+Shape* Shape::checkCameraCollidingAnyShape(Camera &camera)
 {
     for (Shape* ptrShape : shapes)
     {
@@ -74,4 +67,14 @@ Shape* Shape::checkCameraCollidingAnyShape(Camera camera)
         }
     }
     return nullptr;
+}
+
+void Shape::moveTo(float (&pos)[3])
+{
+    moveTo(pos[0], pos[1], pos[2]);
+}
+
+bool Shape::hasTexture()
+{
+    return this->tex != nullptr;
 }

@@ -1,35 +1,24 @@
-#include"../headers/Cube.h"
+#include"../headers/Quad.h"
 #include"../headers/GlobalArrays.h"
-#include<GLFW/glfw3.h>
 
-int Cube::VERTICE_COUNT = 12;   //Taille du tableau 3 fois plus grosse que 8 car un vertex a (x, y, z)
-int Cube::INDICE_COUNT = 36;    //2 triangles par côté, 6 côtés par cube = 3 * 2 * 6 = 36  
+int Quad::VERTICE_COUNT = 4;
 
-//coordonnées de texture pour chacune des 8 vertices
-vector<float> Cube::SHAPE_TEXMAP(
+int Quad::INDICE_COUNT = 6;  //2 triangles
+
+vector<float> Quad::SHAPE_TEXMAP(
     {
-        0.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-
         0.0f, 0.0f,
         0.0f, 1.0f,
-        1.0f, 1.0f,
         1.0f, 0.0f,
-
-        //correctifs pour texture mapping
         1.0f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 0.0f,
-        0.0f, 1.0f
     }
 );
 
-void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Texture* tex)
+void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
-    this->size = size;
+    this->width = width;
+    this->length = length;
     this->color.insert(this->color.end(), color.begin(), color.end());
     this->tex = tex;
     if (this->tex == nullptr)
@@ -42,32 +31,33 @@ void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Textu
     generate(); 
 }
 
-Cube::Cube(vector<float> &pos, float &size, Texture* tex)
+Quad::Quad(vector<float> &pos, float &size, Texture* tex)
 {
-    initCube(pos, size, DEFAULT_COLOR, tex);
+    initQuad(pos, size, size, DEFAULT_COLOR, tex);
 }
 
-Cube::Cube(vector<float> &pos, float &size, vector<float> &color)
+Quad::Quad(vector<float> &pos, float &size, vector<float> &color)
 {
-    initCube(pos, size, color, nullptr);
+    initQuad(pos, size, size, color, nullptr);
 }
 
-Cube::Cube(vector<float> &pos, float &size)
+Quad::Quad(vector<float> &pos, float &size)
 {
-    initCube(pos, size, DEFAULT_COLOR, nullptr);
+    initQuad(pos, size, size, DEFAULT_COLOR, nullptr);
 }
 
-void Cube::spawn()
+
+void Quad::spawn()
 {
     active = true;
 }
 
-void Cube::despawn()
+void Quad::despawn()
 {
     active = false;
 }
 
-void Cube::moveTo(float &x, float &y, float &z)
+void Quad::moveTo(float &x, float &y, float &z)
 {
     pos[0] = x;
     pos[1] = y;
@@ -76,7 +66,7 @@ void Cube::moveTo(float &x, float &y, float &z)
     refreshGLVertices();
 }
 
-void Cube::render()
+void Quad::render()
 {
     if (hasTexture())
     {
@@ -86,52 +76,45 @@ void Cube::render()
     }else glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
-bool Cube::isColliding(Camera &camera)
+bool Quad::isColliding(Camera &camera)
 {
     float distX = pos[0] - camera.Position[0];
     float distY = pos[1] - camera.Position[1];
     float distZ = pos[2] - camera.Position[2];
 
-    return (distX >= -size && distX <= 0
-        && distY >= -(size + camera.hitBoxHeight) && distY <= 0
-        && distZ >= -size && distZ <= 0);
+    return (distX >= -width && distX <= 0
+        && distY >= -camera.hitBoxHeight && distY <= 0
+        && distZ >= -length && distZ <= 0);
 }
 
-void Cube::setSize(float &size)
+void Quad::setSize(float &size)
 {
-    this->size = size;
+    setSize(size, size);
+}
+
+void Quad::setSize(float &length, float &width)
+{
+    this->length = length;
+    this->width = width;
     initVertices();
     refreshGLVertices();
 }
 
-void Cube::initIndices()
+//**fonctions privées**
+
+void Quad::initIndices()
 {
     //Divise par huit pour obtenir une numérotation de vertex plutot qu'indice de tableau
     int i = indexInVertices / 8;
 
     shapeIndices = 
     {
-        i,   i+1, i+3,
-        i+1, i+3, i+2, //bottom
-
-        i+5, i+4, i+6,
-        i+4, i+6, i+7, //top
-
-        i,   i+3, i+4,
-        i+3, i+4, i+7, //front
-
-        i+2, i+1, i+6,
-        i+1, i+6, i+5, //back
-
-        i,   i+1, i+8,
-        i+1, i+8, i+9, //left
-
-        i+2, i+3, i+10,
-        i+3, i+10,i+11  //right
+        i+1, i,   i+2,
+        i,   i+2, i+3 
     };
 }
 
-void Cube::initVertices()
+void Quad::initVertices()
 {
 
     float x = pos[0];
@@ -140,25 +123,14 @@ void Cube::initVertices()
 
     shapeVertices = 
     {
-        x,        y,        z,         //0 Bottom near left    
-        x,        y,        z + size,  //1 Bottom far left   
-        x + size, y,        z + size,  //2 Bottom far right   
-        x + size, y,        z,         //3 Bottom near right
-
-        x,        y + size, z,         //4 Top near left    
-        x,        y + size, z + size,  //5 Top far left   
-        x + size, y + size, z + size,  //6 Top far right   
-        x + size, y + size, z,         //7 Top near right
-
-       //ces coordonnées sont nécessaires pour le texture mapping
-        x,        y + size, z,         //8  Top near left (copie 4)    
-        x,        y + size, z + size,  //9  Top far left (copie 5)  
-        x + size, y + size, z + size,  //10 Top far right (copie 6)  
-        x + size, y + size, z          //11 Top near right (copie 7)
+        x,         y,        z,          //0 Bottom near left    
+        x,         y,        z + length, //1 Bottom far left   
+        x + width, y,        z + length, //2 Bottom far right   
+        x + width, y,        z           //3 Bottom near right
     };
 }
 
-void Cube::refreshGLVertices()
+void Quad::refreshGLVertices()
 {
     //vertices[]
     int i = indexInVertices;
@@ -177,7 +149,8 @@ void Cube::refreshGLVertices()
     }
 }
 
-void Cube::generate()
+
+void Quad::generate()
 {
     //i = index du tableau, en numérotation de chaque vertex dans vertices[]
     this -> indexInVertices = vertices.size();  //chaque vertex contient (x, y, z) + (r, g, b) + (mapX, mapY) = 8
@@ -185,7 +158,7 @@ void Cube::generate()
 
     initIndices();         //init indices avant pour trouver index de début d'insertion vertices
     initVertices();
-
+    
     for (int i = 0 ; i < VERTICE_COUNT ; i++){
         vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
         vertices.insert(vertices.end(), color.begin(), color.end());
