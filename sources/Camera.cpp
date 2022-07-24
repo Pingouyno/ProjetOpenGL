@@ -159,11 +159,6 @@ void Camera::checkMouseMovement(GLFWwindow* window)
         Orientation = glm::rotate(Orientation, glm::radians(-HORI_PAD_SENSITIVITY), Up);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-        Orientation = glm::rotate(Orientation, glm::radians(-HORI_PAD_SENSITIVITY), Up);
-	}
-
 	// Handles mouse inputs
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{

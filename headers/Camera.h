@@ -52,8 +52,8 @@ class Camera
     private :
         const float NORMAL_SPEED = 0.03f;
         const float FAST_SPEED = 4 * NORMAL_SPEED;
-        const float VERT_PAD_SENSITIVITY = 1.2f;
-        const float HORI_PAD_SENSITIVITY = 2.0f;
+        const float VERT_PAD_SENSITIVITY = 2.0f;
+        const float HORI_PAD_SENSITIVITY = 2.8f;
         void checkCamMovement(GLFWwindow* window);
         void checkMouseMovement(GLFWwindow* window);
         void jump();

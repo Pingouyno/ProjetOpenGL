@@ -23,6 +23,8 @@ class Shape{
         vector<float> pos;
         vector<float> color;
         vector<float> texMap;
+        vector<float> shapeVertices;            
+        vector<int> shapeIndices;    
         bool active = false;
         bool isRenderingColor;
         int indexInVertices = -1;

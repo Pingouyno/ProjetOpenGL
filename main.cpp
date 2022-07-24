@@ -102,7 +102,7 @@ int main()
 	grass_png.texUnit(shaderProgram, "tex0", 0);
 
 	Texture flag_png("resources/textures/sky.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	grass_png.texUnit(shaderProgram, "tex0", 0);
+	flag_png.texUnit(shaderProgram, "tex0", 0);
 
 
 	float rotation = 0.0f;
@@ -120,7 +120,7 @@ int main()
 
 	vector<float> cubeColor({1.0f, 0.5f, 0.5f});
 
-	vector<float> pos({2.3f, 2.2f, 2.5f});
+	vector<float> pos({-1.0f, -3.0f, -1.5f});
 	float size = 2.0f;
 	Cube c1(pos, size, &grass_png);
 
@@ -128,13 +128,14 @@ int main()
 	float size2 = 1.0f;
 	Cube c2(pos2, size2);
 
-	vector<float> pos3({-5.3f, 5.2f, -5.5f});
-	float size3 = 4.0f;
+	//top near right
+	vector<float> pos3({0.5f, -1.0f, -2.0f});
+	float size3 = 0.5f;
 	Cube c3(pos3, size3);
 
 	vector<float> pos4({5.0f, -5.0f, 5.0f});
 	float size4 = 10.0f;
-	Cube c4(pos4, size4, &deux_png);
+	Cube c4(pos4, size4, &flag_png);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
