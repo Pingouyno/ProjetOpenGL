@@ -27,7 +27,6 @@ void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<floa
             texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
     else
         texMap.insert(texMap.end(), SHAPE_TEXMAP.begin(), SHAPE_TEXMAP.end());
-    shapes.push_back(this);
     generate(); 
 }
 
@@ -46,24 +45,19 @@ Quad::Quad(vector<float> &pos, float &size)
     initQuad(pos, size, size, DEFAULT_COLOR, nullptr);
 }
 
-
-void Quad::spawn()
+int Quad::getVerticeCount()
 {
-    active = true;
+    return VERTICE_COUNT;
 }
 
-void Quad::despawn()
+int Quad::getIndiceCount()
 {
-    active = false;
+    return INDICE_COUNT;
 }
 
-void Quad::moveTo(float &x, float &y, float &z)
+vector<float> Quad::getShapeTexMap()
 {
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
-    initVertices();
-    refreshGLVertices();
+    return SHAPE_TEXMAP;
 }
 
 void Quad::render()
@@ -87,12 +81,12 @@ bool Quad::isColliding(Camera &camera)
         && distZ >= -length && distZ <= 0);
 }
 
-void Quad::setSize(float &size)
+void Quad::resize(float &size)
 {
-    setSize(size, size);
+    resize(size, size);
 }
 
-void Quad::setSize(float &length, float &width)
+void Quad::resize(float &length, float &width)
 {
     this->length = length;
     this->width = width;
@@ -128,42 +122,4 @@ void Quad::initVertices()
         x + width, y,        z + length, //2 Bottom far right   
         x + width, y,        z           //3 Bottom near right
     };
-}
-
-void Quad::refreshGLVertices()
-{
-    //vertices[]
-    int i = indexInVertices;
-    //CUBE_VERTICES[]
-    int c = 0;
-    
-    while (c < shapeVertices.size())
-    {
-        for (int inc = 0 ; inc < 3 ; inc++)
-        {
-            vertices[i + inc] = shapeVertices[c + inc];
-        }      
-
-        i += 8; //on passe au prochain vertex dans vertices[]
-        c += 3; //on passe au prochain (x, y, z) dans CUBE_VERTICES
-    }
-}
-
-
-void Quad::generate()
-{
-    //i = index du tableau, en numérotation de chaque vertex dans vertices[]
-    this -> indexInVertices = vertices.size();  //chaque vertex contient (x, y, z) + (r, g, b) + (mapX, mapY) = 8
-    this -> indexInIndices = indices.size();
-
-    initIndices();         //init indices avant pour trouver index de début d'insertion vertices
-    initVertices();
-    
-    for (int i = 0 ; i < VERTICE_COUNT ; i++){
-        vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
-        vertices.insert(vertices.end(), color.begin(), color.end());
-        vertices.insert(vertices.end(), texMap.begin() + 2 * i, texMap.begin() + 2 * i + 2);
-    }
-    indices.insert(indices.end(), shapeIndices.begin(), shapeIndices.end());
-    spawn();
 }

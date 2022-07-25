@@ -138,6 +138,8 @@ int main()
 	float size4 = 10.0f;
 	Cube c4(pos4, size4, &flag_png);
 
+	Shape::addShape(&c1); Shape::addShape(&c2); Shape::addShape(&c3); Shape::addShape(&c4);   
+
 	vector<float> pos5({-10.0f, -10.0f, -10.0f});
 	float size5 = 10.0f;
 	
@@ -145,7 +147,7 @@ int main()
 	{
 		for (int z = 0 ; z < 10 ; z++)
 			{
-				new Quad(pos5, size5, &grass_png);
+				Shape::addShape(new Quad(pos5, size5, &grass_png));
 				pos5[0] += size5 + 1.0f;
 			}
 		pos5[2] += size5 + 1.0f;
@@ -228,13 +230,13 @@ int main()
 
 	// Delete all the objects we've created
 
+	Shape::deleteAllShapes();
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
 	deux_png.Delete();
 	flag_png.Delete();
 	grass_png.Delete();
-	
 	shaderProgram.Delete();
 
 	// Delete window before ending the program

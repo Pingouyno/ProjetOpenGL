@@ -19,19 +19,18 @@ class Quad: public Shape {
         Quad(vector<float> &pos, float &size, vector<float> &color);
         Quad(vector<float> &pos, float &size);
 
-        void spawn();
-        void despawn();
-        void moveTo(float &x, float &y, float &z);
+        int getVerticeCount();
+        int getIndiceCount();
+        vector<float> getShapeTexMap();
+
         void render();
         bool isColliding(Camera &camera);
-        void setSize(float &length, float &width);
-        void setSize(float &size);
+        void resize(float &length, float &width);
+        void resize(float &size);
     
     private:
         void initIndices();
         void initVertices();
-        void refreshGLVertices();
-        void generate();
 };
 
 #endif

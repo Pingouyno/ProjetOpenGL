@@ -24,13 +24,10 @@ class Shape{
 
         //variables/fonctions à utiliser et redéfinir;
 
-        static int VERTICE_COUNT;
-        static int INDICE_COUNT; 
-        static vector<float> SHAPE_TEXMAP;
         vector<float> pos;
         vector<float> color;
         vector<float> texMap;
-        vector<float> shapeVertices;            
+        vector<float> shapeVertices;  //non statique car change           
         vector<int> shapeIndices;    
         bool active = false;
         bool isRenderingColor;
@@ -38,26 +35,42 @@ class Shape{
         int indexInIndices = -1;
         Texture* tex = nullptr;
 
-        virtual void spawn();
-        virtual void despawn();
-        virtual void moveTo(float &x, float &y, float &z);
         virtual void render();
         virtual bool isColliding(Camera &camera);
-        virtual void setSize(float &size);
+        virtual void resize(float &size); 
+        virtual int getVerticeCount();
+        virtual int getIndiceCount();
+        virtual vector<float> getShapeTexMap();
 
     protected:
-        void initIndices();
-        void initVertices();
-        void refreshGLVertices();
-        void generate();
+        virtual void initIndices();
+        virtual void initVertices();
+        
+        //**fin fonctions à redéfinir**
+
 
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
         static void renderActiveShapes();
         static Shape* checkCameraCollidingAnyShape(Camera &Camera);
+        static void addShape(Shape* shape);
+        static void deleteAllShapes();
 
+        void spawn();
+        void despawn();
+        void moveTo(float &x, float &y, float &z);
         void moveTo(float (&pos)[3]);
         bool hasTexture();
+
+        //pour la redéfinition de variables statiques
+        void refreshGLVertices();
+        void generate();
+
+    private:
+        void printUndefinedErr(string funcName)
+        {
+            cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
+        }
 };
 
 #endif

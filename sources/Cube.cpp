@@ -34,11 +34,10 @@ void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Textu
     this->tex = tex;
     if (this->tex == nullptr)
         //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
-        for(int i = 0 ; i < VERTICE_COUNT ; i++)
+        for(int i = 0 ; i < getVerticeCount() ; i++)
             texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
     else
         texMap.insert(texMap.end(), SHAPE_TEXMAP.begin(), SHAPE_TEXMAP.end());
-    shapes.push_back(this);
     generate(); 
 }
 
@@ -57,23 +56,19 @@ Cube::Cube(vector<float> &pos, float &size)
     initCube(pos, size, DEFAULT_COLOR, nullptr);
 }
 
-void Cube::spawn()
+int Cube::getVerticeCount()
 {
-    active = true;
+    return VERTICE_COUNT;
 }
 
-void Cube::despawn()
+int Cube::getIndiceCount()
 {
-    active = false;
+    return INDICE_COUNT;
 }
 
-void Cube::moveTo(float &x, float &y, float &z)
+vector<float> Cube::getShapeTexMap()
 {
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
-    initVertices();
-    refreshGLVertices();
+    return SHAPE_TEXMAP;
 }
 
 void Cube::render()
@@ -81,9 +76,9 @@ void Cube::render()
     if (hasTexture())
     {
         (*tex).Bind();
-        glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+        glDrawElements(GL_TRIANGLES, getIndiceCount(), GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
         (*tex).Unbind();
-    }else glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+    }else glDrawElements(GL_TRIANGLES, getIndiceCount(), GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
 bool Cube::isColliding(Camera &camera)
@@ -97,7 +92,7 @@ bool Cube::isColliding(Camera &camera)
         && distZ >= -size && distZ <= 0);
 }
 
-void Cube::setSize(float &size)
+void Cube::resize(float &size)
 {
     this->size = size;
     initVertices();
@@ -156,41 +151,4 @@ void Cube::initVertices()
         x + size, y + size, z + size,  //10 Top far right (copie 6)  
         x + size, y + size, z          //11 Top near right (copie 7)
     };
-}
-
-void Cube::refreshGLVertices()
-{
-    //vertices[]
-    int i = indexInVertices;
-    //CUBE_VERTICES[]
-    int c = 0;
-    
-    while (c < shapeVertices.size())
-    {
-        for (int inc = 0 ; inc < 3 ; inc++)
-        {
-            vertices[i + inc] = shapeVertices[c + inc];
-        }      
-
-        i += 8; //on passe au prochain vertex dans vertices[]
-        c += 3; //on passe au prochain (x, y, z) dans CUBE_VERTICES
-    }
-}
-
-void Cube::generate()
-{
-    //i = index du tableau, en numérotation de chaque vertex dans vertices[]
-    this -> indexInVertices = vertices.size();  //chaque vertex contient (x, y, z) + (r, g, b) + (mapX, mapY) = 8
-    this -> indexInIndices = indices.size();
-
-    initIndices();         //init indices avant pour trouver index de début d'insertion vertices
-    initVertices();
-
-    for (int i = 0 ; i < VERTICE_COUNT ; i++){
-        vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
-        vertices.insert(vertices.end(), color.begin(), color.end());
-        vertices.insert(vertices.end(), texMap.begin() + 2 * i, texMap.begin() + 2 * i + 2);
-    }
-    indices.insert(indices.end(), shapeIndices.begin(), shapeIndices.end());
-    spawn();
 }
