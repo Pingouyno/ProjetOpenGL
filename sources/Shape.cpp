@@ -10,19 +10,22 @@ std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
 bool Shape::shouldReloadArrays = false;
 
+float Shape::camBoxHeight = 0.8f;
+float Shape::camBoxWidth = 0.2f;
+
+
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 void Shape::render(){printUndefinedErr("RENDER");}
 void Shape::resize(float &size){printUndefinedErr("RESIZE");}
-bool Shape::isColliding(Camera &camera){printUndefinedErr("COLLIDING"); return false;}
+bool Shape::isColliding(glm::vec3 &camPos){printUndefinedErr("COLLIDING"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}
 vector<float> Shape::getShapeTexMap(){printUndefinedErr("TEXMAP"); return DEFAULT_TEXMAP;}
-void Shape::reportCollision(vector<int> &collisionLog, Camera &camera){printUndefinedErr("REPORTCOLLISION");}
 void Shape::initIndices(){printUndefinedErr("INITINDICE");}
 void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
 
-//**FIN FONCTIONS D'HÉRITAGEVIRTUELLES**
+//**FIN FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 //Render toutes les entités, et désactive "newShapeCreated"
 void Shape::renderActiveShapes()
@@ -38,15 +41,20 @@ void Shape::renderActiveShapes()
     shouldReloadArrays = false;
 }
 
-vector<int> Shape::checkCameraCollidingAnyShape(Camera &camera)
+vector<int> Shape::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
 {
     vector<int> collisionLog({0, 0, 0});
     for (Shape* ptrShape : shapes)
     {
-        if ((*ptrShape).active && (*ptrShape).isColliding(camera))
-            (*ptrShape).reportCollision(collisionLog, camera);
+        if ((*ptrShape).active && (*ptrShape).isColliding(newPos))
+            (*ptrShape).reportCollision(collisionLog, oldPos, newPos);
     }
     return collisionLog;
+}
+
+bool Shape::isAnyColliding(vector<int> &collisionLog)
+{
+    return collisionLog[0] != 0 || collisionLog[1] != 0 || collisionLog[2] != 0;
 }
 
 void Shape::addShape(Shape* shape)
@@ -94,6 +102,17 @@ void Shape::moveTo(float (&pos)[3])
 bool Shape::hasTexture()
 {
     return this->tex != nullptr;
+}
+
+void Shape::reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
+{
+    glm::vec3 tryPosX = glm::vec3(newPos[0], oldPos.y, oldPos.z);
+    glm::vec3 tryPosY = glm::vec3(oldPos.x, newPos[1], oldPos.z);
+    glm::vec3 tryPosZ = glm::vec3(oldPos.x, oldPos.y, newPos[2]);
+
+    if (isColliding(tryPosX)) collisionLog[0]++;
+    if (isColliding(tryPosY)) collisionLog[1]++;
+    if (isColliding(tryPosZ)) collisionLog[2]++;
 }
 
 void Shape::refreshGLVertices()

@@ -88,26 +88,15 @@ void Cube::resize(float &size)
     refreshGLVertices();
 }
 
-bool Cube::isColliding(Camera &camera)
+bool Cube::isColliding(glm::vec3 &camPos)
 {
-    float distX = pos[0] - camera.Position[0];
-    float distY = pos[1] - camera.Position[1];
-    float distZ = pos[2] - camera.Position[2];
+    float distX = pos[0] - camPos[0];
+    float distY = pos[1] - camPos[1];
+    float distZ = pos[2] - camPos[2];
 
-    return (distX >= -(size + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
-        && distY >= -(size + camera.hitBoxHeight) && distY <= 0
-        && distZ >= -(size + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
-}
-
-void Cube::reportCollision(vector<int> &collisionLog, Camera &camera)
-{
-    float distX = pos[0] - camera.Position[0];
-    float distY = pos[1] - camera.Position[1];
-    float distZ = pos[2] - camera.Position[2];
-
-    if (distX >= -(size + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
-    if (distY >= -(size + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
-    if (distZ >= -(size + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;
+    return (distX >= -(size + camBoxWidth) && distX <= camBoxWidth
+        && distY >= -(size + camBoxHeight) && distY <= 0
+        && distZ >= -(size + camBoxWidth) && distZ <= camBoxWidth);
 }
 
 void Cube::initIndices()

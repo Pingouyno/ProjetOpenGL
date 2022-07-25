@@ -33,10 +33,10 @@ class Camera
         // Adjust the speed of the camera and it's sensitivity when looking around
         float speed = NORMAL_SPEED;
         float sensitivity = 100.0f;
-        float hitBoxHeight = 0.8f;
-        float hitBoxWidth = 0.4f;
+        //on ne met pas à 0 car cela ferait de mini-bonds au sol
+        float DEFAULT_TIME_AIR = 5.0f;
         
-        float timeInAir = 0.0f;
+        float timeInAir = DEFAULT_TIME_AIR;
         //longueur du saut (en frames)
         const float JUMP_LENGTH = 120.0f;
         //force G qui nous donne x * 1u/s d'accélération
@@ -51,8 +51,8 @@ class Camera
         void Inputs(GLFWwindow* window);
         
     private :
-        const float NORMAL_SPEED = 0.03f;
-        const float FAST_SPEED = 4 * NORMAL_SPEED;
+        const float NORMAL_SPEED = 0.06f;
+        const float FAST_SPEED = 3 * NORMAL_SPEED;
         const float VERT_PAD_SENSITIVITY = 2.0f;
         const float HORI_PAD_SENSITIVITY = 2.8f;
         void checkCamMovement(GLFWwindow* window);

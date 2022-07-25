@@ -10,10 +10,15 @@ using namespace std;
 
 class Shape{
     public:
+
         static vector<Shape*> shapes;
         static vector<float> DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;
+
+        //propriétés hitbox Camera
+        static float camBoxHeight;
+        static float camBoxWidth;
 
         //true si on a créé une nouvelle entité depuis le dernier rendering. On doit donc RELOAD plutôt que SUB-RELOAD
         static bool shouldReloadArrays;
@@ -37,14 +42,13 @@ class Shape{
 
         virtual void render();
         virtual void resize(float &size); 
-        virtual bool isColliding(Camera &camera);
+        virtual bool isColliding(glm::vec3 &camPos);
         virtual int getVerticeCount();
         virtual int getIndiceCount();
         virtual vector<float> getShapeTexMap();
 
     protected:
-        //cette fonction permet d'incrémenter le log, ex : (1, 0, 1) si collision sur x et y
-        virtual void reportCollision(vector<int> &collisionLog, Camera &camera);
+        //inscrit dans le log si les déplacements individuels de x, y et z de camera vers newPos mènent à une collision
         virtual void initIndices();
         virtual void initVertices();
         
@@ -54,7 +58,8 @@ class Shape{
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
         static void renderActiveShapes();
-        static vector<int> checkCameraCollidingAnyShape(Camera &Camera);
+        static vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
+        static bool isAnyColliding(vector<int> &collisionLog);
         static void addShape(Shape* shape);
         static void deleteAllShapes();
 
@@ -63,6 +68,7 @@ class Shape{
         void moveTo(float &x, float &y, float &z);
         void moveTo(float (&pos)[3]);
         bool hasTexture();
+        void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
 
         //pour la redéfinition de variables statiques
         void refreshGLVertices();

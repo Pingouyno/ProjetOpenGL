@@ -30,8 +30,7 @@ class Quad: public Shape {
         void render();
         void resize(float &length, float &width);
         void resize(float &size);
-        bool isColliding(Camera &camera);
-        void reportCollision(vector<int> &collisionLog, Camera &camera);
+        bool isColliding(glm::vec3 &camPos);
     
     private:
         void initIndices();

@@ -84,64 +84,32 @@ void Quad::resize(float &length, float &width)
     refreshGLVertices();
 }
 
-bool Quad::isColliding(Camera &camera)
+bool Quad::isColliding(glm::vec3 &camPos)
 {
-    float distX = pos[0] - camera.Position[0];
-    float distY = pos[1] - camera.Position[1];
-    float distZ = pos[2] - camera.Position[2];
-
-    bool colliding;
+    float distX = pos[0] - camPos[0];
+    float distY = pos[1] - camPos[1];
+    float distZ = pos[2] - camPos[2];
 
     switch(axis){
         case X:
-            return (distX >= -camera.hitBoxWidth && distX <= camera.hitBoxWidth
-                && distY >= -(length + camera.hitBoxHeight) && distY <= 0
-                && distZ >= -(width + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
+            return (distX >= -camBoxWidth && distX <= camBoxWidth
+                && distY >= -(length + camBoxHeight) && distY <= 0
+                && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
             break;
 
         case Y:
-            return (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
-                && distY >= -camera.hitBoxHeight && distY <= 0
-                && distZ >= -(length + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
+            return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
+                && distY >= -camBoxHeight && distY <= 0
+                && distZ >= -(length + camBoxWidth) && distZ <= camBoxWidth);
             break;
 
         case Z:
-            return (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
-                && distY >= -(length + camera.hitBoxHeight) && distY <= 0
-                && distZ >= -camera.hitBoxWidth && distZ <= camera.hitBoxWidth);
-            break;
-    }
-
-    return colliding;
-}
-
-void Quad::reportCollision(vector<int> &collisionLog, Camera &camera)
-{
-    float distX = pos[0] - camera.Position[0];
-    float distY = pos[1] - camera.Position[1];
-    float distZ = pos[2] - camera.Position[2];
-
-    switch(axis){
-        case X:
-            if (distX >= -camera.hitBoxWidth && distX <= camera.hitBoxWidth) collisionLog[0]++;
-            if (distY >= -(length + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
-            if (distZ >= -(width + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;
-            break;
-
-        case Y:
-            if (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
-            if (distY >= -camera.hitBoxHeight && distY <= 0) collisionLog[1]++;
-            if (distZ >= -(length + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;;
-            break;
-
-        case Z:
-            if (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
-            if (distY >= -(length + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
-            if (distZ >= -camera.hitBoxWidth && distZ <= camera.hitBoxWidth) collisionLog[2]++;
+            return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
+                && distY >= -(length + camBoxHeight) && distY <= 0
+                && distZ >= -camBoxWidth && distZ <= camBoxWidth);
             break;
     }
 }
-
 
 //**fonctions privées**
 

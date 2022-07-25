@@ -33,9 +33,6 @@ void Camera::Inputs(GLFWwindow* window)
 
 void Camera::checkCamMovement(GLFWwindow* window)
 {
-	Shape* prevCollidingShapePtr = Shape::checkCameraCollidingAnyShape(*this);
-	//inverser les mouvements de direction si on est en collision 
-	
 	glm::vec3 previousPosition = Position;
 
 	// Handles key inputs
@@ -44,32 +41,32 @@ void Camera::checkCamMovement(GLFWwindow* window)
 		//On prend les coordonnées x, y, z de l'orientation et on retire le y (pour ne pas monter/descendre). 
 		//On trouve le vecteur normal au vecteur normal, soit on retourne à la direction pointéer
 
-		if (isInCreative) Position += speed * fact * Orientation;
-		else Position += speed * fact * -glm::normalize(glm::cross(glm::vec3(-Orientation.z, Orientation.y, Orientation.x), Up));
+		if (isInCreative) Position += speed * Orientation;
+		else Position += speed * -glm::normalize(glm::cross(glm::vec3(-Orientation.z, Orientation.y, Orientation.x), Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		Position += speed * fact * -glm::normalize(glm::cross(Orientation, Up));
+		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		if (isInCreative) Position += speed * fact * -Orientation;
-		else Position += speed * fact * glm::normalize(glm::cross(glm::vec3(-Orientation.z, Orientation.y, Orientation.x), Up));
+		if (isInCreative) Position += speed * -Orientation;
+		else Position += speed * glm::normalize(glm::cross(glm::vec3(-Orientation.z, Orientation.y, Orientation.x), Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		Position += speed * fact * glm::normalize(glm::cross(Orientation, Up));
+		Position += speed * glm::normalize(glm::cross(Orientation, Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		if (isInCreative) Position += speed * fact * Up;
+		if (isInCreative) Position += speed * Up;
 		else jump();
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
-		Position += speed * fact * -Up;
+		Position += speed * -Up;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && isInCreative || !isInAir)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (isInCreative || !isInAir))
 	{
 		speed = FAST_SPEED;
 	}
@@ -94,49 +91,32 @@ void Camera::checkCamMovement(GLFWwindow* window)
 		{
 			timeInAir += 1.0f;
 		}
-
 		Position.y -= timeInAir * JUMP_FALL_ACCELERATION;
 	}
 	
 
-	//logique pour vérifier si on doit atterir pour bloquer le clipping, tout en glissant sur la forme
-	Shape* newCollidingShapePtr = Shape::checkCameraCollidingAnyShape(*this);
+	//calculer les collisions et permettre d'atterir, tomber et de glisser sur les murs
 	glm::vec3 newPosition = Position;
-	if (prevCollidingShapePtr == nullptr && newCollidingShapePtr != nullptr)
-	{
-		/*Nous avons des nouvelles coordonnées x, y, z. Si on est en collision, alors on essaie de restaurer
-		 chaque coordonnée individuellement pour voir si l'on ne devient plus en colision (originalPosition)
-		 Si c'est le cas pour y alors on sait qu'on a touché une plateforme au sol. permet de glisser en collision*/
-		Position.y = previousPosition.y;
-		if (!(*newCollidingShapePtr).isColliding(*this)) 
-		{
-			land();
-		}else 
-		{
-			Position.x = previousPosition.x;
-			if ((*newCollidingShapePtr).isColliding(*this)) 
-				Position.z = previousPosition.z;
-			
-			/*on sait que le y n'est pas impliqué dans la collision, alors on est dans le ciel. 
-			on peut accepter la mise à jour de y.Toutefois, sur une forme bizarre, il POURRAIT y avoir à nouveau une collision ??? */
-			Position.y = newPosition.y;
+	vector<int> collisionLog = Shape::checkCameraCollidingAnyShape(previousPosition, newPosition);
 
-			//TODO: potentiellement retirer/remettre ce IF
-			//if ((*newCollidingShapePtr).isColliding(*this)) 
-			//	Position.y = previousPosition.y;
-		}
-	}else if (!isInCreative && !isInAir && newCollidingShapePtr == nullptr)
+	if (Shape::isAnyColliding(collisionLog))
 	{
-		//vérifier si l'on est dans le vide. si oui, commencer à tomber
-		Position.y -= timeInAir * JUMP_FALL_ACCELERATION;
-		if (Shape::checkCameraCollidingAnyShape(*this) == nullptr)
-		{
-			fall();
-		}else
-		{
-			Position.y = newPosition.y;
-		}
-	}
+		if (collisionLog[0] != 0) Position.x -= newPosition.x - previousPosition.x;
+
+		if (collisionLog[1] != 0) {
+			if (!isInCreative && isInAir) land();
+			Position.y = previousPosition.y;
+		}else if (!isInAir) fall();
+
+		if (collisionLog[2] != 0) Position.z -= newPosition.z - previousPosition.z;
+
+	}else if (!isInAir) fall();
+
+	/*
+	 cout << "\ncollision : " << collisionLog[0] << " | "<<collisionLog[1] << " | " << collisionLog[2];
+	 cout << "\nprev : " << previousPosition.x << " | "<< previousPosition.y << " | " << previousPosition.z;
+	 cout << "\n now : " << Position.x << " | "<< Position.y << " | " << Position.z << "\n";
+	*/
 
 }
 
@@ -228,15 +208,16 @@ void Camera::jump()
 	}
 }
 
+//on met le temps dans l'air à 5.0 pour éviter de mini-sauts
 void Camera::land()
 {
 	isInAir = false;	
-	timeInAir = 0.0f;
+	timeInAir = DEFAULT_TIME_AIR;
 }
 
 //commencer à tomber si l'on tombe d'un bord
 void Camera::fall()
 {
 	isInAir = true;
-	timeInAir = 0.0f;	
+	timeInAir = DEFAULT_TIME_AIR;	
 }
