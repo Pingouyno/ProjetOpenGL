@@ -8,7 +8,7 @@ std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
-bool Shape::newShapeCreated = false;
+bool Shape::shouldReloadArrays = false;
 
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
@@ -34,7 +34,7 @@ void Shape::renderActiveShapes()
         }
     }
 
-    newShapeCreated = false;
+    shouldReloadArrays = false;
 }
 
 Shape* Shape::checkCameraCollidingAnyShape(Camera &camera)
@@ -56,9 +56,15 @@ void Shape::addShape(Shape* shape)
 
 void Shape::deleteAllShapes()
 {
-    for (Shape* shape : shapes) delete(shape);
+    int i = shapes.size() - 1;
+    while(i >= 0)
+    {
+        shapes.erase(shapes.begin() + i);
+        i--;
+    }
     vertices.clear();
     indices.clear();
+    shouldReloadArrays = true;
 }
 
 void Shape::spawn()

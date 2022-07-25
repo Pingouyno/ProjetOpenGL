@@ -15,11 +15,11 @@ class Shape{
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;
 
-        //true si on a créé une nouvelle entité depuis le dernier rendering
-        static bool newShapeCreated;
+        //true si on a créé une nouvelle entité depuis le dernier rendering. On doit donc RELOAD plutôt que SUB-RELOAD
+        static bool shouldReloadArrays;
 
         Shape(){
-            newShapeCreated = true;
+            shouldReloadArrays = true;
         }
 
         //variables/fonctions à utiliser et redéfinir;

@@ -107,7 +107,7 @@ void Camera::checkCamMovement(GLFWwindow* window)
 	{
 		/*Nous avons des nouvelles coordonnées x, y, z. Si on est en collision, alors on essaie de restaurer
 		 chaque coordonnée individuellement pour voir si l'on ne devient plus en colision (originalPosition)
-		 Si c'est le cas pour y alors on sait qu'on a touché une plateforme au sol*/
+		 Si c'est le cas pour y alors on sait qu'on a touché une plateforme au sol. permet de glisser en collision*/
 		Position.y = previousPosition.y;
 		if (!(*newCollidingShapePtr).isColliding(*this)) 
 		{
@@ -115,7 +115,16 @@ void Camera::checkCamMovement(GLFWwindow* window)
 		}else 
 		{
 			Position.x = previousPosition.x;
-			if ((*newCollidingShapePtr).isColliding(*this)) Position.z = previousPosition.z;
+			if ((*newCollidingShapePtr).isColliding(*this)) 
+				Position.z = previousPosition.z;
+			
+			/*on sait que le y n'est pas impliqué dans la collision, alors on est dans le ciel. 
+			on peut accepter la mise à jour de y.Toutefois, sur une forme bizarre, il POURRAIT y avoir à nouveau une collision ??? */
+			Position.y = newPosition.y;
+
+			//TODO: potentiellement retirer/remettre ce IF
+			//if ((*newCollidingShapePtr).isColliding(*this)) 
+			//	Position.y = previousPosition.y;
 		}
 	}else if (!isInCreative && !isInAir && newCollidingShapePtr == nullptr)
 	{

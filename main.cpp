@@ -140,6 +140,8 @@ int main()
 
 	Shape::addShape(&c1); Shape::addShape(&c2); Shape::addShape(&c3); Shape::addShape(&c4);   
 
+	//Shape::deleteAllShapes();
+
 	vector<float> pos5({-10.0f, -10.0f, -10.0f});
 	float size5 = 10.0f;
 	
@@ -147,7 +149,7 @@ int main()
 	{
 		for (int z = 0 ; z < 10 ; z++)
 			{
-				Shape::addShape(new Quad(pos5, size5, &grass_png));
+				Shape::addShape(new Quad(pos5, size5, &deux_png));
 				pos5[0] += size5 + 1.0f;
 			}
 		pos5[2] += size5 + 1.0f;
@@ -272,7 +274,7 @@ void reloadVerticesInVBO(VBO &VBO1){
 	//Mettre à jour le tableau et re-charger le VBO. On prend SubData pour optimisation
 	VBO1.Bind();
 	
-	if (Shape::newShapeCreated)
+	if (Shape::shouldReloadArrays)
 	{
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_DYNAMIC_DRAW);
 	}else
@@ -284,7 +286,7 @@ void reloadVerticesInVBO(VBO &VBO1){
 
 void reloadIndicesInEBO(EBO &EBO1){
 	EBO1.Bind();
-	if (Shape::newShapeCreated)
+	if (Shape::shouldReloadArrays)
 	{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), &indices[0], GL_DYNAMIC_DRAW);
 	}else
