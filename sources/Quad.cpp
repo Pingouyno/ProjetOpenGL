@@ -14,13 +14,14 @@ vector<float> Quad::SHAPE_TEXMAP(
     }
 );
 
-void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex)
+void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex, Axis axis)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->width = width;
     this->length = length;
     this->color.insert(this->color.end(), color.begin(), color.end());
     this->tex = tex;
+    this->axis = axis;
     if (this->tex == nullptr)
         //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
         for(int i = 0 ; i < VERTICE_COUNT ; i++)
@@ -30,19 +31,19 @@ void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<floa
     generate(); 
 }
 
-Quad::Quad(vector<float> &pos, float &size, Texture* tex)
+Quad::Quad(vector<float> &pos, float &size, Texture* tex, Axis axis)
 {
-    initQuad(pos, size, size, DEFAULT_COLOR, tex);
+    initQuad(pos, size, size, DEFAULT_COLOR, tex, axis);
 }
 
-Quad::Quad(vector<float> &pos, float &size, vector<float> &color)
+Quad::Quad(vector<float> &pos, float &size, vector<float> &color, Axis axis)
 {
-    initQuad(pos, size, size, color, nullptr);
+    initQuad(pos, size, size, color, nullptr, axis);
 }
 
-Quad::Quad(vector<float> &pos, float &size)
+Quad::Quad(vector<float> &pos, float &size, Axis axis)
 {
-    initQuad(pos, size, size, DEFAULT_COLOR, nullptr);
+    initQuad(pos, size, size, DEFAULT_COLOR, nullptr, axis);
 }
 
 int Quad::getVerticeCount()
@@ -70,17 +71,6 @@ void Quad::render()
     }else glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
-bool Quad::isColliding(Camera &camera)
-{
-    float distX = pos[0] - camera.Position[0];
-    float distY = pos[1] - camera.Position[1];
-    float distZ = pos[2] - camera.Position[2];
-
-    return (distX >= -width && distX <= 0
-        && distY >= -camera.hitBoxHeight && distY <= 0
-        && distZ >= -length && distZ <= 0);
-}
-
 void Quad::resize(float &size)
 {
     resize(size, size);
@@ -93,6 +83,65 @@ void Quad::resize(float &length, float &width)
     initVertices();
     refreshGLVertices();
 }
+
+bool Quad::isColliding(Camera &camera)
+{
+    float distX = pos[0] - camera.Position[0];
+    float distY = pos[1] - camera.Position[1];
+    float distZ = pos[2] - camera.Position[2];
+
+    bool colliding;
+
+    switch(axis){
+        case X:
+            return (distX >= -camera.hitBoxWidth && distX <= camera.hitBoxWidth
+                && distY >= -(length + camera.hitBoxHeight) && distY <= 0
+                && distZ >= -(width + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
+            break;
+
+        case Y:
+            return (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
+                && distY >= -camera.hitBoxHeight && distY <= 0
+                && distZ >= -(length + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
+            break;
+
+        case Z:
+            return (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
+                && distY >= -(length + camera.hitBoxHeight) && distY <= 0
+                && distZ >= -camera.hitBoxWidth && distZ <= camera.hitBoxWidth);
+            break;
+    }
+
+    return colliding;
+}
+
+void Quad::reportCollision(vector<int> &collisionLog, Camera &camera)
+{
+    float distX = pos[0] - camera.Position[0];
+    float distY = pos[1] - camera.Position[1];
+    float distZ = pos[2] - camera.Position[2];
+
+    switch(axis){
+        case X:
+            if (distX >= -camera.hitBoxWidth && distX <= camera.hitBoxWidth) collisionLog[0]++;
+            if (distY >= -(length + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
+            if (distZ >= -(width + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;
+            break;
+
+        case Y:
+            if (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
+            if (distY >= -camera.hitBoxHeight && distY <= 0) collisionLog[1]++;
+            if (distZ >= -(length + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;;
+            break;
+
+        case Z:
+            if (distX >= -(width + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
+            if (distY >= -(length + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
+            if (distZ >= -camera.hitBoxWidth && distZ <= camera.hitBoxWidth) collisionLog[2]++;
+            break;
+    }
+}
+
 
 //**fonctions privées**
 
@@ -115,11 +164,37 @@ void Quad::initVertices()
     float y = pos[1];
     float z = pos[2];
 
-    shapeVertices = 
+    switch(axis)
     {
-        x,         y,        z,          //0 Bottom near left    
-        x,         y,        z + length, //1 Bottom far left   
-        x + width, y,        z + length, //2 Bottom far right   
-        x + width, y,        z           //3 Bottom near right
-    };
+        case X:
+            //                   **Selon la perspective de l'axe en question**
+            shapeVertices = 
+            {
+                x,       y,          z,          //0 Bottom left    
+                x,       y + length, z,          //1 Top left   
+                x,       y + length, z + width,  //2 Top right   
+                x,       y,          z + width   //3 Bottom right
+            };
+            break;
+
+        case Y:
+            shapeVertices = 
+            {
+                x,         y,        z,          //0 Bottom left    
+                x,         y,        z + length, //1 Top left   
+                x + width, y,        z + length, //2 Top right   
+                x + width, y,        z           //3 Bottom right
+            };
+            break;
+
+        case Z:
+            shapeVertices = 
+            {
+                x,         y,          z,       //0 Bottom left    
+                x,         y + length, z,       //1 Top left   
+                x + width, y + length, z,       //2 Top right   
+                x + width, y,          z        //3 Bottom right
+            };
+            break;
+    }
 }

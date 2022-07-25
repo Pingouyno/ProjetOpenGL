@@ -13,11 +13,12 @@ bool Shape::shouldReloadArrays = false;
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 void Shape::render(){printUndefinedErr("RENDER");}
-bool Shape::isColliding(Camera &camera){printUndefinedErr("COLLIDING"); return false;}
 void Shape::resize(float &size){printUndefinedErr("RESIZE");}
+bool Shape::isColliding(Camera &camera){printUndefinedErr("COLLIDING"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}
 vector<float> Shape::getShapeTexMap(){printUndefinedErr("TEXMAP"); return DEFAULT_TEXMAP;}
+void Shape::reportCollision(vector<int> &collisionLog, Camera &camera){printUndefinedErr("REPORTCOLLISION");}
 void Shape::initIndices(){printUndefinedErr("INITINDICE");}
 void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
 
@@ -37,16 +38,15 @@ void Shape::renderActiveShapes()
     shouldReloadArrays = false;
 }
 
-Shape* Shape::checkCameraCollidingAnyShape(Camera &camera)
+vector<int> Shape::checkCameraCollidingAnyShape(Camera &camera)
 {
+    vector<int> collisionLog({0, 0, 0});
     for (Shape* ptrShape : shapes)
     {
         if ((*ptrShape).active && (*ptrShape).isColliding(camera))
-        {
-            return ptrShape;
-        }
+            (*ptrShape).reportCollision(collisionLog, camera);
     }
-    return nullptr;
+    return collisionLog;
 }
 
 void Shape::addShape(Shape* shape)

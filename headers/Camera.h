@@ -34,6 +34,7 @@ class Camera
         float speed = NORMAL_SPEED;
         float sensitivity = 100.0f;
         float hitBoxHeight = 0.8f;
+        float hitBoxWidth = 0.4f;
         
         float timeInAir = 0.0f;
         //longueur du saut (en frames)

@@ -24,6 +24,24 @@ GLFW/glfw3.h
 shaderClass.h
 /home/will/Prog/CPP/ProjetOpenGL/headers/shaderClass.h
 
+/home/will/Prog/CPP/ProjetOpenGL/headers/Cube.h
+Shape.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
+vector
+-
+
+/home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
+vector
+-
+Shape.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
+
+/home/will/Prog/CPP/ProjetOpenGL/headers/Quad.h
+Shape.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
+Texture.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Texture.h
+
 /home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
 vector
 -
@@ -1562,11 +1580,17 @@ intrin.h
 arm_neon.h
 -
 
-/home/will/Prog/CPP/ProjetOpenGL/sources/Camera.cpp
-../headers/Camera.h
-/home/will/Prog/CPP/ProjetOpenGL/headers/Camera.h
-../headers/Shape.h
-/home/will/Prog/CPP/ProjetOpenGL/headers/Shape.h
-fstream
+/home/will/Prog/CPP/ProjetOpenGL/sources/Cube.cpp
+../headers/Cube.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Cube.h
+../headers/GlobalArrays.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
+GLFW/glfw3.h
 -
+
+/home/will/Prog/CPP/ProjetOpenGL/sources/Quad.cpp
+../headers/Quad.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/Quad.h
+../headers/GlobalArrays.h
+/home/will/Prog/CPP/ProjetOpenGL/headers/GlobalArrays.h
 

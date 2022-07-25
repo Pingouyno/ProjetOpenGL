@@ -24,8 +24,9 @@ class Cube : public Shape
         vector<float> getShapeTexMap();
         
         void render();
-        bool isColliding(Camera &camera);
-        void resize(float &size);   
+        void resize(float &size); 
+        bool isColliding(Camera &camera);  
+        void reportCollision(vector<int> &collisionLog, Camera &camera);
 
     private:
         void initIndices();

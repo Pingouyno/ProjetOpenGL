@@ -36,13 +36,15 @@ class Shape{
         Texture* tex = nullptr;
 
         virtual void render();
-        virtual bool isColliding(Camera &camera);
         virtual void resize(float &size); 
+        virtual bool isColliding(Camera &camera);
         virtual int getVerticeCount();
         virtual int getIndiceCount();
         virtual vector<float> getShapeTexMap();
 
     protected:
+        //cette fonction permet d'incrémenter le log, ex : (1, 0, 1) si collision sur x et y
+        virtual void reportCollision(vector<int> &collisionLog, Camera &camera);
         virtual void initIndices();
         virtual void initVertices();
         
@@ -52,7 +54,7 @@ class Shape{
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
         static void renderActiveShapes();
-        static Shape* checkCameraCollidingAnyShape(Camera &Camera);
+        static vector<int> checkCameraCollidingAnyShape(Camera &Camera);
         static void addShape(Shape* shape);
         static void deleteAllShapes();
 

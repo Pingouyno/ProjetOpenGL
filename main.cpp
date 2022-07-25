@@ -149,7 +149,8 @@ int main()
 	{
 		for (int z = 0 ; z < 10 ; z++)
 			{
-				Shape::addShape(new Quad(pos5, size5, &deux_png));
+				Shape::addShape(new Quad(pos5, size5, &grass_png, Quad::Axis::X));
+				Shape::addShape(new Quad(pos5, size5, &grass_png, Quad::Axis::Y));
 				pos5[0] += size5 + 1.0f;
 			}
 		pos5[2] += size5 + 1.0f;

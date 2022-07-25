@@ -11,22 +11,27 @@ class Quad: public Shape {
         static int INDICE_COUNT; 
         static vector<float> SHAPE_TEXMAP;
 
+        //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
+        enum Axis : char { X = 'x', Y = 'y', Z = 'z'};
+
         float length;
         float width;
+        Axis axis;
 
-        void initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex);
-        Quad(vector<float> &pos, float &size, Texture* texture);
-        Quad(vector<float> &pos, float &size, vector<float> &color);
-        Quad(vector<float> &pos, float &size);
+        void initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex, Axis axis);
+        Quad(vector<float> &pos, float &size, Texture* texture, Axis axis);
+        Quad(vector<float> &pos, float &size, vector<float> &color, Axis axis);
+        Quad(vector<float> &pos, float &size, Axis axis);
 
         int getVerticeCount();
         int getIndiceCount();
         vector<float> getShapeTexMap();
 
         void render();
-        bool isColliding(Camera &camera);
         void resize(float &length, float &width);
         void resize(float &size);
+        bool isColliding(Camera &camera);
+        void reportCollision(vector<int> &collisionLog, Camera &camera);
     
     private:
         void initIndices();

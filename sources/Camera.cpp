@@ -35,7 +35,6 @@ void Camera::checkCamMovement(GLFWwindow* window)
 {
 	Shape* prevCollidingShapePtr = Shape::checkCameraCollidingAnyShape(*this);
 	//inverser les mouvements de direction si on est en collision 
-	int fact = prevCollidingShapePtr == nullptr ? 1 : -1;
 	
 	glm::vec3 previousPosition = Position;
 

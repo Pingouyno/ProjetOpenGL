@@ -81,22 +81,33 @@ void Cube::render()
     }else glDrawElements(GL_TRIANGLES, getIndiceCount(), GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
+void Cube::resize(float &size)
+{
+    this->size = size;
+    initVertices();
+    refreshGLVertices();
+}
+
 bool Cube::isColliding(Camera &camera)
 {
     float distX = pos[0] - camera.Position[0];
     float distY = pos[1] - camera.Position[1];
     float distZ = pos[2] - camera.Position[2];
 
-    return (distX >= -size && distX <= 0
+    return (distX >= -(size + camera.hitBoxWidth) && distX <= camera.hitBoxWidth
         && distY >= -(size + camera.hitBoxHeight) && distY <= 0
-        && distZ >= -size && distZ <= 0);
+        && distZ >= -(size + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth);
 }
 
-void Cube::resize(float &size)
+void Cube::reportCollision(vector<int> &collisionLog, Camera &camera)
 {
-    this->size = size;
-    initVertices();
-    refreshGLVertices();
+    float distX = pos[0] - camera.Position[0];
+    float distY = pos[1] - camera.Position[1];
+    float distZ = pos[2] - camera.Position[2];
+
+    if (distX >= -(size + camera.hitBoxWidth) && distX <= camera.hitBoxWidth) collisionLog[0]++;
+    if (distY >= -(size + camera.hitBoxHeight) && distY <= 0) collisionLog[1]++;
+    if (distZ >= -(size + camera.hitBoxWidth) && distZ <= camera.hitBoxWidth) collisionLog[2]++;
 }
 
 void Cube::initIndices()
