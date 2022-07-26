@@ -118,45 +118,58 @@ int main()
 	auto targetTime = high_resolution_clock::now();
 	targetTime += milliseconds(FRAME_MILLI);
 
+	vector<float> pos({-10.0f, -10.0f, -10.0f});
+	float wallSize = 2.5f;
+	float cubeSize = wallSize;
+	int x = 0;
 
-	vector<float> cubeColor({1.0f, 0.5f, 0.5f});
+	camera.Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
+	camera.Orientation = glm::rotate(camera.Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
 
-	vector<float> pos({-1.0f, -3.0f, -1.5f});
-	float size = 2.0f;
-	Cube c1(pos, size, &grass_png);
-
-	vector<float> pos2({-10.3f, 10.2f, -10.5f});
-	float size2 = 1.0f;
-	Cube c2(pos2, size2);
-
-	//top near right
-	vector<float> pos3({0.5f, -1.0f, -2.0f});
-	float size3 = 0.5f;
-	Cube c3(pos3, size3);
-
-	vector<float> pos4({5.0f, -5.0f, 5.0f});
-	float size4 = 10.0f;
-	Cube c4(pos4, size4, &flag_png);
-
-	Shape::addShape(&c1); Shape::addShape(&c2); Shape::addShape(&c3); Shape::addShape(&c4);   
-
-	//Shape::deleteAllShapes();
-
-	vector<float> pos5({-10.0f, -10.0f, -10.0f});
-	float size5 = 10.0f;
-	
-	for (int x = 0 ; x < 10 ; x++)
+	//générer les murs du labyrinthe
+	for (int z = 0 ; z < LAB_SIZE + 1; z++)
 	{
-		for (int z = 0 ; z < 10 ; z++)
+		for (int x = 0 ; x < LAB_SIZE + 1 ; x++)
+		{
+			if (z != LAB_SIZE)
 			{
-				Shape::addShape(new Quad(pos5, size5, &deux_png, Quad::Axis::X));
-				Shape::addShape(new Quad(pos5, size5, &grass_png, Quad::Axis::Y));
-				Shape::addShape(new Quad(pos5, size5, &flag_png, Quad::Axis::Z));
-				pos5[0] += size5 + 1.0f;
+				if (x != LAB_SIZE)
+					Shape::shapes.push_back(new Quad(pos, wallSize, &deux_png, Quad::Axis::Y));
+
+				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
+					Shape::shapes.push_back(new Quad(pos, wallSize, &grass_png, Quad::Axis::X));
 			}
-		pos5[2] += size5 + 1.0f;
-		pos5[0] -= 10 * (size5 + 1.0f);
+
+			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
+				Shape::shapes.push_back(new Quad(pos, wallSize, &grass_png, Quad::Axis::Z));
+
+			pos[0] += wallSize;
+
+		}
+
+		pos[0] -= (LAB_SIZE + 1) * wallSize;
+		pos[2] += wallSize;
+		
 	}
+
+	pos = {-10.0f, -10.0f, -10.0f};
+	int cpt = 0;
+	for (int i = 0 ; i < labyrinth.size(); i++)
+	{
+
+		if (labyrinth[i] == 1)
+			Shape::shapes.push_back(new Cube(pos, cubeSize, &grass_png));
+		pos[0] += wallSize;
+
+		cpt++;
+		if (cpt == LAB_SIZE)
+		{
+			cpt = 0;
+			pos[0] -= LAB_SIZE * wallSize;
+			pos[2] += wallSize;
+		}
+	}
+
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -169,54 +182,17 @@ int main()
 		shaderProgram.Activate();
 
 		camera.Inputs(window);
-		camera.Matrix(45.0f, 0.01f, 100.0f, shaderProgram, "camMatrix");
+		camera.Matrix(45.0f, 0.01f, 200.0f, shaderProgram, "camMatrix");
 
 		glUniform1f(uniID, 0.5f);
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		 
-		/*Déplacer la pyramide
-		{
-			int arr[5] = {0, 8, 16, 24, 32};
-			float distX = camera.Position.x - ((vertices[arr[0]] + vertices[arr[2]]) / 2);
-			float factX = distX >= 0 ? 1 : -1;
-			float distZ = camera.Position.z - ((vertices[arr[0] + 2] + vertices[arr[2] + 2]) / 2);
-			float factZ = distZ >= 0 ? 1 : -1;
-			for (int i = 0 ; i < 5; i++){
-				vertices[arr[i]] += 0.008f * factX;
-				vertices[arr[i] + 2] += 0.008f * factZ;
-			}
-		}
-		*/
-
 		reloadVerticesInVBO(VBO1);
 		reloadIndicesInEBO(EBO1);
-	
-		/*dessiner les valeurs hard-codées
-		deux_png.Bind();
-		glDrawElements(GL_TRIANGLES, 6*3,  GL_UNSIGNED_INT, 0);
-		
-		deux_png.Unbind();
-		flag_png.Bind();
-		glDrawElements(GL_TRIANGLES, 2*3, GL_UNSIGNED_INT, (void*)(6*3*sizeof(int)));
-
-		flag_png.Unbind();
-		grass_png.Bind();
-		glDrawElements(GL_TRIANGLES, 2*3, GL_UNSIGNED_INT, (void*)(8*3*sizeof(int)));
-
-		
-		//grass_png.Unbind();
-
-		c1.moveTo(c1.pos[0] - 0.01f, c1.pos[1], c1.pos[2]);
-		c2.setSize(c2.size + 0.001f);
-		*/
-
-		grass_png.Bind();
 
 		Shape::renderActiveShapes();
-
-		grass_png.Unbind();
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);

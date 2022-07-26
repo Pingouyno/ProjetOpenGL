@@ -38,9 +38,9 @@ class Camera
         
         float timeInAir = DEFAULT_TIME_AIR;
         //longueur du saut (en frames)
-        const float JUMP_LENGTH = 120.0f;
+        const float JUMP_LENGTH = 45.0f;
         //force G qui nous donne x * 1u/s d'accélération
-        const float JUMP_FALL_ACCELERATION = 2 * 1.0f / 1830.0f; 
+        const float JUMP_FALL_ACCELERATION = 9.8 * 1.0f / 1830.0f; 
 
         // Camera constructor to set up initial values
         Camera(int width, int height, glm::vec3 position);
@@ -51,8 +51,8 @@ class Camera
         void Inputs(GLFWwindow* window);
         
     private :
-        const float NORMAL_SPEED = 0.06f;
-        const float FAST_SPEED = 3 * NORMAL_SPEED;
+        const float NORMAL_SPEED = 0.10f;
+        const float FAST_SPEED = 2 * NORMAL_SPEED;
         const float VERT_PAD_SENSITIVITY = 2.0f;
         const float HORI_PAD_SENSITIVITY = 2.8f;
         void checkCamMovement(GLFWwindow* window);

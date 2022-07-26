@@ -10,7 +10,7 @@ std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
 bool Shape::shouldReloadArrays = false;
 
-float Shape::camBoxHeight = 0.8f;
+float Shape::camBoxHeight = 1.4f;
 float Shape::camBoxWidth = 0.2f;
 
 
