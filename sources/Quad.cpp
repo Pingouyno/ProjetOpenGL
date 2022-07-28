@@ -31,6 +31,11 @@ void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<floa
     generate(); 
 }
 
+Quad::Quad(vector<float> &pos, float &width, float &height, Texture* tex, Axis axis)
+{
+    initQuad(pos, width, height, DEFAULT_COLOR, tex, axis);
+}
+
 Quad::Quad(vector<float> &pos, float &size, Texture* tex, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, tex, axis);
@@ -112,6 +117,7 @@ bool Quad::isColliding(glm::vec3 &camPos)
                 && distZ >= -camBoxWidth && distZ <= camBoxWidth);
             break;
     }
+    return false;
 }
 
 //**fonctions privées**

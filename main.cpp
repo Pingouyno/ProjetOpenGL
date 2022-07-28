@@ -12,6 +12,8 @@ using namespace std::chrono;
 #include"libraries/include/glm/glm.hpp"
 #include"libraries/include/glm/gtc/matrix_transform.hpp"
 #include"libraries/include/glm/gtc/type_ptr.hpp"
+#include"libraries/include/IrrKlang/include/irrKlang.h"
+using namespace irrklang;
 
 #include"headers/shaderClass.h"
 #include"headers/VAO.h" 
@@ -23,8 +25,8 @@ using namespace std::chrono;
 #include"headers/Cube.h"
 #include"headers/Quad.h"
 
-const int width = 1920;
-const int heigth = 1080;
+const int width = 1440;//1420;
+const int heigth = 900;//800;
 const int FRAME_MILLI = 17;
 
 //MÉTHODES UTILISÉES____________________________________________________________
@@ -34,7 +36,7 @@ void doRenderLogic(GLFWwindow* window, int seed);
 void reloadVerticesInVBO(VBO &VBO1);
 void reloadIndicesInEBO(EBO &EBO1);
 void setup3DWorld(Shader &shaderProgram3D, Camera &camera);
-void setup2DOverlay(Shader &shaderProgram2D, float width, float height);
+void setup2DOverlay(Shader &shaderProgram2D, Camera &camera);
 void draw2DVertices();
 void draw3DVertices();
 
@@ -42,6 +44,16 @@ void draw3DVertices();
 
 int main()
 {	
+	//démarrer l'engin irrKlang pour le son
+	ISoundEngine* soundEngine = createIrrKlangDevice();
+
+	//vérifier que l'engin a pu démarrer, donc ptr != nullptr
+	if (!soundEngine)
+	{
+		printf("Could not startup engine\n");
+		return 0;
+	}
+
 	// Initialize GLFW
 	glfwInit();
 
@@ -103,7 +115,7 @@ int main()
 	Camera camera(width, heigth, glm::vec3(0.0f, 0.0f, 0.2f));
 
 	setup3DWorld(shaderProgram3D, camera);
-	setup2DOverlay(shaderProgram2D, width, heigth);
+	setup2DOverlay(shaderProgram2D, camera);
 
 	EBO1.Bind();
 
@@ -119,8 +131,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram3D.Activate();
-
-		camera.Inputs(window);
+		
+		camera.Inputs(window, soundEngine);
 		camera.Matrix(45.0f, 0.01f, 200.0f, shaderProgram3D, "camMatrix");
 
 		// Bind the VAO so OpenGL knows to use it
@@ -164,6 +176,10 @@ int main()
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
 	glfwTerminate();
+
+	//arrêter l'engin de son
+	soundEngine->drop();
+
 	return 0;
 }
 
@@ -262,9 +278,8 @@ void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
 	}
 }
 
-void setup2DOverlay(Shader &shaderProgram2D, float width, float height)
+void setup2DOverlay(Shader &shaderProgram2D, Camera &camera)
 {
-	float PNG_SIZE = 512;
 
 	//Pour blend les endroits vides des png
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -272,8 +287,8 @@ void setup2DOverlay(Shader &shaderProgram2D, float width, float height)
 	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	(*crosshair_png).texUnit(shaderProgram2D, "tex0", 0);
 
-	vector<float> pos({-((PNG_SIZE/ 2.0f) / width), -((PNG_SIZE/ 2.0f) / height), 0.0f});
-	float size = 0.5f;
+	vector<float> pos({-0.03125, -0.03125, 0.0f});
+	float size = 0.0625f;
 
 	Shape::shapes2D.push_back(new Quad(pos, size, crosshair_png, Quad::Axis::Z));
 }

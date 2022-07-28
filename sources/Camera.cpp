@@ -25,13 +25,13 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shade
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
-void Camera::Inputs(GLFWwindow* window)
+void Camera::Inputs(GLFWwindow* window, ISoundEngine* soundEngine)
 {
-	checkCamMovement(window);
+	checkCamMovement(window, soundEngine);
 	checkMouseMovement(window);
 }
 
-void Camera::checkCamMovement(GLFWwindow* window)
+void Camera::checkCamMovement(GLFWwindow* window, ISoundEngine* soundEngine)
 {
 	glm::vec3 previousPosition = Position;
 
@@ -60,7 +60,12 @@ void Camera::checkCamMovement(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		if (isInCreative) Position += speed * Up;
-		else jump();
+		else if (!isInAir)
+		{
+			jump();
+			soundEngine->play2D("/home/will/Prog/CPP/ProjetOpenGL/resources/sounds/jump_01.wav");
+		}
+
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
@@ -201,11 +206,12 @@ void Camera::checkMouseMovement(GLFWwindow* window)
 
 void Camera::jump()
 {
-	if (!isInAir){
-		isInAir = true;
-		//parce que l'on va passer la moitié du temps en ascenscion (négatif) et l'autre  moitié en ascension
-		timeInAir = -JUMP_LENGTH / 2.0f;
-	}
+	
+	isInAir = true;
+	//parce que l'on va passer la moitié du temps en ascenscion (négatif) et l'autre  moitié en ascension
+	timeInAir = -JUMP_LENGTH / 2.0f;
+
+
 }
 
 //on met le temps dans l'air à 5.0 pour éviter de mini-sauts

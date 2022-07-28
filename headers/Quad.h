@@ -19,6 +19,7 @@ class Quad: public Shape {
         Axis axis;
 
         void initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex, Axis axis);
+        Quad(vector<float> &pos, float &width, float &height, Texture* tex, Axis axis);
         Quad(vector<float> &pos, float &size, Texture* texture, Axis axis);
         Quad(vector<float> &pos, float &size, vector<float> &color, Axis axis);
         Quad(vector<float> &pos, float &size, Axis axis);

@@ -7,5 +7,5 @@ file(GLOB SOURCES_DIR "sources/*")
 
 add_executable(${PROJECT_NAME} main.cpp ${SOURCES_DIR})
 
-target_link_libraries(${PROJECT_NAME} GL dl glfw)
+target_link_libraries(${PROJECT_NAME} GL dl glfw IrrKlang)
 

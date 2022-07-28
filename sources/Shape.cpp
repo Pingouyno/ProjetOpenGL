@@ -26,6 +26,7 @@ vector<float> Shape::getShapeTexMap(){printUndefinedErr("TEXMAP"); return DEFAUL
 void Shape::initIndices(){printUndefinedErr("INITINDICE");}
 void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
 
+
 //**FIN FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 //Render toutes les entités, et désactive "newShapeCreated"
