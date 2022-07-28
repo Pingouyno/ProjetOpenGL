@@ -12,6 +12,7 @@ class Shape{
     public:
 
         static vector<Shape*> shapes;
+        static vector<Shape*> shapes2D;
         static vector<float> DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;
@@ -57,7 +58,8 @@ class Shape{
 
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
-        static void renderActiveShapes();
+        static void renderActive3DShapes();
+        static void renderActive2DShapes();
         static vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
         static bool isAnyColliding(vector<int> &collisionLog);
         static void addShape(Shape* shape);

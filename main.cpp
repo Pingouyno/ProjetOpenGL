@@ -33,6 +33,10 @@ void checkProgramKill(GLFWwindow *window);
 void doRenderLogic(GLFWwindow* window, int seed);
 void reloadVerticesInVBO(VBO &VBO1);
 void reloadIndicesInEBO(EBO &EBO1);
+void setup3DWorld(Shader &shaderProgram3D, Camera &camera);
+void setup2DOverlay(Shader &shaderProgram2D, float width, float height);
+void draw2DVertices();
+void draw3DVertices();
 
 //______________________________________________________________________________
 
@@ -69,7 +73,9 @@ int main()
 
 
 	// Create Vertex Shader Object and get its reference
-	Shader shaderProgram("resources/shaders/default.vert", "resources/shaders/default.frag"); 
+	Shader shaderProgram3D("resources/shaders/default.vert", "resources/shaders/default.frag"); 
+	
+	Shader shaderProgram2D("resources/shaders/default.vert2D", "resources/shaders/default.frag"); 
 
 	// Create reference containers for the Vartex Array Object and the Vertex Buffer Object
 	VAO VAO1;
@@ -94,82 +100,15 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-
-	Texture deux_png("resources/textures/deux_icon.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	deux_png.texUnit(shaderProgram, "tex0", 0);
-
-	Texture grass_png("resources/textures/grass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	grass_png.texUnit(shaderProgram, "tex0", 0);
-
-	Texture flag_png("resources/textures/sky.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	flag_png.texUnit(shaderProgram, "tex0", 0);
-
-
-	float rotation = 0.0f;
-	double prevTime = glfwGetTime();
-
-	glEnable(GL_DEPTH_TEST);
-
 	Camera camera(width, heigth, glm::vec3(0.0f, 0.0f, 0.2f));
+
+	setup3DWorld(shaderProgram3D, camera);
+	setup2DOverlay(shaderProgram2D, width, heigth);
 
 	EBO1.Bind();
 
 	auto targetTime = high_resolution_clock::now();
 	targetTime += milliseconds(FRAME_MILLI);
-
-	vector<float> pos({-10.0f, -10.0f, -10.0f});
-	float wallSize = 2.5f;
-	float cubeSize = wallSize;
-	int x = 0;
-
-	camera.Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
-	camera.Orientation = glm::rotate(camera.Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
-
-	//générer les murs du labyrinthe
-	for (int z = 0 ; z < LAB_SIZE + 1; z++)
-	{
-		for (int x = 0 ; x < LAB_SIZE + 1 ; x++)
-		{
-			if (z != LAB_SIZE)
-			{
-				if (x != LAB_SIZE)
-					Shape::shapes.push_back(new Quad(pos, wallSize, &deux_png, Quad::Axis::Y));
-
-				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
-					Shape::shapes.push_back(new Quad(pos, wallSize, &grass_png, Quad::Axis::X));
-			}
-
-			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
-				Shape::shapes.push_back(new Quad(pos, wallSize, &grass_png, Quad::Axis::Z));
-
-			pos[0] += wallSize;
-
-		}
-
-		pos[0] -= (LAB_SIZE + 1) * wallSize;
-		pos[2] += wallSize;
-		
-	}
-
-	pos = {-10.0f, -10.0f, -10.0f};
-	int cpt = 0;
-	for (int i = 0 ; i < labyrinth.size(); i++)
-	{
-
-		if (labyrinth[i] == 1)
-			Shape::shapes.push_back(new Cube(pos, cubeSize, &grass_png));
-		pos[0] += wallSize;
-
-		cpt++;
-		if (cpt == LAB_SIZE)
-		{
-			cpt = 0;
-			pos[0] -= LAB_SIZE * wallSize;
-			pos[2] += wallSize;
-		}
-	}
-
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -179,12 +118,10 @@ int main()
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
-		shaderProgram.Activate();
+		shaderProgram3D.Activate();
 
 		camera.Inputs(window);
-		camera.Matrix(45.0f, 0.01f, 200.0f, shaderProgram, "camMatrix");
-
-		glUniform1f(uniID, 0.5f);
+		camera.Matrix(45.0f, 0.01f, 200.0f, shaderProgram3D, "camMatrix");
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
@@ -192,7 +129,10 @@ int main()
 		reloadVerticesInVBO(VBO1);
 		reloadIndicesInEBO(EBO1);
 
-		Shape::renderActiveShapes();
+		draw3DVertices();
+
+		shaderProgram2D.Activate();
+		draw2DVertices();
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -214,10 +154,11 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
-	deux_png.Delete();
-	flag_png.Delete();
-	grass_png.Delete();
-	shaderProgram.Delete();
+	//deux_png.Delete();
+	//flag_png.Delete();
+	//grass_png.Delete();
+	shaderProgram3D.Delete();
+	shaderProgram2D.Delete();
 
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
@@ -235,18 +176,6 @@ void checkProgramKill(GLFWwindow* window){
 	}
 }
 
-void doRenderLogic(GLFWwindow* window, int &seed){
-
-	/*
-	const void* falseOffset = (void*)(3*6 * sizeof(int));
-	const void* trueOffset = 0;
-	
-	// Draw the triangle using the GL_TRIANGLES primitive      
-									//nombre d'indices à render                    //offset (en octets) de indices[]
-	glDrawElements(GL_TRIANGLES, 3*6, GL_UNSIGNED_INT, 0);
-						//sizeof(indices)/sizeof(int)     (seed == 0 ? trueOffset : falseOffset)      
-    */     
-}
 
 void reloadVerticesInVBO(VBO &VBO1){
 	//Mettre à jour le tableau et re-charger le VBO. On prend SubData pour optimisation
@@ -272,4 +201,93 @@ void reloadIndicesInEBO(EBO &EBO1){
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(float), &indices[0]);
 	}
 
+}
+
+void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
+{
+	Texture* deux_png = new Texture("resources/textures/deux_icon.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	(*deux_png).texUnit(shaderProgram3D, "tex0", 0);
+
+	Texture* grass_png = new Texture("resources/textures/grass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	(*grass_png).texUnit(shaderProgram3D, "tex0", 0);
+
+	vector<float> pos({-10.0f, -10.0f, -10.0f});
+	float wallSize = 2.5f;
+	int x = 0;
+
+	camera.Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
+	camera.Orientation = glm::rotate(camera.Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
+
+	//générer les murs du labyrinthe
+	for (int z = 0 ; z < LAB_SIZE + 1; z++)
+	{
+		for (int x = 0 ; x < LAB_SIZE + 1 ; x++)
+		{
+			if (z != LAB_SIZE)
+			{
+				if (x != LAB_SIZE)
+					Shape::shapes.push_back(new Quad(pos, wallSize, deux_png, Quad::Axis::Y));
+
+				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
+					Shape::shapes.push_back(new Quad(pos, wallSize, grass_png, Quad::Axis::X));
+			}
+
+			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
+				Shape::shapes.push_back(new Quad(pos, wallSize, grass_png, Quad::Axis::Z));
+
+			pos[0] += wallSize;
+
+		}
+
+		pos[0] -= (LAB_SIZE + 1) * wallSize;
+		pos[2] += wallSize;
+	}
+
+	pos = {-10.0f, -10.0f, -10.0f};
+	int cpt = 0;
+	for (int i = 0 ; i < labyrinth.size(); i++)
+	{
+
+		if (labyrinth[i] == 1)
+			Shape::shapes.push_back(new Cube(pos, wallSize, grass_png));
+		pos[0] += wallSize;
+
+		cpt++;
+		if (cpt == LAB_SIZE)
+		{
+			cpt = 0;
+			pos[0] -= LAB_SIZE * wallSize;
+			pos[2] += wallSize;
+		}
+	}
+}
+
+void setup2DOverlay(Shader &shaderProgram2D, float width, float height)
+{
+	float PNG_SIZE = 512;
+
+	//Pour blend les endroits vides des png
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	(*crosshair_png).texUnit(shaderProgram2D, "tex0", 0);
+
+	vector<float> pos({-((PNG_SIZE/ 2.0f) / width), -((PNG_SIZE/ 2.0f) / height), 0.0f});
+	float size = 0.5f;
+
+	Shape::shapes2D.push_back(new Quad(pos, size, crosshair_png, Quad::Axis::Z));
+}
+
+void draw3DVertices()
+{
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	Shape::renderActive3DShapes();
+}
+
+void draw2DVertices()
+{
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	Shape::renderActive2DShapes();
 }

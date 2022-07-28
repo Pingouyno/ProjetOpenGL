@@ -68,7 +68,10 @@ void Quad::render()
         (*tex).Bind();
         glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
         (*tex).Unbind();
-    }else glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+    }else
+    {
+        glDrawElements(GL_TRIANGLES, INDICE_COUNT, GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
+    }
 }
 
 void Quad::resize(float &size)

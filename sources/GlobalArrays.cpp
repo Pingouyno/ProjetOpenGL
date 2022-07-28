@@ -2,7 +2,7 @@
 
 std::vector<float> vertices = 
 {     //COORDONNÉES            //COULEURS           //MAP TEXTURE  (1.0 par copie de l'image)
-	-0.5f, 0.0f, 0.5f,      0.5f, 0.2f, 0.3f,      0.0f, 0.0f,  // Lower left
+	-0.5f, 0.5f, 0.5f,      0.5f, 0.2f, 0.3f,      0.0f, 0.0f,  // Lower left
 	-0.5f, 0.0f, -0.5f,     0.2f, 0.1f, 0.9f,      5.0f, 0.0f, // Upper left
 	0.5f, 0.0f, -0.5f,      0.3f, 0.2f, 0.8f,      0.0f, 0.0f, // Upper right
 	0.5f, 0.0f, 0.5f,       0.3f, 0.4f, 0.6f,      5.0f, 0.0f, // Lower right   //PYRAMIDE 1

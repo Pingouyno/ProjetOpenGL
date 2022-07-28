@@ -8,6 +8,7 @@ std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
+vector<Shape*> Shape::shapes2D({});
 bool Shape::shouldReloadArrays = false;
 
 float Shape::camBoxHeight = 1.4f;
@@ -28,7 +29,7 @@ void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
 //**FIN FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 //Render toutes les entités, et désactive "newShapeCreated"
-void Shape::renderActiveShapes()
+void Shape::renderActive3DShapes()
 {
     for (Shape* ptrShape : shapes)
     {
@@ -37,7 +38,18 @@ void Shape::renderActiveShapes()
             (*ptrShape).render();
         }
     }
+    shouldReloadArrays = false;
+}
 
+void Shape::renderActive2DShapes()
+{
+    for (Shape* ptrShape : shapes2D)
+    {
+        if ((*ptrShape).active)
+        {
+            (*ptrShape).render();
+        }
+    }
     shouldReloadArrays = false;
 }
 
