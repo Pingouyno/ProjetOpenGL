@@ -8,8 +8,6 @@
 #include"../libraries/include/glm/gtc/type_ptr.hpp"
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"
 #include"../libraries/include/glm/gtx/vector_angle.hpp"
-#include"../libraries/include/IrrKlang/include/irrKlang.h"
-using namespace irrklang;
 
 #include"shaderClass.h"
 
@@ -50,14 +48,14 @@ class Camera
         // Updates and exports the camera matrix to the Vertex Shader
         void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
         // Handles camera inputs
-        void Inputs(GLFWwindow* window, ISoundEngine* soundEngine);
+        void Inputs(GLFWwindow* window);
         
     private :
         const float NORMAL_SPEED = 0.10f;
         const float FAST_SPEED = 2 * NORMAL_SPEED;
         const float VERT_PAD_SENSITIVITY = 2.0f;
         const float HORI_PAD_SENSITIVITY = 2.8f;
-        void checkCamMovement(GLFWwindow* window, ISoundEngine* soundEngine);
+        void checkCamMovement(GLFWwindow* window);
         void checkMouseMovement(GLFWwindow* window);
         void jump();
         void land();

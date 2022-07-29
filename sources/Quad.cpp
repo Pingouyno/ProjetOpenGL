@@ -14,11 +14,11 @@ vector<float> Quad::SHAPE_TEXMAP(
     }
 );
 
-void Quad::initQuad(vector<float> &pos, float &length, float &width, vector<float> &color, Texture* tex, Axis axis)
+void Quad::initQuad(vector<float> &pos, float &width, float &height, vector<float> &color, Texture* tex, Axis axis)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->width = width;
-    this->length = length;
+    this->height = height;
     this->color.insert(this->color.end(), color.begin(), color.end());
     this->tex = tex;
     this->axis = axis;
@@ -84,10 +84,10 @@ void Quad::resize(float &size)
     resize(size, size);
 }
 
-void Quad::resize(float &length, float &width)
+void Quad::resize(float &width, float &height)
 {
-    this->length = length;
     this->width = width;
+    this->height = height;
     initVertices();
     refreshGLVertices();
 }
@@ -101,19 +101,19 @@ bool Quad::isColliding(glm::vec3 &camPos)
     switch(axis){
         case X:
             return (distX >= -camBoxWidth && distX <= camBoxWidth
-                && distY >= -(length + camBoxHeight) && distY <= 0
-                && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
+                && distY >= -(width + camBoxHeight) && distY <= 0
+                && distZ >= -(height+ camBoxWidth) && distZ <= camBoxWidth);
             break;
 
         case Y:
-            return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
+            return (distX >= -(height + camBoxWidth) && distX <= camBoxWidth
                 && distY >= -camBoxHeight && distY <= 0
-                && distZ >= -(length + camBoxWidth) && distZ <= camBoxWidth);
+                && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
             break;
 
         case Z:
-            return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
-                && distY >= -(length + camBoxHeight) && distY <= 0
+            return (distX >= -(height + camBoxWidth) && distX <= camBoxWidth
+                && distY >= -(width + camBoxHeight) && distY <= 0
                 && distZ >= -camBoxWidth && distZ <= camBoxWidth);
             break;
     }
@@ -148,8 +148,8 @@ void Quad::initVertices()
             shapeVertices = 
             {
                 x,       y,          z,          //0 Bottom left    
-                x,       y + length, z,          //1 Top left   
-                x,       y + length, z + width,  //2 Top right   
+                x,       y + height, z,          //1 Top left   
+                x,       y + height, z + width,  //2 Top right   
                 x,       y,          z + width   //3 Bottom right
             };
             break;
@@ -157,20 +157,20 @@ void Quad::initVertices()
         case Y:
             shapeVertices = 
             {
-                x,         y,        z,          //0 Bottom left    
-                x,         y,        z + length, //1 Top left   
-                x + width, y,        z + length, //2 Top right   
-                x + width, y,        z           //3 Bottom right
+                x,          y,        z,          //0 Bottom left    
+                x,          y,        z + height, //1 Top left   
+                x + width,  y,        z + height, //2 Top right   
+                x + width,  y,        z           //3 Bottom right
             };
             break;
 
         case Z:
             shapeVertices = 
             {
-                x,         y,          z,       //0 Bottom left    
-                x,         y + length, z,       //1 Top left   
-                x + width, y + length, z,       //2 Top right   
-                x + width, y,          z        //3 Bottom right
+                x,          y,          z,       //0 Bottom left    
+                x,          y + height, z,       //1 Top left   
+                x + width,  y + height, z,       //2 Top right   
+                x + width,  y,          z        //3 Bottom right
             };
             break;
     }

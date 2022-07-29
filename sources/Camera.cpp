@@ -1,5 +1,6 @@
 #include"../headers/Camera.h"
 #include"../headers/Shape.h"
+#include"../headers/PlaySound.h"
 
 #include<fstream>
 
@@ -25,13 +26,13 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shade
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
-void Camera::Inputs(GLFWwindow* window, ISoundEngine* soundEngine)
+void Camera::Inputs(GLFWwindow* window)
 {
-	checkCamMovement(window, soundEngine);
+	checkCamMovement(window);
 	checkMouseMovement(window);
 }
 
-void Camera::checkCamMovement(GLFWwindow* window, ISoundEngine* soundEngine)
+void Camera::checkCamMovement(GLFWwindow* window)
 {
 	glm::vec3 previousPosition = Position;
 
@@ -63,7 +64,7 @@ void Camera::checkCamMovement(GLFWwindow* window, ISoundEngine* soundEngine)
 		else if (!isInAir)
 		{
 			jump();
-			soundEngine->play2D("/home/will/Prog/CPP/ProjetOpenGL/resources/sounds/jump_01.wav");
+			PlaySound::playJumpSound();
 		}
 
 	}

@@ -12,8 +12,6 @@ using namespace std::chrono;
 #include"libraries/include/glm/glm.hpp"
 #include"libraries/include/glm/gtc/matrix_transform.hpp"
 #include"libraries/include/glm/gtc/type_ptr.hpp"
-#include"libraries/include/IrrKlang/include/irrKlang.h"
-using namespace irrklang;
 
 #include"headers/shaderClass.h"
 #include"headers/VAO.h" 
@@ -24,6 +22,7 @@ using namespace irrklang;
 #include"headers/GlobalArrays.h"
 #include"headers/Cube.h"
 #include"headers/Quad.h"
+#include"headers/PlaySound.h"
 
 const int width = 1440;//1420;
 const int heigth = 900;//800;
@@ -44,15 +43,7 @@ void draw3DVertices();
 
 int main()
 {	
-	//démarrer l'engin irrKlang pour le son
-	ISoundEngine* soundEngine = createIrrKlangDevice();
-
-	//vérifier que l'engin a pu démarrer, donc ptr != nullptr
-	if (!soundEngine)
-	{
-		printf("Could not startup engine\n");
-		return 0;
-	}
+	PlaySound::startEngine();
 
 	// Initialize GLFW
 	glfwInit();
@@ -132,7 +123,7 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram3D.Activate();
 		
-		camera.Inputs(window, soundEngine);
+		camera.Inputs(window);
 		camera.Matrix(45.0f, 0.01f, 200.0f, shaderProgram3D, "camMatrix");
 
 		// Bind the VAO so OpenGL knows to use it
@@ -177,8 +168,7 @@ int main()
 	// Terminate GLFW before ending the program
 	glfwTerminate();
 
-	//arrêter l'engin de son
-	soundEngine->drop();
+	PlaySound::stopEngine();
 
 	return 0;
 }
@@ -287,10 +277,14 @@ void setup2DOverlay(Shader &shaderProgram2D, Camera &camera)
 	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	(*crosshair_png).texUnit(shaderProgram2D, "tex0", 0);
 
-	vector<float> pos({-0.03125, -0.03125, 0.0f});
-	float size = 0.0625f;
+	//pour que la texture fasse 128 pixels de large peu importe les dimensions de l'écran
+	float pixelSize = 128.0f; 
+	float sizeRatioX = pixelSize / width;
+	float sizeRatioY = pixelSize / heigth;
 
-	Shape::shapes2D.push_back(new Quad(pos, size, crosshair_png, Quad::Axis::Z));
+	vector<float> pos({-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f});
+
+	Shape::shapes2D.push_back(new Quad(pos, sizeRatioX, sizeRatioY, crosshair_png, Quad::Axis::Z));
 }
 
 void draw3DVertices()
