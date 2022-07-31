@@ -13,6 +13,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"

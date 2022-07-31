@@ -297,6 +297,30 @@ sources/Quad.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.s
 .PHONY : sources/Quad.cpp.s
 
+sources/Quad2D.o: sources/Quad2D.cpp.o
+.PHONY : sources/Quad2D.o
+
+# target to build an object file
+sources/Quad2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o
+.PHONY : sources/Quad2D.cpp.o
+
+sources/Quad2D.i: sources/Quad2D.cpp.i
+.PHONY : sources/Quad2D.i
+
+# target to preprocess a source file
+sources/Quad2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.i
+.PHONY : sources/Quad2D.cpp.i
+
+sources/Quad2D.s: sources/Quad2D.cpp.s
+.PHONY : sources/Quad2D.s
+
+# target to generate assembly for a file
+sources/Quad2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.s
+.PHONY : sources/Quad2D.cpp.s
+
 sources/Shape.o: sources/Shape.cpp.o
 .PHONY : sources/Shape.o
 
@@ -495,6 +519,9 @@ help:
 	@echo "... sources/Quad.o"
 	@echo "... sources/Quad.i"
 	@echo "... sources/Quad.s"
+	@echo "... sources/Quad2D.o"
+	@echo "... sources/Quad2D.i"
+	@echo "... sources/Quad2D.s"
 	@echo "... sources/Shape.o"
 	@echo "... sources/Shape.i"
 	@echo "... sources/Shape.s"

@@ -32,6 +32,27 @@ void Camera::Inputs(GLFWwindow* window)
 	checkMouseMovement(window);
 }
 
+void Camera::jump()
+{
+	isInAir = true;
+	//parce que l'on va passer la moitié du temps en ascenscion (négatif) et l'autre  moitié en ascension
+	timeInAir = -JUMP_LENGTH / 2.0f;
+}
+
+//on met le temps dans l'air à 5.0 pour éviter de mini-sauts
+void Camera::land()
+{
+	isInAir = false;	
+	timeInAir = DEFAULT_TIME_AIR;
+}
+
+//commencer à tomber si l'on tombe d'un bord
+void Camera::fall()
+{
+	isInAir = true;
+	timeInAir = DEFAULT_TIME_AIR;	
+}
+
 void Camera::checkCamMovement(GLFWwindow* window)
 {
 	glm::vec3 previousPosition = Position;
@@ -81,15 +102,6 @@ void Camera::checkCamMovement(GLFWwindow* window)
 		speed = NORMAL_SPEED;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-	{
-		isInCreative = true;
-	}else if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-	{
-		isInCreative = false;
-		fall();
-	}
-
 	//appliquer la gravité
 	if (!isInCreative) 
 	{
@@ -129,40 +141,31 @@ void Camera::checkCamMovement(GLFWwindow* window)
 void Camera::checkMouseMovement(GLFWwindow* window)
 {
 	//Gère le mouvement de caméra via clavier, x = vertical et y = horizontal
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
+	//checkKeyMouseMovement(window);
 
-		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE && !waitingForTPress)
+	{
+		waitingForTPress = true;
+	//passer du mode menu au mode jeu
+	}else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && waitingForTPress)
+	{
+		waitingForTPress = false;
+		isInMenu = !isInMenu;
+		if (isInMenu) 
 		{
-			Orientation = newOrient;
+			// Unhides cursor since camera is not looking around anymore
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			// Makes sure the next time the camera looks around it doesn't jump
+			firstClick = true;
+		}else 
+		{
+			// Hides mouse cursor
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		}
 	}
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-        Orientation = glm::rotate(Orientation, glm::radians(HORI_PAD_SENSITIVITY), Up);
-	}
-        //Gère le mouvement de caméra via clavier, b = x et g = y
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(-VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
-		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-		{
-			Orientation = newOrient;
-		}
-	}
-        //Gère le mouvement de caméra via clavier, b = x et g = y
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-        Orientation = glm::rotate(Orientation, glm::radians(-HORI_PAD_SENSITIVITY), Up);
-	}
-
-	// Handles mouse inputs
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-	{
-		// Hides mouse cursor
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
+	
+	//bouger la souris
+	if (!isInMenu) {
 		// Prevents camera from jumping on the first click
 		if (firstClick)
 		{
@@ -196,35 +199,54 @@ void Camera::checkMouseMovement(GLFWwindow* window)
 		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 		glfwSetCursorPos(window, (width / 2), (height / 2));
 	}
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+
+	//regarder s'il y a eu clic de souris
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE && !waitingForLClick)
 	{
-		// Unhides cursor since camera is not looking around anymore
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		// Makes sure the next time the camera looks around it doesn't jump
-		firstClick = true;
+		waitingForLClick = true;
+	}else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && waitingForLClick)
+	{
+		waitingForLClick = false;
+
+		if (isInMenu)
+		{
+			//détecter la collision avec les formes 2D
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			glm::vec3 mousePos((float)x, (float)y, 0.0f);
+			Shape::checkCameraCollidingAnyHUD(mousePos);
+		}
 	}
-}
-
-void Camera::jump()
-{
 	
-	isInAir = true;
-	//parce que l'on va passer la moitié du temps en ascenscion (négatif) et l'autre  moitié en ascension
-	timeInAir = -JUMP_LENGTH / 2.0f;
-
-
 }
 
-//on met le temps dans l'air à 5.0 pour éviter de mini-sauts
-void Camera::land()
+void Camera::checkKeyboardMouseMovement(GLFWwindow* window)
 {
-	isInAir = false;	
-	timeInAir = DEFAULT_TIME_AIR;
-}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
 
-//commencer à tomber si l'on tombe d'un bord
-void Camera::fall()
-{
-	isInAir = true;
-	timeInAir = DEFAULT_TIME_AIR;	
+		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			Orientation = newOrient;
+		}
+	}
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+        Orientation = glm::rotate(Orientation, glm::radians(HORI_PAD_SENSITIVITY), Up);
+	}
+        //Gère le mouvement de caméra via clavier, b = x et g = y
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(-VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
+		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			Orientation = newOrient;
+		}
+	}
+        //Gère le mouvement de caméra via clavier, b = x et g = y
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+        Orientation = glm::rotate(Orientation, glm::radians(-HORI_PAD_SENSITIVITY), Up);
+	}
 }

@@ -10,6 +10,8 @@ using namespace std;
 
 class Shape{
     public:
+        //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
+        enum Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD = 'h'};
 
         static vector<Shape*> shapes;
         static vector<Shape*> shapes2D;
@@ -20,6 +22,9 @@ class Shape{
         //propriétés hitbox Camera
         static float camBoxHeight;
         static float camBoxWidth;
+
+        static float screenWidth;
+        static float screenHeight;
 
         //true si on a créé une nouvelle entité depuis le dernier rendering. On doit donc RELOAD plutôt que SUB-RELOAD
         static bool shouldReloadArrays;
@@ -58,11 +63,18 @@ class Shape{
 
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
+        static void initVariables(float screenWidth, float screenHeight);
+        static float toXRatio(float pixSize);
+        static float toYRatio(float pixSize);
+        static float toXPixelCoord(float xRatio);
+        static float toYPixelCoord(float yRatio);
         static void renderActive3DShapes();
         static void renderActive2DShapes();
+        static void renderActiveHUDShapes();
+        static void checkCameraCollidingAnyHUD(glm::vec3 &mousePos);
         static vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
         static bool isAnyColliding(vector<int> &collisionLog);
-        static void addShape(Shape* shape);
+        static void addShape(Type shapeType, Shape* shape);
         static void deleteAllShapes();
 
         void spawn();

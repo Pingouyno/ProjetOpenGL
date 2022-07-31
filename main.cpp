@@ -21,11 +21,11 @@ using namespace std::chrono;
 #include"headers/Camera.h"
 #include"headers/GlobalArrays.h"
 #include"headers/Cube.h"
-#include"headers/Quad.h"
+#include"headers/Quad2D.h"
 #include"headers/PlaySound.h"
 
-const int width = 1440;//1420;
-const int heigth = 900;//800;
+const float width = 1420;
+const float heigth = 900;
 const int FRAME_MILLI = 17;
 
 //MÉTHODES UTILISÉES____________________________________________________________
@@ -35,14 +35,16 @@ void doRenderLogic(GLFWwindow* window, int seed);
 void reloadVerticesInVBO(VBO &VBO1);
 void reloadIndicesInEBO(EBO &EBO1);
 void setup3DWorld(Shader &shaderProgram3D, Camera &camera);
-void setup2DOverlay(Shader &shaderProgram2D, Camera &camera);
-void draw2DVertices();
+void setup2DOverlay(Shader &shaderProgram2D);
+void setup2DHUD(Shader &shaderProgram2D, Camera &camera);
+void draw2DVertices(Camera &camera);
 void draw3DVertices();
 
 //______________________________________________________________________________
 
 int main()
 {	
+	Shape::initVariables(width, heigth);
 	PlaySound::startEngine();
 
 	// Initialize GLFW
@@ -104,9 +106,12 @@ int main()
 	EBO1.Unbind();
 
 	Camera camera(width, heigth, glm::vec3(0.0f, 0.0f, 0.2f));
+	//cacher le curseur
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	setup3DWorld(shaderProgram3D, camera);
-	setup2DOverlay(shaderProgram2D, camera);
+	setup2DOverlay(shaderProgram2D);
+	setup2DHUD(shaderProgram2D, camera);
 
 	EBO1.Bind();
 
@@ -135,7 +140,7 @@ int main()
 		draw3DVertices();
 
 		shaderProgram2D.Activate();
-		draw2DVertices();
+		draw2DVertices(camera);
 
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
@@ -211,6 +216,7 @@ void reloadIndicesInEBO(EBO &EBO1){
 
 void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
 {
+	const Shape::Type PHYSICAL = Shape::Type::PHYSICAL;
 	Texture* deux_png = new Texture("resources/textures/deux_icon.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	(*deux_png).texUnit(shaderProgram3D, "tex0", 0);
 
@@ -232,14 +238,14 @@ void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
 			if (z != LAB_SIZE)
 			{
 				if (x != LAB_SIZE)
-					Shape::shapes.push_back(new Quad(pos, wallSize, deux_png, Quad::Axis::Y));
+					Shape::addShape(PHYSICAL, new Quad(pos, wallSize, deux_png, Quad::Axis::Y));
 
 				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
-					Shape::shapes.push_back(new Quad(pos, wallSize, grass_png, Quad::Axis::X));
+					Shape::addShape(PHYSICAL, new Quad(pos, wallSize, grass_png, Quad::Axis::X));
 			}
 
 			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
-				Shape::shapes.push_back(new Quad(pos, wallSize, grass_png, Quad::Axis::Z));
+				Shape::addShape(PHYSICAL, new Quad(pos, wallSize, grass_png, Quad::Axis::Z));
 
 			pos[0] += wallSize;
 
@@ -255,7 +261,7 @@ void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
 	{
 
 		if (labyrinth[i] == 1)
-			Shape::shapes.push_back(new Cube(pos, wallSize, grass_png));
+			Shape::addShape(PHYSICAL, new Cube(pos, wallSize, grass_png));
 		pos[0] += wallSize;
 
 		cpt++;
@@ -268,23 +274,51 @@ void setup3DWorld(Shader &shaderProgram3D, Camera &camera)
 	}
 }
 
-void setup2DOverlay(Shader &shaderProgram2D, Camera &camera)
+void setup2DOverlay(Shader &shaderProgram2D)
 {
-
+	const Shape::Type OVERLAY = Shape::Type::OVERLAY;
 	//Pour blend les endroits vides des png
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	(*crosshair_png).texUnit(shaderProgram2D, "tex0", 0);
 
+	//pour que la texture fasse 64 pixels de large peu importe les dimensions de l'écran
+	float pixelSize = 64.0f; 
+	float sizeRatioX = Shape::toXRatio(pixelSize);
+	float sizeRatioY = Shape::toYRatio(pixelSize);
+	vector<float> pos({-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f});
+	Shape::addShape(OVERLAY, new Quad(pos, sizeRatioX, sizeRatioY, crosshair_png, Quad::Axis::Z));
+}
+
+
+
+void setup2DHUD(Shader &shaderProgram2D, Camera &camera)
+{
+	const Shape::Type HUD = Shape::Type::HUD;
+
+	Texture* sadge_png = new Texture("resources/textures/sadge.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	sadge_png->texUnit(shaderProgram2D, "tex0", 0);
+
+	Texture* obama_png = new Texture("resources/textures/obama.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	obama_png->texUnit(shaderProgram2D, "tex0", 0);
+
 	//pour que la texture fasse 128 pixels de large peu importe les dimensions de l'écran
 	float pixelSize = 128.0f; 
-	float sizeRatioX = pixelSize / width;
-	float sizeRatioY = pixelSize / heigth;
+	float sizeRatioX = Shape::toXRatio(pixelSize);
+	float sizeRatioY = Shape::toYRatio(pixelSize);
+	vector<float> pos({-1.0f, 0.5f, 0.0f});
 
-	vector<float> pos({-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f});
+	Quad2D* creativeButton = new Quad2D(pos, pixelSize, pixelSize, sadge_png, [](){});
+	Quad2D* survivalButton = new Quad2D(pos, pixelSize, pixelSize, obama_png, [](){});
 
-	Shape::shapes2D.push_back(new Quad(pos, sizeRatioX, sizeRatioY, crosshair_png, Quad::Axis::Z));
+	survivalButton->despawn();
+
+	creativeButton->clickLogic = [creativeButton, survivalButton, &camera](){creativeButton->despawn(); survivalButton->spawn(); camera.isInCreative = true;};
+	survivalButton->clickLogic = [creativeButton, survivalButton, &camera](){survivalButton->despawn(); creativeButton->spawn(); camera.isInCreative = false; camera.fall();};
+
+	Shape::addShape(HUD, creativeButton);
+	Shape::addShape(HUD, survivalButton);
 }
 
 void draw3DVertices()
@@ -294,9 +328,14 @@ void draw3DVertices()
 	Shape::renderActive3DShapes();
 }
 
-void draw2DVertices()
+void draw2DVertices(Camera &camera)
 {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	Shape::renderActive2DShapes();
+	if (camera.isInMenu)
+	{
+		Shape::renderActiveHUDShapes();
+	}
 }
+

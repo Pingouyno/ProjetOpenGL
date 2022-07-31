@@ -26,7 +26,7 @@ vector<float> Cube::SHAPE_TEXMAP(
     }
 );
 
-void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Texture* tex)
+void Cube::initCube(vector<float> &pos, float size, vector<float> &color, Texture* tex)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->size = size;
@@ -41,17 +41,17 @@ void Cube::initCube(vector<float> &pos, float &size, vector<float> &color, Textu
     generate(); 
 }
 
-Cube::Cube(vector<float> &pos, float &size, Texture* tex)
+Cube::Cube(vector<float> &pos, float size, Texture* tex)
 {
     initCube(pos, size, DEFAULT_COLOR, tex);
 }
 
-Cube::Cube(vector<float> &pos, float &size, vector<float> &color)
+Cube::Cube(vector<float> &pos, float size, vector<float> &color)
 {
     initCube(pos, size, color, nullptr);
 }
 
-Cube::Cube(vector<float> &pos, float &size)
+Cube::Cube(vector<float> &pos, float size)
 {
     initCube(pos, size, DEFAULT_COLOR, nullptr);
 }

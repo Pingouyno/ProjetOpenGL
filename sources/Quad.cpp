@@ -14,7 +14,7 @@ vector<float> Quad::SHAPE_TEXMAP(
     }
 );
 
-void Quad::initQuad(vector<float> &pos, float &width, float &height, vector<float> &color, Texture* tex, Axis axis)
+void Quad::initQuad(vector<float> &pos, float width, float height, vector<float> &color, Texture* tex, Axis axis)
 {
     this->pos.insert(this->pos.end(), pos.begin(), pos.end());
     this->width = width;
@@ -31,22 +31,22 @@ void Quad::initQuad(vector<float> &pos, float &width, float &height, vector<floa
     generate(); 
 }
 
-Quad::Quad(vector<float> &pos, float &width, float &height, Texture* tex, Axis axis)
+Quad::Quad(vector<float> &pos, float width, float height, Texture* tex, Axis axis)
 {
     initQuad(pos, width, height, DEFAULT_COLOR, tex, axis);
 }
 
-Quad::Quad(vector<float> &pos, float &size, Texture* tex, Axis axis)
+Quad::Quad(vector<float> &pos, float size, Texture* tex, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, tex, axis);
 }
 
-Quad::Quad(vector<float> &pos, float &size, vector<float> &color, Axis axis)
+Quad::Quad(vector<float> &pos, float size, vector<float> &color, Axis axis)
 {
     initQuad(pos, size, size, color, nullptr, axis);
 }
 
-Quad::Quad(vector<float> &pos, float &size, Axis axis)
+Quad::Quad(vector<float> &pos, float size, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, nullptr, axis);
 }

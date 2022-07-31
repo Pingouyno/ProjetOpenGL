@@ -14,10 +14,10 @@ class Cube : public Shape
         static vector<float> SHAPE_TEXMAP;  
         float size;
 
-        void initCube(vector<float> &pos, float &size, vector<float> &color, Texture* tex);
-        Cube(vector<float> &pos, float &size, Texture* tex);
-        Cube(vector<float> &pos, float &size, vector<float> &color);
-        Cube(vector<float> &pos, float &size);
+        void initCube(vector<float> &pos, float size, vector<float> &color, Texture* tex);
+        Cube(vector<float> &pos, float size, Texture* tex);
+        Cube(vector<float> &pos, float size, vector<float> &color);
+        Cube(vector<float> &pos, float size);
         
         int getVerticeCount();
         int getIndiceCount();

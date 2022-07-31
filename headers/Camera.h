@@ -25,6 +25,11 @@ class Camera
         bool firstClick = true;
         bool isInAir = true;
         bool isInCreative = false;
+        bool isInMenu = false;
+
+        //pour permettre les clics
+        bool waitingForTPress = true;
+        bool waitingForLClick = true;
 
         // Stores the width and height of the window
         int width;
@@ -49,6 +54,10 @@ class Camera
         void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
         // Handles camera inputs
         void Inputs(GLFWwindow* window);
+
+        void jump();
+        void land();
+        void fall();
         
     private :
         const float NORMAL_SPEED = 0.10f;
@@ -57,9 +66,7 @@ class Camera
         const float HORI_PAD_SENSITIVITY = 2.8f;
         void checkCamMovement(GLFWwindow* window);
         void checkMouseMovement(GLFWwindow* window);
-        void jump();
-        void land();
-        void fall();
+        void checkKeyboardMouseMovement(GLFWwindow* window);
 
 };
 #endif
