@@ -345,6 +345,30 @@ sources/Shape.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.s
 .PHONY : sources/Shape.cpp.s
 
+sources/TextManager.o: sources/TextManager.cpp.o
+.PHONY : sources/TextManager.o
+
+# target to build an object file
+sources/TextManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o
+.PHONY : sources/TextManager.cpp.o
+
+sources/TextManager.i: sources/TextManager.cpp.i
+.PHONY : sources/TextManager.i
+
+# target to preprocess a source file
+sources/TextManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.i
+.PHONY : sources/TextManager.cpp.i
+
+sources/TextManager.s: sources/TextManager.cpp.s
+.PHONY : sources/TextManager.s
+
+# target to generate assembly for a file
+sources/TextManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.s
+.PHONY : sources/TextManager.cpp.s
+
 sources/Texture.o: sources/Texture.cpp.o
 .PHONY : sources/Texture.o
 
@@ -525,6 +549,9 @@ help:
 	@echo "... sources/Shape.o"
 	@echo "... sources/Shape.i"
 	@echo "... sources/Shape.s"
+	@echo "... sources/TextManager.o"
+	@echo "... sources/TextManager.i"
+	@echo "... sources/TextManager.s"
 	@echo "... sources/Texture.o"
 	@echo "... sources/Texture.i"
 	@echo "... sources/Texture.s"

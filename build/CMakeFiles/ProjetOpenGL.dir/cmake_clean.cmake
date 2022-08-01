@@ -17,6 +17,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o"

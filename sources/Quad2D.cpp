@@ -1,6 +1,7 @@
 #include"../headers/Quad2D.h"
 
-vector<Quad2D*> Quad2D::shapesHUD({});
+
+vector<Quad2D*> Quad2D::shapesHUDCollidable({});
 
 //pos : ratio ;  pixWidth : pixel
 Quad2D::Quad2D(vector<float> &pos, float pixWidth, float pixHeight, Texture* tex, function <void(void)> clickLogic)
@@ -12,6 +13,10 @@ Quad2D::Quad2D(vector<float> &pos, float pixWidth, float pixHeight, Texture* tex
     this->pixPosY = Shape::toYPixelCoord(pos[1]);
     initQuad(pos, Shape::toXRatio(pixWidth), Shape::toYRatio(pixHeight), DEFAULT_COLOR, tex, AXIS_2D);
 }
+
+Quad2D::Quad2D(vector<float> &pos, float pixWidth, float pixHeight, Texture* tex)
+    : Quad2D(pos, pixWidth, pixHeight, tex, [](){}){}
+
 
 //pour la souris, on calcule la position de pixel de la souris.
 //position de la souris commence en HAUT À GAUCHE.

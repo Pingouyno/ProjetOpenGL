@@ -11,10 +11,11 @@ using namespace std;
 class Shape{
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
-        enum Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD = 'h'};
+        enum Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
 
         static vector<Shape*> shapes;
         static vector<Shape*> shapes2D;
+        static vector<Shape*> shapesHUDStatic;
         static vector<float> DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;

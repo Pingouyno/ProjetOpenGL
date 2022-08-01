@@ -11,7 +11,6 @@ using namespace std::chrono;
 #include"libraries/include/stb/stb_image.h"
 #include"libraries/include/glm/glm.hpp"
 #include"libraries/include/glm/gtc/matrix_transform.hpp"
-#include"libraries/include/glm/gtc/type_ptr.hpp"
 
 #include"headers/shaderClass.h"
 #include"headers/VAO.h" 
@@ -23,6 +22,7 @@ using namespace std::chrono;
 #include"headers/Cube.h"
 #include"headers/Quad2D.h"
 #include"headers/PlaySound.h"
+#include"headers/TextManager.h"
 
 const float width = 1420;
 const float heigth = 900;
@@ -39,7 +39,6 @@ void setup2DOverlay(Shader &shaderProgram2D);
 void setup2DHUD(Shader &shaderProgram2D, Camera &camera);
 void draw2DVertices(Camera &camera);
 void draw3DVertices();
-
 //______________________________________________________________________________
 
 int main()
@@ -81,6 +80,9 @@ int main()
 	Shader shaderProgram3D("resources/shaders/default.vert", "resources/shaders/default.frag"); 
 	
 	Shader shaderProgram2D("resources/shaders/default.vert2D", "resources/shaders/default.frag"); 
+
+	//pour que les images de texte soient liées au shader 2D
+	TextManager::bindToShader(&shaderProgram2D);
 
 	// Create reference containers for the Vartex Array Object and the Vertex Buffer Object
 	VAO VAO1;
@@ -289,13 +291,24 @@ void setup2DOverlay(Shader &shaderProgram2D)
 	float sizeRatioY = Shape::toYRatio(pixelSize);
 	vector<float> pos({-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f});
 	Shape::addShape(OVERLAY, new Quad(pos, sizeRatioX, sizeRatioY, crosshair_png, Quad::Axis::Z));
+
+	Shape::addShape(OVERLAY, new Quad2D(*(new vector<float>({-1.0f, -1.0f, 0.0f})), 65, 77, TextManager::getNumberTexture('0')));
+	Shape::addShape(OVERLAY, new Quad2D(*(new vector<float>({-0.8f, -1.0f, 0.0f})), 65, 77, TextManager::getNumberTexture('1')));
 }
 
 
 
 void setup2DHUD(Shader &shaderProgram2D, Camera &camera)
 {
-	const Shape::Type HUD = Shape::Type::HUD;
+	Shape::Type HUD = Shape::Type::HUD_STATIC;
+
+	Texture* square_png = new Texture("resources/textures/square.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	square_png->texUnit(shaderProgram2D, "tex0", 0);
+
+	Shape::addShape(HUD, new Quad2D(*(new vector<float>({-1.0f, -1.0f, 0.0f})), camera.width, camera.height, square_png));
+
+
+	HUD = Shape::Type::HUD_COLLIDE;
 
 	Texture* sadge_png = new Texture("resources/textures/sadge.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	sadge_png->texUnit(shaderProgram2D, "tex0", 0);
@@ -319,6 +332,8 @@ void setup2DHUD(Shader &shaderProgram2D, Camera &camera)
 
 	Shape::addShape(HUD, creativeButton);
 	Shape::addShape(HUD, survivalButton);
+
+
 }
 
 void draw3DVertices()

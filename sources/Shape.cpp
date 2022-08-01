@@ -9,6 +9,7 @@ std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 vector<Shape*> Shape::shapes({});
 vector<Shape*> Shape::shapes2D({});
+vector<Shape*> Shape::shapesHUDStatic({});
 bool Shape::shouldReloadArrays = false;
 float Shape::screenHeight = -1;
 float Shape::screenWidth = -1;
@@ -97,7 +98,15 @@ void Shape::renderActive2DShapes()
 
 void Shape::renderActiveHUDShapes()
 {
-    for (Quad2D* ptrShape : Quad2D::shapesHUD)
+    for (Shape* ptrShape : Shape::shapesHUDStatic)
+    {
+        if (ptrShape->active)
+        {
+            ptrShape->render();
+        }
+    }
+    //faire apparaître les boutons par dessus les images statiques
+    for (Quad2D* ptrShape : Quad2D::shapesHUDCollidable)
     {
         if (ptrShape->active)
         {
@@ -109,12 +118,12 @@ void Shape::renderActiveHUDShapes()
 
 void Shape::checkCameraCollidingAnyHUD(glm::vec3 &mousePos)
 {
-    for (Quad2D* ptrShape : Quad2D::shapesHUD)
+    for (Quad2D* ptrShape : Quad2D::shapesHUDCollidable)
     {
         if (ptrShape->active && ptrShape->isColliding(mousePos))
         {
             ptrShape->doClickLogic();
-            
+
             /*on échappe car on ne cliquer qu'un seul icône à la fois.
              de plus, si un des boutons réactive le suivant dans la liste, 
              on peut avoir un comportement non défini (ré-activation des boutons perpétuelle)*/
@@ -152,9 +161,17 @@ void Shape::addShape(Type shapeType, Shape* shape)
             shapes2D.push_back(shape);
             break;
 
-        case HUD:
-            Quad2D::shapesHUD.push_back((Quad2D*)shape);
+        case HUD_STATIC:
+            Shape::shapesHUDStatic.push_back(shape);
             break;
+
+        case HUD_COLLIDE:
+            Quad2D::shapesHUDCollidable.push_back((Quad2D*)shape);
+            break;
+
+        default:
+            cout << "\n\n**ERREUR : TYPE D'ENUM DE SHAPE NON DÉFINI**\n\n";
+            throw 1;
     }
 }
 

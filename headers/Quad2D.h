@@ -10,7 +10,7 @@ class Quad2D : public Quad {
     float pixPosY;
 
     public:
-        static vector<Quad2D*> shapesHUD;
+        static vector<Quad2D*> shapesHUDCollidable;
         Axis AXIS_2D = Axis::Z;
 
     //potentiellement remettre public
@@ -19,6 +19,7 @@ class Quad2D : public Quad {
 
     public:
         Quad2D(vector<float> &pos, float pixWidth, float pixheight, Texture* tex, function <void(void)> clickLogic);
+        Quad2D(vector<float> &pos, float pixWidth, float pixheight, Texture* tex);
 
         bool isColliding(glm::vec3 &mousePos);
         
