@@ -5,7 +5,7 @@
 #include<vector>
 using namespace std;
 
-#include"GlobalArrays.h"
+#include"Globals.h"
 #include"Shape.h"
 #include"Quad.h"
 #include"Cube.h"
@@ -17,21 +17,16 @@ using namespace std;
 class World
 {
     //variables statiques
-    public:
-        enum State : int {GAME = 0, MENU = 1};
-        World();
-
     private:
-        vector<Entity*> entities; 
-        vector<Shape*> shapes;
+        vector<Entity*> entities = {}; 
+        vector<Shape*> shapes = {};
 
     public:
-        State state;
-        Shader* shaderProgram2D;
-        Shader* shaderProgram3D;
-        Overlay gameOverlay;
-        Overlay menuOverlay;
-        Camera camera;
+        Overlay* gameOverlay = nullptr;
+        Overlay* menuOverlay = nullptr;
+        Camera* camera = nullptr;
+
+        World();
 
         void render();
         void renderActive3DShapes();

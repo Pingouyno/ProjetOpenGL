@@ -1,10 +1,10 @@
 #include"../headers/EventManager.h"
 
 
-EventManager::EventManager(World *world)
+EventManager::EventManager(World* world)
 {
     this->world = world;
-    this->camera = &world->camera;
+    this->camera = world->camera;
 }
 
 
@@ -19,20 +19,21 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 {
 
 	//vérifier si l'on a appuyé sur le bouton de menu
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE && !camera->waitingForTPress)
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE && !waitingForTPress)
 	{
-		camera->waitingForTPress = true;
+		waitingForTPress = true;
 	//passer du mode menu au mode jeu
-	}else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && camera->waitingForTPress)
+	}else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && waitingForTPress)
 	{
-		camera->waitingForTPress = false;
-		camera->isInMenu = !camera->isInMenu;
-		if (camera->isInMenu) 
+		//inverser l'état de jeu
+		waitingForTPress = false;
+		worldState = worldState == WorldState::GAME ? WorldState::MENU : WorldState::GAME;
+		if (worldState == WorldState::MENU) 
 		{
 			// Unhides cursor since camera is not looking around anymore
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			// Makes sure the next time the camera looks around it doesn't jump
-			camera->firstClick = true;
+			firstClick = true;
 		}else 
 		{
 			// Hides mouse cursor
@@ -48,7 +49,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 		//On prend les coordonnées x, y, z de l'orientation et on retire le y (pour ne pas monter/descendre). 
 		//On trouve le vecteur normal au vecteur normal, soit on retourne à la direction pointéer
 
-		if (camera->isInCreative) camera->Position += camera->speed * camera->Orientation;
+		if (gameMode == GameMode::CREATIVE) camera->Position += camera->speed * camera->Orientation;
 		else camera->Position += camera->speed * -glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -57,7 +58,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		if (camera->isInCreative) camera->Position += camera->speed * -camera->Orientation;
+		if (gameMode == GameMode::CREATIVE) camera->Position += camera->speed * -camera->Orientation;
 		else camera->Position += camera->speed * glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
@@ -66,11 +67,11 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		if (camera->isInCreative) camera->Position += camera->speed * camera->Up;
+		if (gameMode == CREATIVE) camera->Position += camera->speed * camera->Up;
 		else if (!camera->isInAir)
 		{
 			camera->jump();
-			//PlaySound::playJumpSound();
+			PlaySound::playJumpSound();
 		}
 
 	}
@@ -78,7 +79,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 	{
 		camera->Position += camera->speed * -camera->Up;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (camera->isInCreative || !camera->isInAir))
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (gameMode == CREATIVE || !camera->isInAir))
 	{
 		camera->speed = Camera::FAST_SPEED;
 	}
@@ -88,7 +89,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 	}
 
 	//appliquer la gravité
-	if (!camera->isInCreative) 
+	if (!gameMode == GameMode::CREATIVE) 
 	{
 		if (camera->isInAir)
 		{
@@ -107,7 +108,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 		if (collisionLog[0] != 0) camera->Position.x -= newPosition.x - previousPosition.x;
 
 		if (collisionLog[1] != 0) {
-			if (!camera->isInCreative && camera->isInAir) camera->land();
+			if (gameMode != CREATIVE && camera->isInAir) camera->land();
 			camera->Position.y = previousPosition.y;
 		}else if (!camera->isInAir) camera->fall();
 
@@ -125,15 +126,32 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 
 void EventManager::checkMouseEvents(GLFWwindow* window)
 {
-	//Gère le mouvement de caméra via souris, x = vertical et y = horizontal
-	
+	//Gère le mouvement de caméra ou clics via souris, x = vertical et y = horizontal
 	//bouger la souris
-	if (!camera->isInMenu) {
+
+	if (worldState == WorldState::MENU) {
+		//regarder s'il y a eu clic de souris
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE && !waitingForLClick)
+		{
+			waitingForLClick = true;
+		}else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && waitingForLClick)
+		{
+			waitingForLClick = false;
+
+			//détecter la collision avec les overlays
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			glm::vec3 mousePos((float)x, (float)y, 0.0f);
+			world->checkCameraCollidingAnyOverlay(mousePos);
+		}
+	}else
+	{
+		//sinon puisqu'on n'est pas dans le menu, faire bouger la caméra
 		// Prevents camera from jumping on the first click
-		if (camera->firstClick)
+		if (firstClick)
 		{
 			glfwSetCursorPos(window, (screenWidth / 2), (screenHeight / 2));
-			camera->firstClick = false;
+			firstClick = false;
 		}
 
 		// Stores the coordinates of the cursor
@@ -161,21 +179,6 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 
 		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
 		glfwSetCursorPos(window, (screenWidth / 2), (screenHeight / 2));
-	}
-
-	//regarder s'il y a eu clic de souris
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE && !camera->waitingForLClick)
-	{
-		camera->waitingForLClick = true;
-	}else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && camera->waitingForLClick)
-	{
-		camera->waitingForLClick = false;
-
-		//détecter la collision avec les overlays
-		double x, y;
-		glfwGetCursorPos(window, &x, &y);
-		glm::vec3 mousePos((float)x, (float)y, 0.0f);
-		world->checkCameraCollidingAnyOverlay(mousePos);
 	}
 	
 }

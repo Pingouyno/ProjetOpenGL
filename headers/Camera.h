@@ -31,18 +31,10 @@ class Camera
         glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
         // Prevents the camera from jumping around when first clicking left click
-        bool firstClick = true;
         bool isInAir = true;
-        bool isInCreative = false;
-        bool isInMenu = false;
 
-        //pour permettre les clics
-        bool waitingForTPress = true;
-        bool waitingForLClick = true;
-
-        // Stores the width and height of the window
-        int width;
-        int height;
+        float width;
+        float height;
 
         // Adjust the speed of the camera and it's sensitivity when looking around
         float speed = NORMAL_SPEED;

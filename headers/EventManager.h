@@ -7,16 +7,21 @@
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"
 #include"../libraries/include/glm/gtx/vector_angle.hpp"
 
+#include"PlaySound.h"
 #include"World.h"
 
 class EventManager
 {
     private:
-        World *world;
-        Camera *camera;
+        World* world;
+        Camera* camera;
+
+        bool waitingForTPress = true;
+        bool waitingForLClick = true;
+        bool firstClick = true;
 
     public:
-        EventManager(World *world);
+        EventManager(World* world);
         void Inputs(GLFWwindow* window);
     
     private:

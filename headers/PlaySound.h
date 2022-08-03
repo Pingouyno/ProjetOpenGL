@@ -1,3 +1,6 @@
+#ifndef SOUND_CLASS_H
+#define SOUND_CLASS_H
+
 #include<string>
 using namespace std;
 #include"../libraries/include/IrrKlang/include/irrKlang.h"
@@ -15,3 +18,4 @@ class PlaySound {
         //jouer des sons
         static void playJumpSound();
 };
+#endif

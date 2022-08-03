@@ -10,9 +10,6 @@ std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 float Shape::camBoxHeight = 1.4f;
 float Shape::camBoxWidth = 0.2f;
 
-float Shape::screenHeight = -1;
-float Shape::screenWidth = -1;
-
 Shape::Shape(){
     shouldReloadArrays = true;
 }
@@ -38,14 +35,14 @@ void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
  ne peut PAS être utilisé pour la translation de coordonnées, car OpenGL a le milieu de l'écran à (0.0)*/
 float Shape::toXRatio(float pixSize)
 {
-    return 2.0f * pixSize / Shape::screenWidth;
+    return 2.0f * pixSize / screenWidth;
 }
 
 /*transforme une longueur de pixel en ratio d'écran vertical. 
  ne peut PAS être utilisé pour la translation de coordonnées, car OpenGL a le milieu de l'écran à (0.0)*/
 float Shape::toYRatio(float pixSize)
 {
-    return 2.0f * pixSize / Shape::screenHeight;
+    return 2.0f * pixSize / screenHeight;
 }
 
 /*transforme une coordonnée ratio openGL (entre -0.5 et 0.5) en coordonnée de pixel de souris. 
@@ -55,12 +52,12 @@ float Shape::toYRatio(float pixSize)
  
 float Shape::toXPixelCoord(float xRatio)
 {
-    return (xRatio + 1.0f) / 2.0f * Shape::screenWidth;
+    return (xRatio + 1.0f) / 2.0f * screenWidth;
 }
 
 float Shape::toYPixelCoord(float yRatio)
 {
-    return (1.0f - ((yRatio + 1.0f) / 2.0f)) * Shape::screenHeight;
+    return (1.0f - ((yRatio + 1.0f) / 2.0f)) * screenHeight;
 }
 
 void Shape::spawn()

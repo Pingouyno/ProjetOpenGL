@@ -14,7 +14,6 @@ class Quad2D : public Quad {
     float pixPosY;
 
     public:
-        static vector<Quad2D*> shapesHUDCollidable;
         Quad::Axis AXIS_2D = Axis::Z;
 
     //potentiellement remettre public

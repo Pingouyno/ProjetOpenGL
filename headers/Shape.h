@@ -8,7 +8,7 @@ using namespace std;
 
 #include"../libraries/include/glm/glm.hpp"
 
-#include"GlobalArrays.h"
+#include"Globals.h"
 #include"Texture.h"
 
 
@@ -24,9 +24,6 @@ class Shape {
         //propriétés hitbox Camera
         static float camBoxHeight;
         static float camBoxWidth;
-
-        static float screenWidth;
-        static float screenHeight;
 
         Shape();
 

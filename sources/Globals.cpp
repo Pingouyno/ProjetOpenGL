@@ -1,4 +1,4 @@
-#include"../headers/GlobalArrays.h"
+#include"../headers/Globals.h"
 
 std::vector<float> vertices = 
 {     //COORDONNÉES            //COULEURS           //MAP TEXTURE  (1.0 par copie de l'image)
@@ -98,3 +98,6 @@ Shader* shaderProgram3D = nullptr;
 
 float screenWidth = 1420.0f;
 float screenHeight = 900.0f;
+
+WorldState worldState = WorldState::GAME;
+GameMode gameMode = GameMode::SURVIVAL;

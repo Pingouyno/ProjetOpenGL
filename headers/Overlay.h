@@ -7,6 +7,7 @@ using namespace std;
 #include"TextManager.h"
 #include"Quad2D.h"
 #include"Camera.h"
+#include"Globals.h"
 
 class Overlay
 {

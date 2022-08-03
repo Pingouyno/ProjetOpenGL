@@ -2,16 +2,14 @@
 
 World::World()
 {
-	this->camera = *(new Camera(screenWidth, screenHeight, glm::vec3(0.0f, 0.0f, 0.2f)));
-
+	this->camera = new Camera(screenWidth, screenHeight, glm::vec3(0.0f, 0.0f, 0.2f));
     this->entities = {};
     setup3DShapes();
 
     //Pour blend les endroits vides des png
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    this->gameOverlay = *(new Overlay(&camera, State::GAME));
-    this->menuOverlay = *(new Overlay(&camera, State::MENU));
-    this->state = GAME;
+    this->gameOverlay = new Overlay(camera, WorldState::GAME);
+    this->menuOverlay = new Overlay(camera, WorldState::MENU);
 }
 
 void World::render()
@@ -44,18 +42,18 @@ void World::renderActive3DShapes()
 
 void World::renderOverlays()
 {
-    gameOverlay.render();
-    if (state == MENU)
+    gameOverlay->render();
+    if (worldState == WorldState::MENU)
 	{
-		menuOverlay.render();
+		menuOverlay->render();
 	}
 }
 
 void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 {
-    if (state == MENU)
+    if (worldState == MENU)
 	{
-		menuOverlay.checkCollisions(mousePos);
+		menuOverlay->checkCollisions(mousePos);
 	}
 }
 
@@ -107,8 +105,8 @@ void World::setup3DShapes()
 	float wallSize = 2.5f;
 	int x = 0;
 
-	camera.Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
-	camera.Orientation = glm::rotate(camera.Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
+	camera->Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
+	camera->Orientation = glm::rotate(camera->Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
 
 	//générer les murs du labyrinthe
 	for (int z = 0 ; z < LAB_SIZE + 1; z++)

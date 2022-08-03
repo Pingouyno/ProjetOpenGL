@@ -1,8 +1,5 @@
 #include"../headers/Quad2D.h"
 
-
-vector<Quad2D*> Quad2D::shapesHUDCollidable({});
-
 //pos : ratio ;  pixWidth : pixel
 Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex, function <void(void)> clickLogic)
 {

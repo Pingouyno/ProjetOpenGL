@@ -249,29 +249,29 @@ sources/EventManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.s
 .PHONY : sources/EventManager.cpp.s
 
-sources/GlobalArrays.o: sources/GlobalArrays.cpp.o
-.PHONY : sources/GlobalArrays.o
+sources/Globals.o: sources/Globals.cpp.o
+.PHONY : sources/Globals.o
 
 # target to build an object file
-sources/GlobalArrays.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.o
-.PHONY : sources/GlobalArrays.cpp.o
+sources/Globals.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o
+.PHONY : sources/Globals.cpp.o
 
-sources/GlobalArrays.i: sources/GlobalArrays.cpp.i
-.PHONY : sources/GlobalArrays.i
+sources/Globals.i: sources/Globals.cpp.i
+.PHONY : sources/Globals.i
 
 # target to preprocess a source file
-sources/GlobalArrays.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.i
-.PHONY : sources/GlobalArrays.cpp.i
+sources/Globals.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.i
+.PHONY : sources/Globals.cpp.i
 
-sources/GlobalArrays.s: sources/GlobalArrays.cpp.s
-.PHONY : sources/GlobalArrays.s
+sources/Globals.s: sources/Globals.cpp.s
+.PHONY : sources/Globals.s
 
 # target to generate assembly for a file
-sources/GlobalArrays.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.s
-.PHONY : sources/GlobalArrays.cpp.s
+sources/Globals.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.s
+.PHONY : sources/Globals.cpp.s
 
 sources/Overlay.o: sources/Overlay.cpp.o
 .PHONY : sources/Overlay.o
@@ -609,9 +609,9 @@ help:
 	@echo "... sources/EventManager.o"
 	@echo "... sources/EventManager.i"
 	@echo "... sources/EventManager.s"
-	@echo "... sources/GlobalArrays.o"
-	@echo "... sources/GlobalArrays.i"
-	@echo "... sources/GlobalArrays.s"
+	@echo "... sources/Globals.o"
+	@echo "... sources/Globals.i"
+	@echo "... sources/Globals.s"
 	@echo "... sources/Overlay.o"
 	@echo "... sources/Overlay.i"
 	@echo "... sources/Overlay.s"

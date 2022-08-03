@@ -41,7 +41,7 @@ void Overlay::render()
 
 void Overlay::checkCollisions(glm::vec3 &mousePos)
 {
-    for (Quad2D* ptrShape : Quad2D::shapesHUDCollidable)
+    for (Quad2D* ptrShape : clickableShapes)
     {
         if (ptrShape->active && ptrShape->isColliding(mousePos))
         {
@@ -108,8 +108,8 @@ const void Overlay::setupMenuOverlay()
 
 	survivalButton->despawn();
 
-	creativeButton->clickLogic = [this, creativeButton, survivalButton](){creativeButton->despawn(); survivalButton->spawn(); camera->isInCreative = true;};
-	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); camera->isInCreative = false; camera->fall();};
+	creativeButton->clickLogic = [this, creativeButton, survivalButton](){creativeButton->despawn(); survivalButton->spawn(); gameMode = GameMode::CREATIVE;};
+	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); gameMode = GameMode::SURVIVAL; camera->fall();};
 
 	addClickShape(creativeButton);
 	addClickShape(survivalButton);
