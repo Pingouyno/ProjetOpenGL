@@ -9,7 +9,7 @@ void PlaySound::startEngine()
 	soundEngine = createIrrKlangDevice();
 
     //vérifier que l'engin a pu démarrer, donc ptr != nullptr
-	if (!soundEngine)
+	if (soundEngine == nullptr)
 	{
 		printf("Engin audio impossible à démarrer\n");
 		throw 0;

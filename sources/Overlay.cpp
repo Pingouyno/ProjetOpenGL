@@ -68,7 +68,7 @@ void Overlay::addClickShape(Quad2D* shape)
 const void Overlay::setupGameOverlay()
 {
 	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	(*crosshair_png).texUnit(shaderProgram2D, "tex0", 0);
+	(*crosshair_png).texUnit(*shaderProgram2D, "tex0", 0);
 
 	//pour que la texture fasse 64 pixels de large peu importe les dimensions de l'écran
 	float pixelSize = 64.0f; 
@@ -87,13 +87,13 @@ const void Overlay::setupGameOverlay()
 const void Overlay::setupMenuOverlay()
 {
 	Texture* square_png = new Texture("resources/textures/square.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	square_png->texUnit(shaderProgram2D, "tex0", 0);
+	square_png->texUnit(*shaderProgram2D, "tex0", 0);
 
     Texture* sadge_png = new Texture("resources/textures/sadge.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	sadge_png->texUnit(shaderProgram2D, "tex0", 0);
+	sadge_png->texUnit(*shaderProgram2D, "tex0", 0);
 
 	Texture* obama_png = new Texture("resources/textures/obama.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	obama_png->texUnit(shaderProgram2D, "tex0", 0);
+	obama_png->texUnit(*shaderProgram2D, "tex0", 0);
 
 	addStaticShape(new Quad2D(glm::vec3(-1.0f, -1.0f, 0.0f), screenWidth, screenHeight, square_png));
 

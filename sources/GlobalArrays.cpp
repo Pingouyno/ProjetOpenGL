@@ -93,8 +93,8 @@ std::vector<int> labyrinth =
 
 bool shouldReloadArrays = false;
 
-Shader shaderProgram3D("resources/shaders/default.vert", "resources/shaders/default.frag"); 
-Shader shaderProgram2D("resources/shaders/default.vert2D", "resources/shaders/default.frag"); 
+Shader* shaderProgram2D = nullptr;
+Shader* shaderProgram3D = nullptr;
 
 float screenWidth = 1420.0f;
 float screenHeight = 900.0f;
