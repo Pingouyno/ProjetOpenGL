@@ -225,6 +225,30 @@ sources/EBO.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.s
 .PHONY : sources/EBO.cpp.s
 
+sources/EventManager.o: sources/EventManager.cpp.o
+.PHONY : sources/EventManager.o
+
+# target to build an object file
+sources/EventManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o
+.PHONY : sources/EventManager.cpp.o
+
+sources/EventManager.i: sources/EventManager.cpp.i
+.PHONY : sources/EventManager.i
+
+# target to preprocess a source file
+sources/EventManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.i
+.PHONY : sources/EventManager.cpp.i
+
+sources/EventManager.s: sources/EventManager.cpp.s
+.PHONY : sources/EventManager.s
+
+# target to generate assembly for a file
+sources/EventManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.s
+.PHONY : sources/EventManager.cpp.s
+
 sources/GlobalArrays.o: sources/GlobalArrays.cpp.o
 .PHONY : sources/GlobalArrays.o
 
@@ -249,29 +273,29 @@ sources/GlobalArrays.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GlobalArrays.cpp.s
 .PHONY : sources/GlobalArrays.cpp.s
 
-sources/PlaySound.o: sources/PlaySound.cpp.o
-.PHONY : sources/PlaySound.o
+sources/Overlay.o: sources/Overlay.cpp.o
+.PHONY : sources/Overlay.o
 
 # target to build an object file
-sources/PlaySound.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o
-.PHONY : sources/PlaySound.cpp.o
+sources/Overlay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o
+.PHONY : sources/Overlay.cpp.o
 
-sources/PlaySound.i: sources/PlaySound.cpp.i
-.PHONY : sources/PlaySound.i
+sources/Overlay.i: sources/Overlay.cpp.i
+.PHONY : sources/Overlay.i
 
 # target to preprocess a source file
-sources/PlaySound.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.i
-.PHONY : sources/PlaySound.cpp.i
+sources/Overlay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.i
+.PHONY : sources/Overlay.cpp.i
 
-sources/PlaySound.s: sources/PlaySound.cpp.s
-.PHONY : sources/PlaySound.s
+sources/Overlay.s: sources/Overlay.cpp.s
+.PHONY : sources/Overlay.s
 
 # target to generate assembly for a file
-sources/PlaySound.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.s
-.PHONY : sources/PlaySound.cpp.s
+sources/Overlay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.s
+.PHONY : sources/Overlay.cpp.s
 
 sources/Quad.o: sources/Quad.cpp.o
 .PHONY : sources/Quad.o
@@ -441,6 +465,30 @@ sources/VBO.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.s
 .PHONY : sources/VBO.cpp.s
 
+sources/World.o: sources/World.cpp.o
+.PHONY : sources/World.o
+
+# target to build an object file
+sources/World.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o
+.PHONY : sources/World.cpp.o
+
+sources/World.i: sources/World.cpp.i
+.PHONY : sources/World.i
+
+# target to preprocess a source file
+sources/World.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.i
+.PHONY : sources/World.cpp.i
+
+sources/World.s: sources/World.cpp.s
+.PHONY : sources/World.s
+
+# target to generate assembly for a file
+sources/World.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.s
+.PHONY : sources/World.cpp.s
+
 sources/glad.o: sources/glad.c.o
 .PHONY : sources/glad.o
 
@@ -534,12 +582,15 @@ help:
 	@echo "... sources/EBO.o"
 	@echo "... sources/EBO.i"
 	@echo "... sources/EBO.s"
+	@echo "... sources/EventManager.o"
+	@echo "... sources/EventManager.i"
+	@echo "... sources/EventManager.s"
 	@echo "... sources/GlobalArrays.o"
 	@echo "... sources/GlobalArrays.i"
 	@echo "... sources/GlobalArrays.s"
-	@echo "... sources/PlaySound.o"
-	@echo "... sources/PlaySound.i"
-	@echo "... sources/PlaySound.s"
+	@echo "... sources/Overlay.o"
+	@echo "... sources/Overlay.i"
+	@echo "... sources/Overlay.s"
 	@echo "... sources/Quad.o"
 	@echo "... sources/Quad.i"
 	@echo "... sources/Quad.s"
@@ -561,6 +612,9 @@ help:
 	@echo "... sources/VBO.o"
 	@echo "... sources/VBO.i"
 	@echo "... sources/VBO.s"
+	@echo "... sources/World.o"
+	@echo "... sources/World.i"
+	@echo "... sources/World.s"
 	@echo "... sources/glad.o"
 	@echo "... sources/glad.i"
 	@echo "... sources/glad.s"

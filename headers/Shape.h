@@ -2,21 +2,22 @@
 #define SHAPE_CLASS_H
 
 #include<vector>
-using namespace std;
 #include<iterator>
 #include<iostream>
-#include"Camera.h"
+using namespace std;
+
+#include"../libraries/include/glm/glm.hpp"
+
+#include"GlobalArrays.h"
 #include"Texture.h"
 
-class Shape{
+
+class Shape {
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
-        enum Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
+        enum Type : char;
 
-        static vector<Shape*> shapes;
-        static vector<Shape*> shapes2D;
-        static vector<Shape*> shapesHUDStatic;
-        static vector<float> DEFAULT_COLOR;
+        static glm::vec3 DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;
 
@@ -27,17 +28,12 @@ class Shape{
         static float screenWidth;
         static float screenHeight;
 
-        //true si on a créé une nouvelle entité depuis le dernier rendering. On doit donc RELOAD plutôt que SUB-RELOAD
-        static bool shouldReloadArrays;
-
-        Shape(){
-            shouldReloadArrays = true;
-        }
+        Shape();
 
         //variables/fonctions à utiliser et redéfinir;
 
-        vector<float> pos;
-        vector<float> color;
+        glm::vec3 pos;
+        glm::vec3 color;
         vector<float> texMap;
         vector<float> shapeVertices;  //non statique car change           
         vector<int> shapeIndices;    
@@ -69,14 +65,6 @@ class Shape{
         static float toYRatio(float pixSize);
         static float toXPixelCoord(float xRatio);
         static float toYPixelCoord(float yRatio);
-        static void renderActive3DShapes();
-        static void renderActive2DShapes();
-        static void renderActiveHUDShapes();
-        static void checkCameraCollidingAnyHUD(glm::vec3 &mousePos);
-        static vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
-        static bool isAnyColliding(vector<int> &collisionLog);
-        static void addShape(Type shapeType, Shape* shape);
-        static void deleteAllShapes();
 
         void spawn();
         void despawn();
@@ -90,10 +78,7 @@ class Shape{
         void generate();
 
     private:
-        void printUndefinedErr(string funcName)
-        {
-            cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
-        }
+        void printUndefinedErr(string funcName);
 };
 
 #endif

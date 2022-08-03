@@ -1,5 +1,4 @@
 #include"../headers/Quad.h"
-#include"../headers/GlobalArrays.h"
 
 int Quad::VERTICE_COUNT = 4;
 
@@ -14,12 +13,12 @@ vector<float> Quad::SHAPE_TEXMAP(
     }
 );
 
-void Quad::initQuad(vector<float> &pos, float width, float height, vector<float> &color, Texture* tex, Axis axis)
+void Quad::initQuad(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex, Axis axis)
 {
-    this->pos.insert(this->pos.end(), pos.begin(), pos.end());
+    this->pos = pos;
     this->width = width;
     this->height = height;
-    this->color.insert(this->color.end(), color.begin(), color.end());
+    this->color = color;
     this->tex = tex;
     this->axis = axis;
     if (this->tex == nullptr)
@@ -31,22 +30,22 @@ void Quad::initQuad(vector<float> &pos, float width, float height, vector<float>
     generate(); 
 }
 
-Quad::Quad(vector<float> &pos, float width, float height, Texture* tex, Axis axis)
+Quad::Quad(glm::vec3 pos, float width, float height, Texture* tex, Axis axis)
 {
     initQuad(pos, width, height, DEFAULT_COLOR, tex, axis);
 }
 
-Quad::Quad(vector<float> &pos, float size, Texture* tex, Axis axis)
+Quad::Quad(glm::vec3 pos, float size, Texture* tex, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, tex, axis);
 }
 
-Quad::Quad(vector<float> &pos, float size, vector<float> &color, Axis axis)
+Quad::Quad(glm::vec3 pos, float size, glm::vec3 color, Axis axis)
 {
     initQuad(pos, size, size, color, nullptr, axis);
 }
 
-Quad::Quad(vector<float> &pos, float size, Axis axis)
+Quad::Quad(glm::vec3 pos, float size, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, nullptr, axis);
 }

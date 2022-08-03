@@ -1,22 +1,21 @@
-#include"../headers/Cube.h"
-#include"../headers/Quad2D.h"
 #include<vector>
-#include"../headers/Camera.h"
-#include"../headers/GlobalArrays.h"
 
-std::vector<float> Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
+#include"../headers/Shape.h"
+
+enum Shape::Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
+
+glm::vec3 Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
-vector<Shape*> Shape::shapes({});
-vector<Shape*> Shape::shapes2D({});
-vector<Shape*> Shape::shapesHUDStatic({});
-bool Shape::shouldReloadArrays = false;
-float Shape::screenHeight = -1;
-float Shape::screenWidth = -1;
-
 float Shape::camBoxHeight = 1.4f;
 float Shape::camBoxWidth = 0.2f;
 
+float Shape::screenHeight = -1;
+float Shape::screenWidth = -1;
+
+Shape::Shape(){
+    shouldReloadArrays = true;
+}
 
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
@@ -34,12 +33,6 @@ void Shape::initVertices(){printUndefinedErr("INITVERTICE");}
 
 /*IMPORTANT : les coordonnées de pixel de la souris commmencent à (0, 0) en haut à gauche, 
  tandis que les coordonnées de ratio commencent à (0.0f, 0.0f) au MILLIEU de l'écran*/
-
-void Shape::initVariables(float screenWidth, float screenHeight)
-{
-    Shape::screenWidth = screenWidth;
-    Shape::screenHeight = screenHeight;
-}
 
 /*transforme une longueur de pixel en ratio d'écran horizontal. 
  ne peut PAS être utilisé pour la translation de coordonnées, car OpenGL a le milieu de l'écran à (0.0)*/
@@ -68,124 +61,6 @@ float Shape::toXPixelCoord(float xRatio)
 float Shape::toYPixelCoord(float yRatio)
 {
     return (1.0f - ((yRatio + 1.0f) / 2.0f)) * Shape::screenHeight;
-}
-
-
-//Render toutes les entités, et désactive "newShapeCreated"
-void Shape::renderActive3DShapes()
-{
-    for (Shape* ptrShape : shapes)
-    {
-        if ((*ptrShape).active)
-        {
-            (*ptrShape).render();
-        }
-    }
-    shouldReloadArrays = false;
-}
-
-void Shape::renderActive2DShapes()
-{
-    for (Shape* ptrShape : shapes2D)
-    {
-        if ((*ptrShape).active)
-        {
-            (*ptrShape).render();
-        }
-    }
-    shouldReloadArrays = false;
-}
-
-void Shape::renderActiveHUDShapes()
-{
-    for (Shape* ptrShape : Shape::shapesHUDStatic)
-    {
-        if (ptrShape->active)
-        {
-            ptrShape->render();
-        }
-    }
-    //faire apparaître les boutons par dessus les images statiques
-    for (Quad2D* ptrShape : Quad2D::shapesHUDCollidable)
-    {
-        if (ptrShape->active)
-        {
-            ptrShape->render();
-        }
-    }
-    shouldReloadArrays = false;
-}
-
-void Shape::checkCameraCollidingAnyHUD(glm::vec3 &mousePos)
-{
-    for (Quad2D* ptrShape : Quad2D::shapesHUDCollidable)
-    {
-        if (ptrShape->active && ptrShape->isColliding(mousePos))
-        {
-            ptrShape->doClickLogic();
-
-            /*on échappe car on ne cliquer qu'un seul icône à la fois.
-             de plus, si un des boutons réactive le suivant dans la liste, 
-             on peut avoir un comportement non défini (ré-activation des boutons perpétuelle)*/
-            break;
-        }
-    }
-
-}
-
-vector<int> Shape::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
-{
-    vector<int> collisionLog({0, 0, 0});
-    for (Shape* ptrShape : shapes)
-    {
-        if ((*ptrShape).active && (*ptrShape).isColliding(newPos))
-            (*ptrShape).reportCollision(collisionLog, oldPos, newPos);
-    }
-    return collisionLog;
-}
-
-bool Shape::isAnyColliding(vector<int> &collisionLog)
-{
-    return collisionLog[0] != 0 || collisionLog[1] != 0 || collisionLog[2] != 0;
-}
-
-void Shape::addShape(Type shapeType, Shape* shape)
-{
-    switch(shapeType)
-    {
-        case PHYSICAL:
-            shapes.push_back(shape);
-            break;
-
-        case OVERLAY:
-            shapes2D.push_back(shape);
-            break;
-
-        case HUD_STATIC:
-            Shape::shapesHUDStatic.push_back(shape);
-            break;
-
-        case HUD_COLLIDE:
-            Quad2D::shapesHUDCollidable.push_back((Quad2D*)shape);
-            break;
-
-        default:
-            cout << "\n\n**ERREUR : TYPE D'ENUM DE SHAPE NON DÉFINI**\n\n";
-            throw 1;
-    }
-}
-
-void Shape::deleteAllShapes()
-{
-    int i = shapes.size() - 1;
-    while(i >= 0)
-    {
-        shapes.erase(shapes.begin() + i);
-        i--;
-    }
-    vertices.clear();
-    indices.clear();
-    shouldReloadArrays = true;
 }
 
 void Shape::spawn()
@@ -258,9 +133,14 @@ void Shape::generate()
 
     for (int i = 0 ; i < getVerticeCount() ; i++){
         vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
-        vertices.insert(vertices.end(), color.begin(), color.end());
+        for (int i = 0 ; i < 3 ; i++) vertices.push_back(color[i]);
         vertices.insert(vertices.end(), texMap.begin() + 2 * i, texMap.begin() + 2 * i + 2);
     }
     indices.insert(indices.end(), shapeIndices.begin(), shapeIndices.end());
     spawn();
+}
+
+void Shape::printUndefinedErr(string funcName)
+{
+    cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
 }

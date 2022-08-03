@@ -2,7 +2,6 @@
 #define QUAD_CLASS_H
 
 #include"Shape.h"
-#include"Texture.h"
 
 class Quad: public Shape {
     public:
@@ -19,11 +18,11 @@ class Quad: public Shape {
 
         Axis axis;
 
-        void initQuad(vector<float> &pos, float width, float height, vector<float> &color, Texture* tex, Axis axis);
-        Quad(vector<float> &pos, float width, float height, Texture* tex, Axis axis);
-        Quad(vector<float> &pos, float size, Texture* texture, Axis axis);
-        Quad(vector<float> &pos, float size, vector<float> &color, Axis axis);
-        Quad(vector<float> &pos, float size, Axis axis);
+        void initQuad(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex, Axis axis);
+        Quad(glm::vec3 pos, float width, float height, Texture* tex, Axis axis);
+        Quad(glm::vec3 pos, float size, Texture* texture, Axis axis);
+        Quad(glm::vec3 pos, float size, glm::vec3 color, Axis axis);
+        Quad(glm::vec3 pos, float size, Axis axis);
         Quad(){}
 
         int getVerticeCount();

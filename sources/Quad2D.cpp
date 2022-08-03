@@ -4,17 +4,17 @@
 vector<Quad2D*> Quad2D::shapesHUDCollidable({});
 
 //pos : ratio ;  pixWidth : pixel
-Quad2D::Quad2D(vector<float> &pos, float pixWidth, float pixHeight, Texture* tex, function <void(void)> clickLogic)
+Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex, function <void(void)> clickLogic)
 {
     this->clickLogic = clickLogic;
     this->pixWidth = pixWidth;
     this->pixHeight = pixHeight;
     this->pixPosX = Shape::toXPixelCoord(pos[0]);
     this->pixPosY = Shape::toYPixelCoord(pos[1]);
-    initQuad(pos, Shape::toXRatio(pixWidth), Shape::toYRatio(pixHeight), DEFAULT_COLOR, tex, AXIS_2D);
+    initQuad(glm::vec3(pos, 0.0f), Shape::toXRatio(pixWidth), Shape::toYRatio(pixHeight), DEFAULT_COLOR, tex, AXIS_2D);
 }
 
-Quad2D::Quad2D(vector<float> &pos, float pixWidth, float pixHeight, Texture* tex)
+Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex)
     : Quad2D(pos, pixWidth, pixHeight, tex, [](){}){}
 
 

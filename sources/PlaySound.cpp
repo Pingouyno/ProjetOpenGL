@@ -1,4 +1,3 @@
-#include<iostream>
 #include"../headers/PlaySound.h"
 
 const string PlaySound::SOUND_PATH = "resources/sounds/";

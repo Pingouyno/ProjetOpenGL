@@ -1,6 +1,4 @@
 #include"../headers/Cube.h"
-#include"../headers/GlobalArrays.h"
-#include<GLFW/glfw3.h>
 
 int Cube::VERTICE_COUNT = 12;   //Taille du tableau 3 fois plus grosse que 8 car un vertex a (x, y, z)
 int Cube::INDICE_COUNT = 36;    //2 triangles par côté, 6 côtés par cube = 3 * 2 * 6 = 36  
@@ -26,11 +24,11 @@ vector<float> Cube::SHAPE_TEXMAP(
     }
 );
 
-void Cube::initCube(vector<float> &pos, float size, vector<float> &color, Texture* tex)
+void Cube::initCube(glm::vec3 pos, float size, glm::vec3 color, Texture* tex)
 {
-    this->pos.insert(this->pos.end(), pos.begin(), pos.end());
+    this->pos = pos;
     this->size = size;
-    this->color.insert(this->color.end(), color.begin(), color.end());
+    this->color = color;
     this->tex = tex;
     if (this->tex == nullptr)
         //remplire la texmap avec le motif qui indique de ne pas render de texture, chaque vertice
@@ -41,17 +39,17 @@ void Cube::initCube(vector<float> &pos, float size, vector<float> &color, Textur
     generate(); 
 }
 
-Cube::Cube(vector<float> &pos, float size, Texture* tex)
+Cube::Cube(glm::vec3 pos, float size, Texture* tex)
 {
     initCube(pos, size, DEFAULT_COLOR, tex);
 }
 
-Cube::Cube(vector<float> &pos, float size, vector<float> &color)
+Cube::Cube(glm::vec3 pos, float size, glm::vec3 color)
 {
     initCube(pos, size, color, nullptr);
 }
 
-Cube::Cube(vector<float> &pos, float size)
+Cube::Cube(glm::vec3 pos, float size)
 {
     initCube(pos, size, DEFAULT_COLOR, nullptr);
 }

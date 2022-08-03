@@ -3,9 +3,10 @@
 
 #include<string>
 #include<vector>
-#include"Texture.h"
 using namespace std;
 
+#include"Texture.h"
+#include"shaderClass.h"
 
 class TextManager
 {
