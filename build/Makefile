@@ -225,6 +225,30 @@ sources/EBO.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.s
 .PHONY : sources/EBO.cpp.s
 
+sources/Entity.o: sources/Entity.cpp.o
+.PHONY : sources/Entity.o
+
+# target to build an object file
+sources/Entity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o
+.PHONY : sources/Entity.cpp.o
+
+sources/Entity.i: sources/Entity.cpp.i
+.PHONY : sources/Entity.i
+
+# target to preprocess a source file
+sources/Entity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.i
+.PHONY : sources/Entity.cpp.i
+
+sources/Entity.s: sources/Entity.cpp.s
+.PHONY : sources/Entity.s
+
+# target to generate assembly for a file
+sources/Entity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.s
+.PHONY : sources/Entity.cpp.s
+
 sources/EventManager.o: sources/EventManager.cpp.o
 .PHONY : sources/EventManager.o
 
@@ -369,6 +393,30 @@ sources/PlaySound.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.s
 .PHONY : sources/PlaySound.cpp.s
 
+sources/Player.o: sources/Player.cpp.o
+.PHONY : sources/Player.o
+
+# target to build an object file
+sources/Player.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o
+.PHONY : sources/Player.cpp.o
+
+sources/Player.i: sources/Player.cpp.i
+.PHONY : sources/Player.i
+
+# target to preprocess a source file
+sources/Player.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.i
+.PHONY : sources/Player.cpp.i
+
+sources/Player.s: sources/Player.cpp.s
+.PHONY : sources/Player.s
+
+# target to generate assembly for a file
+sources/Player.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.s
+.PHONY : sources/Player.cpp.s
+
 sources/Quad.o: sources/Quad.cpp.o
 .PHONY : sources/Quad.o
 
@@ -440,6 +488,30 @@ sources/Shape.s: sources/Shape.cpp.s
 sources/Shape.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.s
 .PHONY : sources/Shape.cpp.s
+
+sources/Snowman.o: sources/Snowman.cpp.o
+.PHONY : sources/Snowman.o
+
+# target to build an object file
+sources/Snowman.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o
+.PHONY : sources/Snowman.cpp.o
+
+sources/Snowman.i: sources/Snowman.cpp.i
+.PHONY : sources/Snowman.i
+
+# target to preprocess a source file
+sources/Snowman.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.i
+.PHONY : sources/Snowman.cpp.i
+
+sources/Snowman.s: sources/Snowman.cpp.s
+.PHONY : sources/Snowman.s
+
+# target to generate assembly for a file
+sources/Snowman.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.s
+.PHONY : sources/Snowman.cpp.s
 
 sources/TextManager.o: sources/TextManager.cpp.o
 .PHONY : sources/TextManager.o
@@ -654,6 +726,9 @@ help:
 	@echo "... sources/EBO.o"
 	@echo "... sources/EBO.i"
 	@echo "... sources/EBO.s"
+	@echo "... sources/Entity.o"
+	@echo "... sources/Entity.i"
+	@echo "... sources/Entity.s"
 	@echo "... sources/EventManager.o"
 	@echo "... sources/EventManager.i"
 	@echo "... sources/EventManager.s"
@@ -672,6 +747,9 @@ help:
 	@echo "... sources/PlaySound.o"
 	@echo "... sources/PlaySound.i"
 	@echo "... sources/PlaySound.s"
+	@echo "... sources/Player.o"
+	@echo "... sources/Player.i"
+	@echo "... sources/Player.s"
 	@echo "... sources/Quad.o"
 	@echo "... sources/Quad.i"
 	@echo "... sources/Quad.s"
@@ -681,6 +759,9 @@ help:
 	@echo "... sources/Shape.o"
 	@echo "... sources/Shape.i"
 	@echo "... sources/Shape.s"
+	@echo "... sources/Snowman.o"
+	@echo "... sources/Snowman.i"
+	@echo "... sources/Snowman.s"
 	@echo "... sources/TextManager.o"
 	@echo "... sources/TextManager.i"
 	@echo "... sources/TextManager.s"

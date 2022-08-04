@@ -125,10 +125,24 @@ CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/EBO.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.s
 
+CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
+CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o: ../sources/Entity.cpp
+CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Entity.cpp
+
+CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/will/Prog/CPP/ProjetOpenGL/sources/Entity.cpp > CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.i
+
+CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/Entity.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.s
+
 CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o: ../sources/EventManager.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/EventManager.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o: ../sources/GameOverlay.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/GameOverlay.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o: ../sources/Globals.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Globals.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.i: cmake_force
@@ -170,7 +184,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o: ../sources/MenuOverlay.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/MenuOverlay.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.i: cmake_force
@@ -184,7 +198,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o: ../sources/Overlay.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Overlay.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.i: cmake_force
@@ -198,7 +212,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o: ../sources/PlaySound.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/PlaySound.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.i: cmake_force
@@ -209,10 +223,24 @@ CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/PlaySound.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.s
 
+CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
+CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o: ../sources/Player.cpp
+CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Player.cpp
+
+CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/will/Prog/CPP/ProjetOpenGL/sources/Player.cpp > CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.i
+
+CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/Player.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.s
+
 CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o: ../sources/Quad.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Quad.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.i: cmake_force
@@ -226,7 +254,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o: ../sources/Quad2D.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Quad2D.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.i: cmake_force
@@ -240,7 +268,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: ../sources/Shape.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Shape.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.i: cmake_force
@@ -251,10 +279,24 @@ CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/Shape.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.s
 
+CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
+CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o: ../sources/Snowman.cpp
+CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Snowman.cpp
+
+CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/will/Prog/CPP/ProjetOpenGL/sources/Snowman.cpp > CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.i
+
+CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/will/Prog/CPP/ProjetOpenGL/sources/Snowman.cpp -o CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.s
+
 CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o: ../sources/TextManager.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/TextManager.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.i: cmake_force
@@ -268,7 +310,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o: ../sources/Texture.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/Texture.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.i: cmake_force
@@ -282,7 +324,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o: ../sources/VAO.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/VAO.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.i: cmake_force
@@ -296,7 +338,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o: ../sources/VBO.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/VBO.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.i: cmake_force
@@ -310,7 +352,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/VBO.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o: ../sources/World.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/World.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.i: cmake_force
@@ -324,7 +366,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/World.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o: ../sources/glad.c
 CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o -MF CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/glad.c.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/glad.c
 
 CMakeFiles/ProjetOpenGL.dir/sources/glad.c.i: cmake_force
@@ -338,7 +380,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/glad.c.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o: ../sources/shaderClass.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/shaderClass.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.i: cmake_force
@@ -352,7 +394,7 @@ CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.s: cmake_force
 CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o: CMakeFiles/ProjetOpenGL.dir/flags.make
 CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o: ../sources/stb.cpp
 CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o: CMakeFiles/ProjetOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o -MF CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o.d -o CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o -c /home/will/Prog/CPP/ProjetOpenGL/sources/stb.cpp
 
 CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.i: cmake_force
@@ -369,15 +411,18 @@ ProjetOpenGL_OBJECTS = \
 "CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o" \
+"CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o" \
+"CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o" \
+"CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o" \
 "CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o" \
@@ -394,15 +439,18 @@ ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/main.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o
+ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/PlaySound.cpp.o
+ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Player.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Quad.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Quad2D.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Shape.cpp.o
+ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/TextManager.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/Texture.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/VAO.cpp.o
@@ -413,7 +461,7 @@ ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/shaderClass.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/sources/stb.cpp.o
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/build.make
 ProjetOpenGL: CMakeFiles/ProjetOpenGL.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking CXX executable ProjetOpenGL"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/will/Prog/CPP/ProjetOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX executable ProjetOpenGL"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ProjetOpenGL.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

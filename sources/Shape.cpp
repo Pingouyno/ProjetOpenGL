@@ -70,7 +70,7 @@ void Shape::despawn()
     active = false;
 }
 
-void Shape::moveTo(float &x, float &y, float &z)
+void Shape::moveTo(float x, float y, float z)
 {
     pos[0] = x;
     pos[1] = y;
@@ -79,7 +79,7 @@ void Shape::moveTo(float &x, float &y, float &z)
     refreshGLVertices();
 }
 
-void Shape::moveTo(float (&pos)[3])
+void Shape::moveTo(glm::vec3 pos)
 {
     moveTo(pos[0], pos[1], pos[2]);
 }

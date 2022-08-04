@@ -27,5 +27,8 @@ class EventManager
     private:
         void checkKeyEvents(GLFWwindow* window);
         void checkMouseEvents(GLFWwindow* window); 
+        
+        //à activer et désactiver au besoin (raisons de performance)
+        void checkKeyboardCamMovement(GLFWwindow* window);
 };
 #endif

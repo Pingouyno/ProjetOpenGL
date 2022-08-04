@@ -129,6 +129,7 @@ int main()
 		reloadVerticesInVBO(VBO1);
 		reloadIndicesInEBO(EBO1);
 
+		world->doEntityBehaviors();
 		world->render();
 
 		// Swap the back buffer with the front buffer

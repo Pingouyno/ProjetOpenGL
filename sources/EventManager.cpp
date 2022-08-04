@@ -12,6 +12,9 @@ void EventManager::Inputs(GLFWwindow* window)
 {
     checkKeyEvents(window);
 	checkMouseEvents(window);
+
+	//potentiellement à retirer au besoin et performance
+	checkKeyboardCamMovement(window);
 }
 
 
@@ -183,4 +186,36 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 	}
 	
 }
+
+void EventManager::checkKeyboardCamMovement(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+        glm::vec3 newOrient = glm::rotate(camera->Orientation, glm::radians(camera->VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(camera->Orientation, camera->Up)));
+
+		if (abs(glm::angle(newOrient, camera->Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			camera->Orientation = newOrient;
+		}
+	}
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+        camera->Orientation = glm::rotate(camera->Orientation, glm::radians(camera->HORI_PAD_SENSITIVITY), camera->Up);
+	}
+        //Gère le mouvement de caméra via clavier, b = x et g = y
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+        glm::vec3 newOrient = glm::rotate(camera->Orientation, glm::radians(-camera->VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(camera->Orientation, camera->Up)));
+		if (abs(glm::angle(newOrient, camera->Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+		{
+			camera->Orientation = newOrient;
+		}
+	}
+        //Gère le mouvement de caméra via clavier, b = x et g = y
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+        camera->Orientation = glm::rotate(camera->Orientation, glm::radians(-camera->HORI_PAD_SENSITIVITY), camera->Up);
+	}
+}
+
 

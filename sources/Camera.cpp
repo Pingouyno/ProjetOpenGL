@@ -32,7 +32,6 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shade
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
-
 void Camera::jump()
 {
 	isInAir = true;
@@ -53,36 +52,3 @@ void Camera::fall()
 	isInAir = true;
 	timeInAir = DEFAULT_TIME_AIR;	
 }
-
-/*
-void Camera::checkKeyboardMouseMovement(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	{
-        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
-
-		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-		{
-			Orientation = newOrient;
-		}
-	}
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	{
-        Orientation = glm::rotate(Orientation, glm::radians(HORI_PAD_SENSITIVITY), Up);
-	}
-        //Gère le mouvement de caméra via clavier, b = x et g = y
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	{
-        glm::vec3 newOrient = glm::rotate(Orientation, glm::radians(-VERT_PAD_SENSITIVITY), glm::normalize(glm::cross(Orientation, Up)));
-		if (abs(glm::angle(newOrient, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-		{
-			Orientation = newOrient;
-		}
-	}
-        //Gère le mouvement de caméra via clavier, b = x et g = y
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	{
-        Orientation = glm::rotate(Orientation, glm::radians(-HORI_PAD_SENSITIVITY), Up);
-	}
-}
-*/

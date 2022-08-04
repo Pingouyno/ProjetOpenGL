@@ -65,8 +65,8 @@ class Shape {
 
         void spawn();
         void despawn();
-        void moveTo(float &x, float &y, float &z);
-        void moveTo(float (&pos)[3]);
+        void moveTo(float x, float y, float z);
+        void moveTo(glm::vec3 pos);
         bool hasTexture();
         void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
 

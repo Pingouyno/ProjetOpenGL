@@ -43,8 +43,6 @@ class Camera
         float DEFAULT_TIME_AIR = 5.0f;
         float timeInAir = DEFAULT_TIME_AIR;
 
-        Camera();
-
         // Camera constructor to set up initial values
         Camera(int width, int height, glm::vec3 position);
 

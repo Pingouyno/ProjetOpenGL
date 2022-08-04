@@ -2,8 +2,9 @@
 
 World::World()
 {
-	this->camera = new Camera(screenWidth, screenHeight, glm::vec3(0.0f, 0.0f, 0.2f));
-    this->entities = {};
+	this->player = new Player(glm::vec3(0.0f, 0.0f, 0.2f));
+	this->camera = this->player->camera;
+    setupEntities();
     setup3DShapes();
 	this->score = 0;
 
@@ -13,11 +14,23 @@ World::World()
     this->menuOverlay = new MenuOverlay(camera);
 }
 
+void World::doEntityBehaviors()
+{
+	for (Entity* ptrEntity : entities)
+	{
+		if (ptrEntity->active)
+		{
+			ptrEntity->doBehavior();
+		}
+	}
+}
+
 void World::render()
 {
     glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	renderActive3DShapes();
+	renderActiveEntities();
 
     shaderProgram2D -> Activate();
     glDisable(GL_DEPTH_TEST);
@@ -37,6 +50,17 @@ void World::renderActive3DShapes()
         if ((*ptrShape).active)
         {
             (*ptrShape).render();
+        }
+    }
+}
+
+void World::renderActiveEntities()
+{
+	for (Entity* ptrEntity : entities)
+    {
+        if (ptrEntity->active)
+        {
+            ptrEntity->render();
         }
     }
 }
@@ -79,8 +103,10 @@ void World::addShape(Shape* shape)
     shapes.push_back(shape);    
 }
 
+
 void World::deleteAllShapes()
 {
+	//supprimer les formes
     int i = shapes.size() - 1;
     while(i >= 0)
     {
@@ -108,8 +134,17 @@ void World::updateScore()
 
 //fin fonctions dynamiques______________________________________________________________
 
-
 //méthodes privées
+
+void World::setupEntities()
+{
+	Snowman* firstSnowman = new Snowman(glm::vec3(10, 10, 10), player);
+
+	entities = 
+	{
+		firstSnowman
+	};
+}
 
 void World::setup3DShapes()
 {
