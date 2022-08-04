@@ -21,7 +21,7 @@ void TextManager::bindToShader(Shader *shader)
     initTextures();
 }
 
-Texture* TextManager::getNumberTexture(char number)
+Texture* TextManager::getNumberTexture(int number)
 {
-    return numbers[number - '0']; 
+    return numbers[number]; 
 }

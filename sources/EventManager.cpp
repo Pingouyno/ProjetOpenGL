@@ -72,6 +72,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 		{
 			camera->jump();
 			PlaySound::playJumpSound();
+			world->incrementScore(1);
 		}
 
 	}

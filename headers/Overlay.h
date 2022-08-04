@@ -16,16 +16,16 @@ class Overlay
         vector<Quad2D*> clickableShapes;
 
     public:
-        Camera* camera = nullptr;
-        Overlay();
-        Overlay(Camera* camera, int worldStateType);
+        Camera* camera;
+        Overlay(Camera* camera);
         void render();
         void checkCollisions(glm::vec3 &mousePos);
         void addStaticShape(Quad2D* shape);
         void addClickShape(Quad2D* shape);
 
-        const void setupGameOverlay();
-        const void setupMenuOverlay();
+    //fonctions virtuelles (À ÊTRE REDÉFINIES)
+    protected:
+        virtual void setupOverlay();
 
 };
 #endif

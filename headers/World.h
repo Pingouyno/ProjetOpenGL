@@ -12,19 +12,23 @@ using namespace std;
 #include"shaderClass.h"
 #include"Entity.h"
 #include"Camera.h"
-#include"Overlay.h"
+#include"GameOverlay.h"
+#include"MenuOverlay.h"
 
 class World
 {
     //variables statiques
     private:
-        vector<Entity*> entities = {}; 
-        vector<Shape*> shapes = {};
+        vector<Entity*> entities; 
+        vector<Shape*> shapes;
+
+        //variables reliées au monde dynamique
+        int score;
 
     public:
-        Overlay* gameOverlay = nullptr;
-        Overlay* menuOverlay = nullptr;
-        Camera* camera = nullptr;
+        Camera* camera;
+        GameOverlay* gameOverlay;
+        MenuOverlay* menuOverlay;
 
         World();
 
@@ -36,6 +40,10 @@ class World
         bool isAnyColliding(vector<int> &collisionLog);
         void addShape(Shape* shape);
         void deleteAllShapes();
+
+        //fonctions reliées à la logique dynamique
+        void incrementScore(int amount);
+        void updateScore();
 
     //méthodes pour initialiser le monde
     private:

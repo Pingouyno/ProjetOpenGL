@@ -249,6 +249,30 @@ sources/EventManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.s
 .PHONY : sources/EventManager.cpp.s
 
+sources/GameOverlay.o: sources/GameOverlay.cpp.o
+.PHONY : sources/GameOverlay.o
+
+# target to build an object file
+sources/GameOverlay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o
+.PHONY : sources/GameOverlay.cpp.o
+
+sources/GameOverlay.i: sources/GameOverlay.cpp.i
+.PHONY : sources/GameOverlay.i
+
+# target to preprocess a source file
+sources/GameOverlay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.i
+.PHONY : sources/GameOverlay.cpp.i
+
+sources/GameOverlay.s: sources/GameOverlay.cpp.s
+.PHONY : sources/GameOverlay.s
+
+# target to generate assembly for a file
+sources/GameOverlay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.s
+.PHONY : sources/GameOverlay.cpp.s
+
 sources/Globals.o: sources/Globals.cpp.o
 .PHONY : sources/Globals.o
 
@@ -272,6 +296,30 @@ sources/Globals.s: sources/Globals.cpp.s
 sources/Globals.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.s
 .PHONY : sources/Globals.cpp.s
+
+sources/MenuOverlay.o: sources/MenuOverlay.cpp.o
+.PHONY : sources/MenuOverlay.o
+
+# target to build an object file
+sources/MenuOverlay.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.o
+.PHONY : sources/MenuOverlay.cpp.o
+
+sources/MenuOverlay.i: sources/MenuOverlay.cpp.i
+.PHONY : sources/MenuOverlay.i
+
+# target to preprocess a source file
+sources/MenuOverlay.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.i
+.PHONY : sources/MenuOverlay.cpp.i
+
+sources/MenuOverlay.s: sources/MenuOverlay.cpp.s
+.PHONY : sources/MenuOverlay.s
+
+# target to generate assembly for a file
+sources/MenuOverlay.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.s
+.PHONY : sources/MenuOverlay.cpp.s
 
 sources/Overlay.o: sources/Overlay.cpp.o
 .PHONY : sources/Overlay.o
@@ -609,9 +657,15 @@ help:
 	@echo "... sources/EventManager.o"
 	@echo "... sources/EventManager.i"
 	@echo "... sources/EventManager.s"
+	@echo "... sources/GameOverlay.o"
+	@echo "... sources/GameOverlay.i"
+	@echo "... sources/GameOverlay.s"
 	@echo "... sources/Globals.o"
 	@echo "... sources/Globals.i"
 	@echo "... sources/Globals.s"
+	@echo "... sources/MenuOverlay.o"
+	@echo "... sources/MenuOverlay.i"
+	@echo "... sources/MenuOverlay.s"
 	@echo "... sources/Overlay.o"
 	@echo "... sources/Overlay.i"
 	@echo "... sources/Overlay.s"

@@ -1,23 +1,11 @@
 #include"../headers/Overlay.h"
 
-vector<Shape*> staticShapes({});
-vector<Shape*> clickableShapes({});
-
-Overlay::Overlay(){}
-
-Overlay::Overlay(Camera *camera, int worldStateType)
+//aucun constructeur par défaut car on doit appeler ce constructeur dans les classes enfant
+Overlay::Overlay(Camera *camera)
 {
+    staticShapes = {};
+    clickableShapes = {};
     this->camera = camera;
-
-    switch(worldStateType){
-        case 0:
-            setupGameOverlay();
-            break;
-
-        case 1:
-            setupMenuOverlay();
-            break;
-    }
 }
 
 void Overlay::render()
@@ -65,52 +53,8 @@ void Overlay::addClickShape(Quad2D* shape)
     clickableShapes.push_back(shape);
 }
 
-const void Overlay::setupGameOverlay()
+//fonctions virtuelles (À ÊTRE REDÉFINIES)_________________________________________
+void Overlay::setupOverlay()
 {
-	Texture* crosshair_png = new Texture("resources/textures/crosshair.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	(*crosshair_png).texUnit(*shaderProgram2D, "tex0", 0);
-
-	//pour que la texture fasse 64 pixels de large peu importe les dimensions de l'écran
-	float pixelSize = 64.0f; 
-	float sizeRatioX = Shape::toXRatio(pixelSize);
-	float sizeRatioY = Shape::toYRatio(pixelSize);
-	glm::vec3 pos(-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f);
-
-	addStaticShape(new Quad2D(pos, sizeRatioX, sizeRatioY, crosshair_png, [](){}));
-
-    //chiffres
-	addStaticShape(new Quad2D(glm::vec3(-1.0f, -1.0f, 0.0f), 65, 77, TextManager::getNumberTexture('0')));
-	addStaticShape(new Quad2D(glm::vec3(-0.8f, -1.0f, 0.0f), 65, 77, TextManager::getNumberTexture('1')));
-}
-
-
-const void Overlay::setupMenuOverlay()
-{
-	Texture* square_png = new Texture("resources/textures/square.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	square_png->texUnit(*shaderProgram2D, "tex0", 0);
-
-    Texture* sadge_png = new Texture("resources/textures/sadge.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	sadge_png->texUnit(*shaderProgram2D, "tex0", 0);
-
-	Texture* obama_png = new Texture("resources/textures/obama.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	obama_png->texUnit(*shaderProgram2D, "tex0", 0);
-
-	addStaticShape(new Quad2D(glm::vec3(-1.0f, -1.0f, 0.0f), screenWidth, screenHeight, square_png));
-
-	//pour que la texture fasse 128 pixels de large peu importe les dimensions de l'écran
-	float pixelSize = 128.0f; 
-	float sizeRatioX = Shape::toXRatio(pixelSize);
-	float sizeRatioY = Shape::toYRatio(pixelSize);
-	glm::vec2 pos(-1.0f, 0.5f);
-
-	Quad2D* creativeButton = new Quad2D(pos, pixelSize, pixelSize, sadge_png, [](){});
-	Quad2D* survivalButton = new Quad2D(pos, pixelSize, pixelSize, obama_png, [](){});
-
-	survivalButton->despawn();
-
-	creativeButton->clickLogic = [this, creativeButton, survivalButton](){creativeButton->despawn(); survivalButton->spawn(); gameMode = GameMode::CREATIVE;};
-	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); gameMode = GameMode::SURVIVAL; camera->fall();};
-
-	addClickShape(creativeButton);
-	addClickShape(survivalButton);
+    cout << "\n\nERREUR : fonction Overlay::setupOverlay() non redéfinie dans la classe enfant!\n\n";
 }

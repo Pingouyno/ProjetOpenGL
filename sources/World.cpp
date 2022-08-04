@@ -5,11 +5,12 @@ World::World()
 	this->camera = new Camera(screenWidth, screenHeight, glm::vec3(0.0f, 0.0f, 0.2f));
     this->entities = {};
     setup3DShapes();
+	this->score = 0;
 
     //Pour blend les endroits vides des png
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    this->gameOverlay = new Overlay(camera, WorldState::GAME);
-    this->menuOverlay = new Overlay(camera, WorldState::MENU);
+    this->gameOverlay = new GameOverlay(camera);
+    this->menuOverlay = new MenuOverlay(camera);
 }
 
 void World::render()
@@ -90,6 +91,23 @@ void World::deleteAllShapes()
     indices.clear();
     shouldReloadArrays = true;
 }
+
+
+//fonctions reliées à la logique de monde dynamique_____________________________________
+
+void World::incrementScore(int amount)
+{
+	this->score += amount;
+	updateScore();
+}
+
+void World::updateScore()
+{
+	gameOverlay->updateScoreDisplay(score);
+}
+
+//fin fonctions dynamiques______________________________________________________________
+
 
 //méthodes privées
 

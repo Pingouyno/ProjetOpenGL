@@ -18,7 +18,7 @@ class TextManager
     public:
         static void initTextures();
         static void bindToShader(Shader* Shader);
-        static Texture* getNumberTexture(char number);
+        static Texture* getNumberTexture(int number);
 };
 
 
