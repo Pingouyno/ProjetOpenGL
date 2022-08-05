@@ -23,6 +23,7 @@ class Quad2D : public Quad {
     public:
         Quad2D(glm::vec2 pos, float pixWidth, float pixheight, Texture* tex, function <void(void)> clickLogic);
         Quad2D(glm::vec2 pos, float pixWidth, float pixheight, Texture* tex);
+        Quad2D(glm::vec2 pos, Texture* tex);
 
         bool isColliding(glm::vec3 &mousePos);
         

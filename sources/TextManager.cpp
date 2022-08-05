@@ -25,3 +25,11 @@ Texture* TextManager::getNumberTexture(int number)
 {
     return numbers[number]; 
 }
+
+Texture* TextManager::getTextTexture(string textFileName)
+{
+    string s = (TEXT_PATH + "text_" + textFileName + ".png");
+    Texture* text_png = new Texture(s.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    text_png->texUnit(*shader, "tex0", 0);
+    return text_png;
+}

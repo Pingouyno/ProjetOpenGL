@@ -148,11 +148,8 @@ void World::setupEntities()
 
 void World::setup3DShapes()
 {
-	Texture* deux_png = new Texture("resources/textures/deux_icon.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	(*deux_png).texUnit(*shaderProgram3D, "tex0", 0);
-
-	Texture* grass_png = new Texture("resources/textures/grass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	(*grass_png).texUnit(*shaderProgram3D, "tex0", 0);
+	Texture* deux_png = Texture::get2DImgTexture("deux_icon.png");
+	Texture* grass_png = Texture::get2DImgTexture("grass.png");
 
 	glm::vec3 pos(-10.0f, -10.0f, -10.0f);
 	float wallSize = 2.5f;

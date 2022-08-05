@@ -14,6 +14,9 @@ Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex, fun
 Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex)
     : Quad2D(pos, pixWidth, pixHeight, tex, [](){}){}
 
+Quad2D::Quad2D(glm::vec2 pos, Texture* tex)
+: Quad2D(pos, tex->widthImg, tex->heightImg, tex, [](){}){}
+
 
 //pour la souris, on calcule la position de pixel de la souris.
 //position de la souris commence en HAUT À GAUCHE.

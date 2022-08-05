@@ -1,5 +1,7 @@
 #include"../headers/Texture.h"
 
+const string Texture::TEXTURE_PATH = "resources/textures/";
+
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType)
 {
 	// Assigns the type of the texture ot the texture object
@@ -40,7 +42,12 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 
 	// Unbinds the OpenGL Texture object so that it can't accidentally be modified
 	glBindTexture(texType, 0);
+
+	this->widthImg = widthImg;
+	this->heightImg = heightImg;
 }
+
+Texture::Texture(string imgHeadName) : Texture(imgHeadName.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE){}
 
 void Texture::texUnit(Shader& shader, const char* uniform, GLuint unit)
 {
@@ -65,4 +72,20 @@ void Texture::Unbind()
 void Texture::Delete()
 {
 	glDeleteTextures(1, &ID);
+}
+
+//permet de loader une texture 2D sans avoir à la binder à la ligne suivante
+Texture* Texture::get2DImgTexture(string textureFileName)
+{
+    Texture* texture = new Texture(TEXTURE_PATH + textureFileName);
+    texture->texUnit(*shaderProgram2D, "tex0", 0);
+    return texture;
+}
+
+//permet de loader une texture 3D sans avoir à la binder à la ligne suivante
+Texture* Texture::get3DImgTexture(string textureFileName)
+{
+	Texture* texture= new Texture(TEXTURE_PATH + textureFileName);
+    texture->texUnit(*shaderProgram3D, "tex0", 0);
+    return texture;
 }

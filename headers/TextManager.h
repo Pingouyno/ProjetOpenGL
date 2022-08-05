@@ -8,6 +8,8 @@ using namespace std;
 #include"Texture.h"
 #include"shaderClass.h"
 
+//regader : https://seotoolscentre.com/text-to-image-generator
+
 class TextManager
 {
     private:
@@ -19,8 +21,6 @@ class TextManager
         static void initTextures();
         static void bindToShader(Shader* Shader);
         static Texture* getNumberTexture(int number);
+        static Texture* getTextTexture(string textFileName);
 };
-
-
-
 #endif
