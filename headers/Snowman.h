@@ -2,14 +2,13 @@
 #define ENTITY_SNOWMAN_CLASS_H
 
 #include"Entity.h"
-#include"Cube.h"
 
 class Snowman : public Entity
 {
     private:
         Cube* lowerCube;
-        Cube* middleCube;
         Cube* upperCube;
+        Quad* faceQuad;
 
     public:
         //l'entité à suivre
@@ -18,6 +17,7 @@ class Snowman : public Entity
         Snowman(glm::vec3 pos, Entity* targetEntity);
         
         //fonctions redéfinies
+        void setDirFacing(Direction dirFacing);
         function <void(void)> getDefaultClassBehavior();
 
     private:

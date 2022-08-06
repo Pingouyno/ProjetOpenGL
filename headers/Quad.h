@@ -11,7 +11,7 @@ class Quad: public Shape {
         static vector<float> SHAPE_TEXMAP;
 
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
-        enum Axis : char { X = 'x', Y = 'y', Z = 'z'};
+        enum Axis : char { X = 'x', Y = 'y', Z = 'z', NONE = '?'};
 
         float width;
         float height;

@@ -2,19 +2,34 @@
 #define ENTITY_CLASS_H
 
 #include<functional> 
+#include<cmath>
 using namespace std;
 
 #include"Shape.h"
+#include"Quad.h"
+#include"Cube.h"
 
 class Entity
 {
+    public :  
+        /* DIRECTIONS : 
+
+                Z+
+             X-    X+
+                Z-
+        */
+        enum Direction: char {NORTH = 'N', WEST = 'W', EAST = 'E', SOUTH = 'S'};
+        const static Direction DEFAULT_DIRECTION = NORTH;
+
     private:
         //privé car on doit le protéger pour Player (qui utilise camera.pos)
         glm::vec3 pos;
+
     protected:
         function<void(void)> behavior;
         vector<Shape*> entityShapes;
-
+        Direction dirFacing;
+        
     public:
         bool active;
         Entity(glm::vec3 pos);
@@ -26,12 +41,14 @@ class Entity
         
         void moveTo(glm::vec3 newPos);
 
+        //fonctions à redéfinir (facultatif)
         virtual glm::vec3& getPos();
         virtual float getPos(int i);
         //seulement pour usage interne, voir moveTo() à la place
         virtual void setPos(glm::vec3 &newPos);
         
-        //fonctions à redéfinir
+        //fonctions à redéfinir OBLIGATOIREMENT
+        virtual void setDirFacing(Direction dirFacing);
         virtual function<void(void)> getDefaultClassBehavior();
 
 };

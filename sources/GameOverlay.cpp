@@ -18,13 +18,18 @@ void GameOverlay::setupOverlay()
 	addStaticShape(new Quad2D(pos, sizeRatioX, sizeRatioY, crosshair_png));
 
 	//nombres
+	Quad2D* score = new Quad2D(glm::vec2(-0.196f, 0.82f), TextManager::getTextTexture("score"));
+	Quad2D* numThous = new Quad2D(glm::vec2(score->pos[0] + score->width, score->pos[1]), TextManager::getNumberTexture(0));
+	Quad2D* numHundr = new Quad2D(glm::vec2(numThous->pos[0] + numThous->width, score->pos[1]), TextManager::getNumberTexture(0));
+	Quad2D* numTenth = new Quad2D(glm::vec2(numHundr->pos[0] + numHundr->width, score->pos[1]), TextManager::getNumberTexture(0));
+	Quad2D* numUnity = new Quad2D(glm::vec2(numTenth->pos[0] + numTenth->width, score->pos[1]), TextManager::getNumberTexture(0));
 	scoreQuads = 
-	{
-		new Quad2D(glm::vec3(-1.0f, -1.0f, 0.0f), TextManager::getTextTexture("score")),
-		new Quad2D(glm::vec3(-0.7f, -1.0f, 0.0f), TextManager::getNumberTexture(0)),
-		new Quad2D(glm::vec3(-0.65f, -1.0f, 0.0f), TextManager::getNumberTexture(0)),
-		new Quad2D(glm::vec3(-0.6f, -1.0f, 0.0f), TextManager::getNumberTexture(0)),
-		new Quad2D(glm::vec3(-0.55f, -1.0f, 0.0f), TextManager::getNumberTexture(0))
+	{	
+		score,
+		numThous,
+		numHundr,
+		numTenth,
+		numUnity
 	};
 	for (Quad2D* ptrShape : scoreQuads) addStaticShape(ptrShape);
 }

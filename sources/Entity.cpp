@@ -2,9 +2,10 @@
 
 Entity::Entity(glm::vec3 pos)
 {
-    this->pos = glm::vec3(0.0f, 0.0f, 0.0f);
+    this->pos = pos;
     this->behavior = [](){};
     this->entityShapes = {};
+    this->dirFacing = DEFAULT_DIRECTION;
     this->active = true;
 }
 
@@ -59,8 +60,12 @@ void Entity::setPos(glm::vec3 &newPos)
     this->pos = newPos;
 }
 
+//FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
 
-//FONCTIONS À REDÉFINIR___________________________________
+void Entity::setDirFacing(Direction dirFacing)
+{
+    cout << "\n\nERREUR : fonction Entity::setDirFacing(Direction dirFacing) non redéfinie dans la classe enfant!\n\n";
+}
 
 function<void(void)> Entity::getDefaultClassBehavior()
 {

@@ -7,11 +7,12 @@
 using namespace std;
 
 #include"../libraries/include/glm/glm.hpp"
+using namespace glm;
 
 #include"Globals.h"
 #include"Texture.h"
 
-
+//Le formes vont du SUD-OUEST (-x, -y) au NORD-OUEST (+x, +y) et du BAS vers le HAUT
 class Shape {
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
@@ -41,7 +42,7 @@ class Shape {
         Texture* tex = nullptr;
 
         virtual void render();
-        virtual void resize(float &size); 
+        virtual void resize(float size); 
         virtual bool isColliding(glm::vec3 &camPos);
         virtual int getVerticeCount();
         virtual int getIndiceCount();

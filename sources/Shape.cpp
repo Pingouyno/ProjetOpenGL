@@ -17,7 +17,7 @@ Shape::Shape(){
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 void Shape::render(){printUndefinedErr("RENDER");}
-void Shape::resize(float &size){printUndefinedErr("RESIZE");}
+void Shape::resize(float size){printUndefinedErr("RESIZE");}
 bool Shape::isColliding(glm::vec3 &camPos){printUndefinedErr("COLLIDING"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}

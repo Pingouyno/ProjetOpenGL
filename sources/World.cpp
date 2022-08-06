@@ -142,8 +142,20 @@ void World::setupEntities()
 
 	entities = 
 	{
-		firstSnowman
+		firstSnowman,
 	};
+
+	Snowman* lastSnowman = firstSnowman;
+	Snowman* newSnowman = nullptr;
+	//ajouter un train de snowmans
+	/*
+	for (int i = 0 ; i < 50 ; i++)
+	{
+		newSnowman = new Snowman(vec3(lastSnowman->getPos() + vec3(10.0f, 0, 12.0f)), lastSnowman);
+		entities.push_back(newSnowman);
+		lastSnowman = newSnowman;
+	}
+	*/
 }
 
 void World::setup3DShapes()

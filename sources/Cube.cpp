@@ -24,10 +24,11 @@ vector<float> Cube::SHAPE_TEXMAP(
     }
 );
 
-void Cube::initCube(glm::vec3 pos, float size, glm::vec3 color, Texture* tex)
+void Cube::initCube(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex)
 {
     this->pos = pos;
-    this->size = size;
+    this->width = width;
+    this->height = height;
     this->color = color;
     this->tex = tex;
     if (this->tex == nullptr)
@@ -39,19 +40,29 @@ void Cube::initCube(glm::vec3 pos, float size, glm::vec3 color, Texture* tex)
     generate(); 
 }
 
+Cube::Cube(glm::vec3 pos, float width, float height, Texture* tex)
+{
+    initCube(pos, width, height, DEFAULT_COLOR, tex);
+}
+
+Cube::Cube(glm::vec3 pos, float width, float height, glm::vec3 color)
+{
+    initCube(pos, width, height, color, nullptr);
+}
+
 Cube::Cube(glm::vec3 pos, float size, Texture* tex)
 {
-    initCube(pos, size, DEFAULT_COLOR, tex);
+    initCube(pos, size, size, DEFAULT_COLOR, tex);
 }
 
 Cube::Cube(glm::vec3 pos, float size, glm::vec3 color)
 {
-    initCube(pos, size, color, nullptr);
+    initCube(pos, size, size, color, nullptr);
 }
 
 Cube::Cube(glm::vec3 pos, float size)
 {
-    initCube(pos, size, DEFAULT_COLOR, nullptr);
+    initCube(pos, size, size, DEFAULT_COLOR, nullptr);
 }
 
 int Cube::getVerticeCount()
@@ -79,9 +90,15 @@ void Cube::render()
     }else glDrawElements(GL_TRIANGLES, getIndiceCount(), GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
-void Cube::resize(float &size)
+void Cube::resize(float size)
 {
-    this->size = size;
+    resize(size, size);
+}
+
+void Cube::resize(float width, float height)
+{
+    this->width = width;
+    this->height = height;
     initVertices();
     refreshGLVertices();
 }
@@ -92,9 +109,9 @@ bool Cube::isColliding(glm::vec3 &camPos)
     float distY = pos[1] - camPos[1];
     float distZ = pos[2] - camPos[2];
 
-    return (distX >= -(size + camBoxWidth) && distX <= camBoxWidth
-        && distY >= -(size + camBoxHeight) && distY <= 0
-        && distZ >= -(size + camBoxWidth) && distZ <= camBoxWidth);
+    return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
+        && distY >= -(height + camBoxHeight) && distY <= 0
+        && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
 }
 
 void Cube::initIndices()
@@ -133,20 +150,20 @@ void Cube::initVertices()
 
     shapeVertices = 
     {
-        x,        y,        z,         //0 Bottom near left    
-        x,        y,        z + size,  //1 Bottom far left   
-        x + size, y,        z + size,  //2 Bottom far right   
-        x + size, y,        z,         //3 Bottom near right
+        x,         y,        z,         //0 Bottom near left    
+        x,         y,        z + width,  //1 Bottom far left   
+        x + width, y,        z + width,  //2 Bottom far right   
+        x + width, y,        z,         //3 Bottom near right
 
-        x,        y + size, z,         //4 Top near left    
-        x,        y + size, z + size,  //5 Top far left   
-        x + size, y + size, z + size,  //6 Top far right   
-        x + size, y + size, z,         //7 Top near right
+        x,         y + height, z,         //4 Top near left    
+        x,         y + height, z + width,  //5 Top far left   
+        x + width, y + height, z + width,  //6 Top far right   
+        x + width, y + height, z,         //7 Top near right
 
        //ces coordonnées sont nécessaires pour le texture mapping
-        x,        y + size, z,         //8  Top near left (copie 4)    
-        x,        y + size, z + size,  //9  Top far left (copie 5)  
-        x + size, y + size, z + size,  //10 Top far right (copie 6)  
-        x + size, y + size, z          //11 Top near right (copie 7)
+        x,         y + height, z,         //8  Top near left (copie 4)    
+        x,         y + height, z + width,  //9  Top far left (copie 5)  
+        x + width, y + height, z + width,  //10 Top far right (copie 6)  
+        x + width, y + height, z          //11 Top near right (copie 7)
     };
 }
