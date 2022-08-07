@@ -13,9 +13,6 @@ class Quad: public Shape {
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
         enum Axis : char { X = 'x', Y = 'y', Z = 'z', NONE = '?'};
 
-        float width;
-        float height;
-
         Axis axis;
 
         void initQuad(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex, Axis axis);
@@ -30,8 +27,8 @@ class Quad: public Shape {
         vector<float> getShapeTexMap();
 
         void render();
-        void resize(float &width, float &heigth);
-        void resize(float &size);
+        void resize(float width, float height);
+        void setAxis(Axis axis);
         bool isColliding(glm::vec3 &camPos);
     
     private:

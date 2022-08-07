@@ -17,6 +17,7 @@ class Shape {
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
         enum Type : char;
+        enum Rotation : char;
 
         static glm::vec3 DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
@@ -32,6 +33,8 @@ class Shape {
 
         glm::vec3 pos;
         glm::vec3 color;
+        float width;
+        float height;
         vector<float> texMap;
         vector<float> shapeVertices;  //non statique car change           
         vector<int> shapeIndices;    
@@ -42,7 +45,7 @@ class Shape {
         Texture* tex = nullptr;
 
         virtual void render();
-        virtual void resize(float size); 
+        virtual void resize(float width, float height);
         virtual bool isColliding(glm::vec3 &camPos);
         virtual int getVerticeCount();
         virtual int getIndiceCount();
@@ -68,6 +71,8 @@ class Shape {
         void despawn();
         void moveTo(float x, float y, float z);
         void moveTo(glm::vec3 pos);
+        void resize(float size);
+        void rotate(float degrees, Rotation rotationDir);
         bool hasTexture();
         void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
 

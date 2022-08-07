@@ -78,17 +78,28 @@ void Quad::render()
     }
 }
 
-void Quad::resize(float &size)
-{
-    resize(size, size);
-}
+void Quad::resize(float width, float height)
+{   
+    
+    float scaleX = width / this->width - 1;
+    float scaleY = height / this->height - 1;
 
-void Quad::resize(float &width, float &height)
-{
+    for (int i = 0 ; i < shapeVertices.size(); i += 3)
+    {
+        shapeVertices[i] += scaleX * (shapeVertices[i] - pos[0]);
+        shapeVertices[i + 1] += scaleY * (shapeVertices[i + 1] - pos[1]);
+        shapeVertices[i + 2] += scaleX * (shapeVertices[i + 2] - pos[2]);
+    }
     this->width = width;
     this->height = height;
-    initVertices();
+
     refreshGLVertices();
+}
+
+void Quad::setAxis(Axis axis)
+{
+    this->axis = axis;
+    initVertices();
 }
 
 bool Quad::isColliding(glm::vec3 &camPos)

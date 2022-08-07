@@ -3,6 +3,8 @@
 #include"../headers/Shape.h"
 
 enum Shape::Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
+//dans le sens des aiguilles d'une montre (horizontal), la tête vers le bas (vertical)
+enum Shape::Rotation : char { HORIZONTAL = 'h', VERTICAL = 'v'};
 
 glm::vec3 Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
@@ -17,7 +19,7 @@ Shape::Shape(){
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
 
 void Shape::render(){printUndefinedErr("RENDER");}
-void Shape::resize(float size){printUndefinedErr("RESIZE");}
+void Shape::resize(float width, float height){printUndefinedErr("RESIZE");}
 bool Shape::isColliding(glm::vec3 &camPos){printUndefinedErr("COLLIDING"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}
@@ -72,16 +74,39 @@ void Shape::despawn()
 
 void Shape::moveTo(float x, float y, float z)
 {
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
-    initVertices();
+    float diffX = x - pos[0];
+    float diffY = y - pos[1];
+    float diffZ = z - pos[2]; 
+    for (int i = 0; i < shapeVertices.size(); i += 3)
+    {
+        shapeVertices[i] += diffX;
+        shapeVertices[i + 1] += diffY;
+        shapeVertices[i + 2] += diffZ;
+    }
+    pos = vec3(x, y, z);
     refreshGLVertices();
 }
 
 void Shape::moveTo(glm::vec3 pos)
 {
     moveTo(pos[0], pos[1], pos[2]);
+}
+
+void Shape::resize(float size)
+{
+    resize(size, size);
+}
+
+void Shape::rotate(float degrees, Rotation rotationDir)
+{
+    if (rotationDir == Rotation::HORIZONTAL)
+    {
+        
+    }else if (rotationDir == Rotation::VERTICAL)
+    {
+
+    }
+    refreshGLVertices();
 }
 
 bool Shape::hasTexture()

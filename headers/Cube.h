@@ -9,12 +9,13 @@ class Cube : public Shape {
         static int VERTICE_COUNT;
         static int INDICE_COUNT; 
         static vector<float> SHAPE_TEXMAP;  
-        float width;
-        float height;
 
-        void initCube(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex);
+        float depth;
+
+        void initCube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color, Texture* tex);
+        Cube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color);
         Cube(glm::vec3 pos, float width, float height, Texture* tex);
-         Cube(glm::vec3 pos, float width, float height, glm::vec3 color);
+        Cube(glm::vec3 pos, float width, float height, glm::vec3 color);
         Cube(glm::vec3 pos, float size, Texture* tex);
         Cube(glm::vec3 pos, float size, glm::vec3 color);
         Cube(glm::vec3 pos, float size);
@@ -24,8 +25,8 @@ class Cube : public Shape {
         vector<float> getShapeTexMap();
         
         void render();
-        void resize(float size); 
-        void resize(float width, float height); 
+        void resize(float width, float height);
+        void resize(float width, float height, float depth);
         bool isColliding(glm::vec3 &camPos);  
 
     private:

@@ -10,6 +10,9 @@ class Snowman : public Entity
         Cube* upperCube;
         Quad* faceQuad;
 
+        Shape* sizeCube;
+        Shape* sizeQuad;
+
     public:
         //l'entité à suivre
         Entity* targetEntity;

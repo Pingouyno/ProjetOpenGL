@@ -24,11 +24,12 @@ vector<float> Cube::SHAPE_TEXMAP(
     }
 );
 
-void Cube::initCube(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex)
+void Cube::initCube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color, Texture* tex)
 {
     this->pos = pos;
     this->width = width;
     this->height = height;
+    this->depth = depth;
     this->color = color;
     this->tex = tex;
     if (this->tex == nullptr)
@@ -40,29 +41,34 @@ void Cube::initCube(glm::vec3 pos, float width, float height, glm::vec3 color, T
     generate(); 
 }
 
+Cube::Cube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color)
+{
+    initCube(pos, width, height, depth, color, nullptr);
+}
+
 Cube::Cube(glm::vec3 pos, float width, float height, Texture* tex)
 {
-    initCube(pos, width, height, DEFAULT_COLOR, tex);
+    initCube(pos, width, height, width, DEFAULT_COLOR, tex);
 }
 
 Cube::Cube(glm::vec3 pos, float width, float height, glm::vec3 color)
 {
-    initCube(pos, width, height, color, nullptr);
+    initCube(pos, width, height, width, color, nullptr);
 }
 
 Cube::Cube(glm::vec3 pos, float size, Texture* tex)
 {
-    initCube(pos, size, size, DEFAULT_COLOR, tex);
+    initCube(pos, size, size, size, DEFAULT_COLOR, tex);
 }
 
 Cube::Cube(glm::vec3 pos, float size, glm::vec3 color)
 {
-    initCube(pos, size, size, color, nullptr);
+    initCube(pos, size, size, size, color, nullptr);
 }
 
 Cube::Cube(glm::vec3 pos, float size)
 {
-    initCube(pos, size, size, DEFAULT_COLOR, nullptr);
+    initCube(pos, size, size, size, DEFAULT_COLOR, nullptr);
 }
 
 int Cube::getVerticeCount()
@@ -90,16 +96,26 @@ void Cube::render()
     }else glDrawElements(GL_TRIANGLES, getIndiceCount(), GL_UNSIGNED_INT, (void*)(indexInIndices * sizeof(int)));
 }
 
-void Cube::resize(float size)
-{
-    resize(size, size);
+void Cube::resize(float width, float height)
+{   
+    resize(width, depth, width);
 }
 
-void Cube::resize(float width, float height)
-{
+void Cube::resize(float width, float height, float depth)
+{   
+    float scaleX = width / this->width - 1;
+    float scaleY = height / this->height - 1;
+    float scaleZ = depth / this->depth - 1;
+
+    for (int i = 0 ; i < shapeVertices.size(); i += 3)
+    {
+        shapeVertices[i] += scaleX * (shapeVertices[i] - pos[0]);
+        shapeVertices[i + 1] += scaleY * (shapeVertices[i + 1] - pos[1]);
+        shapeVertices[i + 2] += scaleZ * (shapeVertices[i + 2] - pos[2]);
+    }
     this->width = width;
     this->height = height;
-    initVertices();
+    this->depth = depth;
     refreshGLVertices();
 }
 
@@ -150,20 +166,20 @@ void Cube::initVertices()
 
     shapeVertices = 
     {
-        x,         y,        z,         //0 Bottom near left    
-        x,         y,        z + width,  //1 Bottom far left   
-        x + width, y,        z + width,  //2 Bottom far right   
-        x + width, y,        z,         //3 Bottom near right
+        x,         y,        z,          //0 Bottom near left    
+        x,         y,        z  + depth,  //1 Bottom far left   
+        x + width, y,        z  + depth,  //2 Bottom far right   
+        x + width, y,        z,          //3 Bottom near right
 
         x,         y + height, z,         //4 Top near left    
-        x,         y + height, z + width,  //5 Top far left   
-        x + width, y + height, z + width,  //6 Top far right   
+        x,         y + height, z  + depth,  //5 Top far left   
+        x + width, y + height, z  + depth,  //6 Top far right   
         x + width, y + height, z,         //7 Top near right
 
        //ces coordonnées sont nécessaires pour le texture mapping
         x,         y + height, z,         //8  Top near left (copie 4)    
-        x,         y + height, z + width,  //9  Top far left (copie 5)  
-        x + width, y + height, z + width,  //10 Top far right (copie 6)  
+        x,         y + height, z  + depth,  //9  Top far left (copie 5)  
+        x + width, y + height, z  + depth,  //10 Top far right (copie 6)  
         x + width, y + height, z          //11 Top near right (copie 7)
     };
 }

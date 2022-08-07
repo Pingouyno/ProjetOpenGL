@@ -14,22 +14,22 @@ void Snowman::setDirFacing(Direction dirFacing)
     switch(dirFacing)
     {
         case NORTH:
-            faceQuad->axis = Quad::Axis::Z;
+            faceQuad->setAxis(Quad::Axis::Z);
             faceQuad->moveTo(upperCube->pos + glm::vec3(0, 0, upperCube->width + 0.02f));
             break;
         
         case WEST:
-            faceQuad->axis = Quad::Axis::X;
+            faceQuad->setAxis(Quad::Axis::X);
             faceQuad->moveTo(upperCube->pos + glm::vec3(upperCube->width + 0.02f, 0, 0.0f));
             break;
         
         case EAST:
-            faceQuad->axis = Quad::Axis::X;
+            faceQuad->setAxis(Quad::Axis::X);
             faceQuad->moveTo(upperCube->pos + glm::vec3(-0.02f, 0, 0));
             break;
 
         case SOUTH:
-            faceQuad->axis = Quad::Axis::Z;
+            faceQuad->setAxis(Quad::Axis::Z);
             faceQuad->moveTo(upperCube->pos + glm::vec3(0, 0, -0.02f));
             break;
     };
@@ -67,9 +67,12 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         if (abs(distX) < minDistX) factX = 0;
         if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
-        
 
         moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
+
+        //formes test
+        ((Cube*)this->sizeCube)->resize(this->sizeCube->width + 0.01f, this->sizeCube->height + 0.01f, ((Cube*)this->sizeCube)->depth + 0.01f);
+        this->sizeQuad->resize(this->sizeQuad->width + 0.01f, this->sizeQuad->height + 0.01f);
     };
 }
 
@@ -87,11 +90,18 @@ void Snowman::initSnowman()
     //visage
     faceQuad = new Quad(upperCube->pos, cubeSize, Texture::get3DImgTexture("obama.png"), Quad::Axis::Z);
 
+
+        //snowman est à (10, 10, 10)
+    sizeCube = new Cube(getPos() + vec3(5, 5, 5), 3, 7, 9, colorBlack);
+    sizeQuad = new Quad(getPos() + vec3(10, 10, 10), 3, 8, Texture::get2DImgTexture("grass.png"), Quad::Axis::Z);
+
     entityShapes = 
     {
         lowerCube,
         upperCube,
         faceQuad,
+        sizeCube,
+        sizeQuad
     };
     setDirFacing(NORTH);
 }
