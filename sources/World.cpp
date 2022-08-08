@@ -178,14 +178,14 @@ void World::setup3DShapes()
 			if (z != LAB_SIZE)
 			{
 				if (x != LAB_SIZE)
-					addShape(new Quad(pos, wallSize, deux_png, Quad::Axis::Y));
+					addShape(new Quad(pos - vec3(0, wallSize/2, 0), wallSize, deux_png, Quad::Axis::Y));
 
 				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
-					addShape(new Quad(pos, wallSize, grass_png, Quad::Axis::X));
+					addShape(new Quad(pos - vec3(wallSize/2, 0, 0), wallSize, grass_png, Quad::Axis::X));
 			}
 
 			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
-				addShape(new Quad(pos, wallSize, grass_png, Quad::Axis::Z));
+				addShape(new Quad(pos - vec3(0, 0, wallSize/2), wallSize, grass_png, Quad::Axis::Z));
 
 			pos[0] += wallSize;
 

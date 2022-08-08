@@ -6,15 +6,13 @@ using namespace std;
 
 #include"Quad.h"
 
+//Les coordonnées d'un quad2D commencent en bas à gauche, plutôt qu'au centre de gravité de la forme
 class Quad2D : public Quad {
 
     float pixWidth;
     float pixHeight;
     float pixPosX;
     float pixPosY;
-
-    public:
-        Quad::Axis AXIS_2D = Axis::Z;
 
     //potentiellement remettre public
     public:

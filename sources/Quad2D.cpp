@@ -8,7 +8,7 @@ Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex, fun
     this->pixHeight = pixHeight;
     this->pixPosX = Shape::toXPixelCoord(pos[0]);
     this->pixPosY = Shape::toYPixelCoord(pos[1]);
-    initQuad(glm::vec3(pos, 0.0f), Shape::toXRatio(pixWidth), Shape::toYRatio(pixHeight), DEFAULT_COLOR, tex, AXIS_2D);
+    initQuad(glm::vec3(pos, 0.0f), Shape::toXRatio(pixWidth), Shape::toYRatio(pixHeight), DEFAULT_COLOR, tex, OVERLAY);
 }
 
 Quad2D::Quad2D(glm::vec2 pos, float pixWidth, float pixHeight, Texture* tex)
@@ -22,10 +22,9 @@ Quad2D::Quad2D(glm::vec2 pos, Texture* tex)
 //position de la souris commence en HAUT À GAUCHE.
 bool Quad2D::isColliding(glm::vec3 &mousePos)
 {
-    //cout << "\n" << pixPosX << "/" << pixPosX + pixWidth  << " | " << pixPosY - pixHeight<< "/" << pixPosY;
-    //cout << "--> " <<mousePos[0] << " " << mousePos[1] << " " << mousePos[2] << " \n";
-    return (mousePos[0] > pixPosX && mousePos[0] < pixPosX + pixWidth
-        && mousePos[1] > pixPosY - pixHeight && mousePos[1] < pixPosY);
+    float diffX = abs(mousePos[0] - pixPosX);
+    float diffY = abs(mousePos[1] - pixPosY);
+    return (diffX <= pixWidth && diffY <= pixHeight);
 }
 
 void Quad2D::doClickLogic()

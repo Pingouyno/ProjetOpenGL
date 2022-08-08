@@ -3,14 +3,14 @@
 #include"../headers/Shape.h"
 
 enum Shape::Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
-//dans le sens des aiguilles d'une montre (horizontal), la tête vers le bas (vertical)
-enum Shape::Rotation : char { HORIZONTAL = 'h', VERTICAL = 'v'};
 
 glm::vec3 Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
-float Shape::camBoxHeight = 1.4f;
-float Shape::camBoxWidth = 0.2f;
+
+//ces valeurs sont divisées par deux car on calculer les colissions devant et derrière (diamètre plutôt que rayon)
+float Shape::camBoxHeight = 2.8f;
+float Shape::camBoxWidth = 0.4f;
 
 Shape::Shape(){
     shouldReloadArrays = true;
@@ -97,14 +97,62 @@ void Shape::resize(float size)
     resize(size, size);
 }
 
-void Shape::rotate(float degrees, Rotation rotationDir)
+mat4 Shape::verticesToMat4()
 {
-    if (rotationDir == Rotation::HORIZONTAL)
-    {
-        
-    }else if (rotationDir == Rotation::VERTICAL)
-    {
+    mat3 mat3 = glm::make_mat3(&shapeVertices[0]);
+    mat4 mat4 = glm::mat4(mat3);
+    return mat4;
+}
 
+void printMat3(mat3 &mat)
+{
+    cout << "\nmat3 : {";
+    float* matArr = glm::value_ptr(mat);
+    for (int i = 0 ; i < mat.length(); i++)
+    {
+        cout << "\n\t";
+        for (int j = 0 ; j < 3; j++)
+        {
+            cout << matArr[3*i + j] << ", ";
+        }
+    }
+    cout << "\n};\n";
+}
+
+void printMat4(mat4 &mat)
+{
+    cout << "\nmat4 : {";
+    float* matArr = glm::value_ptr(mat);
+    for (int i = 0 ; i < mat.length(); i++)
+    {
+        cout << "\n\t";
+        for (int j = 0 ; j < 4; j++)
+        {
+            cout << matArr[4*i + j] << ", ";
+        }
+    }
+    cout << "\n};\n";
+}
+
+
+void Shape::rotate(vec3 axis)
+{
+    //environ 2*pi
+    float radiansInCircle = 6.28f;
+    float angle = radiansInCircle/60.0f/2.0f;
+
+    mat4 origin = glm::translate(mat4(1.0f), pos);
+    mat4 rotationMat = glm::rotate(origin, angle, pos + vec3(1, 1, 0));
+
+    for (int i = 0 ; i < shapeVertices.size(); i+=3)
+    {
+        vec4 currentVertice = vec4(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2], 1);
+        
+        currentVertice = currentVertice * rotationMat;
+
+        shapeVertices[i] = currentVertice[0];
+        shapeVertices[i + 1] = currentVertice[1];
+        shapeVertices[i + 2] = currentVertice[2];
     }
     refreshGLVertices();
 }

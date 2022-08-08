@@ -104,27 +104,27 @@ void Quad::setAxis(Axis axis)
 
 bool Quad::isColliding(glm::vec3 &camPos)
 {
-    float distX = pos[0] - camPos[0];
-    float distY = pos[1] - camPos[1];
-    float distZ = pos[2] - camPos[2];
+    float distX = abs(pos[0] - camPos[0]);
+    float distY = abs(pos[1] - camPos[1]);
+    float distZ = abs(pos[2] - camPos[2]);
 
     switch(axis){
         case X:
-            return (distX >= -camBoxWidth && distX <= camBoxWidth
-                && distY >= -(width + camBoxHeight) && distY <= 0
-                && distZ >= -(height+ camBoxWidth) && distZ <= camBoxWidth);
+            return (distX <= camBoxWidth / 2.0f
+                && distY <= (width + camBoxHeight) / 2.0f
+                && distZ <= (height + camBoxWidth) / 2.0f);
             break;
 
         case Y:
-            return (distX >= -(height + camBoxWidth) && distX <= camBoxWidth
-                && distY >= -camBoxHeight && distY <= 0
-                && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
+            return (distX <= (height + camBoxWidth) / 2.0f
+                && distY <= camBoxHeight / 2.0f
+                && distZ <= (width + camBoxWidth) / 2.0f);
             break;
 
         case Z:
-            return (distX >= -(height + camBoxWidth) && distX <= camBoxWidth
-                && distY >= -(width + camBoxHeight) && distY <= 0
-                && distZ >= -camBoxWidth && distZ <= camBoxWidth);
+            return (distX <= (height + camBoxWidth) / 2.0f
+                && distY <= (width + camBoxHeight) / 2.0f
+                && distZ <= camBoxWidth / 2.0f);
             break;
     }
     return false;
@@ -162,6 +162,11 @@ void Quad::initVertices()
                 x,       y + height, z + width,  //2 Top right   
                 x,       y,          z + width   //3 Bottom right
             };
+            for (int i = 0 ; i < shapeVertices.size() ; i+= 3) 
+            {
+                shapeVertices[i + 1] -= height / 2.0f;
+                shapeVertices[i + 2] -= width / 2.0f;
+            }
             break;
 
         case Y:
@@ -172,9 +177,30 @@ void Quad::initVertices()
                 x + width,  y,        z + height, //2 Top right   
                 x + width,  y,        z           //3 Bottom right
             };
+            for (int i = 0 ; i < shapeVertices.size() ; i+= 3) 
+            {
+                shapeVertices[i + 0] -= width / 2.0f;
+                shapeVertices[i + 2] -= width / 2.0f;
+            }
             break;
 
         case Z:
+            shapeVertices = 
+            {
+                x,          y,          z,       //0 Bottom left    
+                x,          y + height, z,       //1 Top left   
+                x + width,  y + height, z,       //2 Top right   
+                x + width,  y,          z        //3 Bottom right
+            };
+            for (int i = 0 ; i < shapeVertices.size() ; i+= 3) 
+            {
+                shapeVertices[i + 0] -= width / 2.0f;
+                shapeVertices[i + 1] -= height / 2.0f;
+            }
+            break;
+
+        //Équivaut à Axis::Z sans le forEach. les quad2D ont des coordonnées qui commencent en bas à gauche plutôt qu'au milieu
+        case OVERLAY:
             shapeVertices = 
             {
                 x,          y,          z,       //0 Bottom left    

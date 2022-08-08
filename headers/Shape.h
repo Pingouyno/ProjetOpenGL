@@ -7,6 +7,10 @@
 using namespace std;
 
 #include"../libraries/include/glm/glm.hpp"
+#include"../libraries/include/glm/gtc/matrix_transform.hpp"
+#include"../libraries/include/glm/gtc/type_ptr.hpp"
+#include"../libraries/include/glm/gtx/rotate_vector.hpp"
+#include"../libraries/include/glm/gtx/vector_angle.hpp"
 using namespace glm;
 
 #include"Globals.h"
@@ -17,7 +21,6 @@ class Shape {
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
         enum Type : char;
-        enum Rotation : char;
 
         static glm::vec3 DEFAULT_COLOR;
         static vector<float> DEFAULT_TEXMAP;
@@ -72,7 +75,8 @@ class Shape {
         void moveTo(float x, float y, float z);
         void moveTo(glm::vec3 pos);
         void resize(float size);
-        void rotate(float degrees, Rotation rotationDir);
+        mat4 verticesToMat4();
+        void rotate(vec3 axis);
         bool hasTexture();
         void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
 

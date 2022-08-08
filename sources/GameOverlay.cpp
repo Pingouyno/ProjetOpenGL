@@ -8,14 +8,12 @@ GameOverlay::GameOverlay(Camera* camera) : Overlay(camera){
 
 void GameOverlay::setupOverlay()
 {
-	Texture* crosshair_png = Texture::get2DImgTexture("crosshair.png");
-
 	//crosshair
 	float pixelSize = 64.0f; 
 	float sizeRatioX = Shape::toXRatio(pixelSize);
 	float sizeRatioY = Shape::toYRatio(pixelSize);
 	glm::vec3 pos(-sizeRatioX / 2.0f, -sizeRatioY / 2.0f, 0.0f);
-	addStaticShape(new Quad2D(pos, sizeRatioX, sizeRatioY, crosshair_png));
+	addStaticShape(new Quad2D(pos, pixelSize, pixelSize, Texture::get2DImgTexture("crosshair.png")));
 
 	//nombres
 	Quad2D* score = new Quad2D(glm::vec2(-0.196f, 0.82f), TextManager::getTextTexture("score"));

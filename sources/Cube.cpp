@@ -121,13 +121,13 @@ void Cube::resize(float width, float height, float depth)
 
 bool Cube::isColliding(glm::vec3 &camPos)
 {
-    float distX = pos[0] - camPos[0];
-    float distY = pos[1] - camPos[1];
-    float distZ = pos[2] - camPos[2];
+    float distX = abs(pos[0] - camPos[0]);
+    float distY = abs(pos[1] - camPos[1]);
+    float distZ = abs(pos[2] - camPos[2]);
 
-    return (distX >= -(width + camBoxWidth) && distX <= camBoxWidth
-        && distY >= -(height + camBoxHeight) && distY <= 0
-        && distZ >= -(width + camBoxWidth) && distZ <= camBoxWidth);
+    return (distX <= (width + camBoxWidth) / 2.0f
+        && distY <= (height + camBoxHeight) / 2.0f
+        && distZ <= (depth + camBoxWidth) / 2.0f);
 }
 
 void Cube::initIndices()
@@ -159,7 +159,6 @@ void Cube::initIndices()
 
 void Cube::initVertices()
 {
-
     float x = pos[0];
     float y = pos[1];
     float z = pos[2];
@@ -171,15 +170,23 @@ void Cube::initVertices()
         x + width, y,        z  + depth,  //2 Bottom far right   
         x + width, y,        z,          //3 Bottom near right
 
-        x,         y + height, z,         //4 Top near left    
+        x,         y + height, z,           //4 Top near left    
         x,         y + height, z  + depth,  //5 Top far left   
         x + width, y + height, z  + depth,  //6 Top far right   
-        x + width, y + height, z,         //7 Top near right
+        x + width, y + height, z,           //7 Top near right
 
        //ces coordonnées sont nécessaires pour le texture mapping
-        x,         y + height, z,         //8  Top near left (copie 4)    
+        x,         y + height, z,           //8  Top near left (copie 4)    
         x,         y + height, z  + depth,  //9  Top far left (copie 5)  
         x + width, y + height, z  + depth,  //10 Top far right (copie 6)  
-        x + width, y + height, z          //11 Top near right (copie 7)
+        x + width, y + height, z            //11 Top near right (copie 7)
     };
+
+    //centrer le cube sur pos, plutôt que de commencer sur pos
+    for (int i = 0 ; i < shapeVertices.size() ; i+= 3) 
+    {
+        shapeVertices[i + 0] -= width / 2.0f;
+        shapeVertices[i + 1] -= height / 2.0f;
+        shapeVertices[i + 2] -= depth / 2.0f;
+    }
 }

@@ -68,11 +68,12 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
 
-        moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
+        //moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
 
         //formes test
-        ((Cube*)this->sizeCube)->resize(this->sizeCube->width + 0.01f, this->sizeCube->height + 0.01f, ((Cube*)this->sizeCube)->depth + 0.01f);
-        this->sizeQuad->resize(this->sizeQuad->width + 0.01f, this->sizeQuad->height + 0.01f);
+        //((Cube*)this->sizeCube)->resize(this->sizeCube->width * 1.001f, this->sizeCube->height * 1.001f, ((Cube*)this->sizeCube)->depth * 1.001f);
+        //this->sizeQuad->resize(this->sizeQuad->width * 1.001f, this->sizeQuad->height * 1.001f);
+	    rotCube->rotate(vec3(1, 1, 1));
     };
 }
 
@@ -95,13 +96,17 @@ void Snowman::initSnowman()
     sizeCube = new Cube(getPos() + vec3(5, 5, 5), 3, 7, 9, colorBlack);
     sizeQuad = new Quad(getPos() + vec3(10, 10, 10), 3, 8, Texture::get2DImgTexture("grass.png"), Quad::Axis::Z);
 
+    rotCube = new Cube(vec3(5, 8, 9), 2.0f, Texture::get2DImgTexture("wood.png"));
+    Cube* rotCubeOrigin = new Cube(rotCube->pos, 0.3f);
     entityShapes = 
     {
         lowerCube,
         upperCube,
         faceQuad,
         sizeCube,
-        sizeQuad
+        sizeQuad,
+        rotCube,
+        rotCubeOrigin
     };
     setDirFacing(NORTH);
 }
