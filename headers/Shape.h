@@ -4,6 +4,7 @@
 #include<vector>
 #include<iterator>
 #include<iostream>
+#include<cmath>
 using namespace std;
 
 #include"../libraries/include/glm/glm.hpp"
@@ -26,6 +27,10 @@ class Shape {
         static vector<float> DEFAULT_TEXMAP;
         static vector<float> NO_TEXMAP;
 
+        const static vec3 ROT_X;
+        const static vec3 ROT_Y;
+        const static vec3 ROT_Z;
+
         //propriétés hitbox Camera
         static float camBoxHeight;
         static float camBoxWidth;
@@ -34,6 +39,8 @@ class Shape {
 
         //variables/fonctions à utiliser et redéfinir;
 
+        //rotation verticale = x, horizontale = y, de côté = z
+        glm::vec3 direction;
         glm::vec3 pos;
         glm::vec3 color;
         float width;
@@ -75,8 +82,8 @@ class Shape {
         void moveTo(float x, float y, float z);
         void moveTo(glm::vec3 pos);
         void resize(float size);
-        mat4 verticesToMat4();
-        void rotate(vec3 axis);
+        void rotate(vec3 axis, float radians);
+        void lookAt(glm::vec3 targetPos);
         bool hasTexture();
         void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
 
@@ -85,7 +92,10 @@ class Shape {
         void generate();
 
     private:
+        float degreesToRadians(float degrees);
+        float radiansToDegrees(float radians);
         void printUndefinedErr(string funcName);
+        void printMat4(mat4 &mat);
 };
 
 #endif

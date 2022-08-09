@@ -77,7 +77,6 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 			PlaySound::playJumpSound();
 			world->incrementScore(1);
 		}
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{

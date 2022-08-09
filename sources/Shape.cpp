@@ -4,6 +4,10 @@
 
 enum Shape::Type : char { PHYSICAL = 'p', OVERLAY = 'o', HUD_STATIC = 's', HUD_COLLIDE = 'c'};
 
+const vec3 Shape::ROT_X = vec3(1, 0, 0);
+const vec3 Shape::ROT_Y = vec3(0, 1, 0);
+const vec3 Shape::ROT_Z = vec3(0, 0, 1);
+
 glm::vec3 Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
@@ -14,6 +18,8 @@ float Shape::camBoxWidth = 0.4f;
 
 Shape::Shape(){
     shouldReloadArrays = true;
+    //TODO: changer la direction de base pour certaines classes de Quad (sinon on ne les voit pas ; deviennent parallèles à la caméra)
+    direction = vec3(0, 0, 1);
 }
 
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
@@ -97,64 +103,60 @@ void Shape::resize(float size)
     resize(size, size);
 }
 
-mat4 Shape::verticesToMat4()
+//tourne toujours dans le sens horaire
+void Shape::rotate(vec3 axis, float radians)
 {
-    mat3 mat3 = glm::make_mat3(&shapeVertices[0]);
-    mat4 mat4 = glm::mat4(mat3);
-    return mat4;
-}
+    //pour rotation autour d'un point (x, y, z), avec T = translate et R = rotate : T(x,y,z) * R * T(-x,-y,-z) 
+    //applique règle de la main droite : on multiplie le vecteur à gauche pour un sens, et à droite pour l'auter sens
+   
+    //translation de l'origine de 3 vecteurs orthonormés sur pos
+    mat4 translateMat = glm::translate(mat4(1), pos); //T(x, y, z)
+    mat4 minusTranslateMat = glm::translate(mat4(1), -pos); //T(-x, -y, -z)
 
-void printMat3(mat3 &mat)
-{
-    cout << "\nmat3 : {";
-    float* matArr = glm::value_ptr(mat);
-    for (int i = 0 ; i < mat.length(); i++)
-    {
-        cout << "\n\t";
-        for (int j = 0 ; j < 3; j++)
-        {
-            cout << matArr[3*i + j] << ", ";
-        }
-    }
-    cout << "\n};\n";
-}
-
-void printMat4(mat4 &mat)
-{
-    cout << "\nmat4 : {";
-    float* matArr = glm::value_ptr(mat);
-    for (int i = 0 ; i < mat.length(); i++)
-    {
-        cout << "\n\t";
-        for (int j = 0 ; j < 4; j++)
-        {
-            cout << matArr[4*i + j] << ", ";
-        }
-    }
-    cout << "\n};\n";
-}
-
-
-void Shape::rotate(vec3 axis)
-{
-    //environ 2*pi
-    float radiansInCircle = 6.28f;
-    float angle = radiansInCircle/60.0f/2.0f;
-
-    mat4 origin = glm::translate(mat4(1.0f), pos);
-    mat4 rotationMat = glm::rotate(origin, angle, pos + vec3(1, 1, 0));
+    //obtention de la formule de rotation d'un vecteur autour d'un axe
+    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
 
     for (int i = 0 ; i < shapeVertices.size(); i+=3)
     {
-        vec4 currentVertice = vec4(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2], 1);
-        
-        currentVertice = currentVertice * rotationMat;
-
+        vec3 currentVertice(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2]);
+        //multiplication de la coordonnée par la formule pour la rotation 
+        currentVertice = glm::vec3(translateMat * rotationMat * minusTranslateMat * glm::vec4(currentVertice, 1.0));
         shapeVertices[i] = currentVertice[0];
         shapeVertices[i + 1] = currentVertice[1];
         shapeVertices[i + 2] = currentVertice[2];
     }
+    //on translate le vecteur de direction sur l'origin, puis on le rétablit à l'origine en soustrayant pos
+    direction = glm::vec3(translateMat * rotationMat * minusTranslateMat * glm::vec4(direction + pos, 1.0)) - pos;
     refreshGLVertices();
+}
+
+//angle = arccos[(xa * xb + ya * yb) / (√(xa2 + ya2) * √(xb2 + yb2))]
+//on sait que glm::length(vec2 a) = √(xa^2 + ya^2)
+/*https://stackoverflow.com/questions/5467007/inverting-rotation-in-3d-to-make-an-object-always-face-the-camera/5487981#5487981
+ la fonctioon lookAt est faite pour la caméra, et donc elle fait une rotation entière du monde autour de la caméra.
+ On utilise une formule qui pratique la rotation de lookAt, sans avoir le déplacement (comme ça la forme tourne sur elle même)*/
+void Shape::lookAt(vec3 targetPos)
+{
+    bool shouldRotateAgain;
+    do{
+        vec3 vecTowardTarget = targetPos - pos;
+        float formula = (direction.x * vecTowardTarget.x + direction.z * vecTowardTarget.z) / (glm::length(vec2(direction.x, direction.z)) * glm::length(vec2(vecTowardTarget.x, vecTowardTarget.z)));
+        float angleRadians = acos(formula);  
+        shouldRotateAgain = angleRadians > 0.01f;
+        if (shouldRotateAgain) 
+        {
+            rotate(Shape::ROT_Y, (angleRadians));
+        }
+    }while(shouldRotateAgain);
+
+    /*
+    cout << "relativePos : " << vecTowardTarget[0] << " | " << vecTowardTarget[1] << " | " << vecTowardTarget[2]<< "\n";
+    cout << "direction : "<< direction[0] << " | " << direction[1] << " | " << direction[2]<< "\n";
+    cout << "distance : " << glm::length(vec2(vecTowardTarget.x, vecTowardTarget.z)) << "\n";
+    cout << "formula : " << formula << "\n";
+    cout <<  "angleRadian : " << angleRadians << "\n";
+    cout <<  "angleDegrees : " << radiansToDegrees(angleRadians) << "\n\n\n";
+    */
 }
 
 bool Shape::hasTexture()
@@ -210,7 +212,64 @@ void Shape::generate()
     spawn();
 }
 
+/*on utilise une approximation de PI, donc sin(degreesToRadians) ne va pas être exact. Utiliser sinf();
+ nb radians / cercle = environ 2*pi */
+float Shape::degreesToRadians(float degrees) 
+{
+    return degrees * (M_PI / 180);
+}
+
+float Shape::radiansToDegrees(float radians)
+{
+    return radians * 180.0f/M_PI;
+}
+
 void Shape::printUndefinedErr(string funcName)
 {
     cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
 }
+
+void Shape::printMat4(mat4 &mat)
+{
+    cout << "\nmat4 : {";
+    float* matArr = glm::value_ptr(mat);
+    for (int i = 0 ; i < mat.length(); i++)
+    {
+        cout << "\n\t";
+        for (int j = 0 ; j < 4; j++)
+        {
+            cout << matArr[4*i + j] << ", ";
+        }
+    }
+    cout << "\n};\n";
+}
+
+/*https://stackoverflow.com/questions/5467007/inverting-rotation-in-3d-to-make-an-object-always-face-the-camera/5487981#5487981
+ la fonctioon lookAt est faite pour la caméra, et donc elle fait une rotation entière du monde autour de la caméra.
+ On utilise une formule qui pratique la rotation de lookAt, sans avoir le déplacement (comme ça la forme tourne sur elle même)
+void Shape::lookAt(vec3 targetPos)
+{
+    vec3 front = glm::normalize(pos - targetPos);
+    vec3 right = normalize(cross(Shape::ROT_Y, front));
+
+    vec3 up = cross(front, right);
+    mat4 transformation
+               (right.x, up.x, front.x, pos.x,
+                right.y, up.y, front.y, pos.y,
+                right.z, up.z, front.z, pos.z,
+                0,       0,    0,       1);
+    
+    for (int i = 0 ; i < shapeVertices.size(); i+=3)
+    {
+        vec3 currentVertice(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2]);
+        
+        //multiplication de la coordonnée par la formule pour la rotation 
+        currentVertice = glm::vec3(transformation * glm::vec4(currentVertice, 1.0));
+
+        shapeVertices[i] = currentVertice[0];
+        shapeVertices[i + 1] = currentVertice[1];
+        shapeVertices[i + 2] = currentVertice[2];
+    }
+    refreshGLVertices();
+}
+*/

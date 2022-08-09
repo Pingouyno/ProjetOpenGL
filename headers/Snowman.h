@@ -13,6 +13,7 @@ class Snowman : public Entity
         Shape* sizeCube;
         Shape* sizeQuad;
         Cube* rotCube;
+        Cube* vecCube;
 
     public:
         //l'entité à suivre

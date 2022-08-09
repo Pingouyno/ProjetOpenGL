@@ -42,6 +42,10 @@ function <void(void)> Snowman::getDefaultClassBehavior()
     float speed = 2.0f/60.0f;
     float minDistX = 0.7f;
     float minDistY = 0.1f;
+    
+    //int* num = new int[1]{0};
+    //int* cpt = &num[0];
+
     return [this, speed, minDistX, minDistY]()
     {
         //trouver les distances
@@ -68,12 +72,14 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
 
-        //moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
-
+        moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
         //formes test
         //((Cube*)this->sizeCube)->resize(this->sizeCube->width * 1.001f, this->sizeCube->height * 1.001f, ((Cube*)this->sizeCube)->depth * 1.001f);
-        //this->sizeQuad->resize(this->sizeQuad->width * 1.001f, this->sizeQuad->height * 1.001f);
-	    rotCube->rotate(vec3(1, 1, 1));
+        //this->sizeQuad->resize(this->sizeQuad->width * 1.001f, this->sizeQuad->height * 1.001f);            
+        rotCube->lookAt(targetEntity->getPos());
+        vecCube->moveTo(rotCube->direction + rotCube->pos);
+        sizeQuad->lookAt(targetEntity->getPos());
+        sizeCube->lookAt(targetEntity->getPos());
     };
 }
 
@@ -96,8 +102,8 @@ void Snowman::initSnowman()
     sizeCube = new Cube(getPos() + vec3(5, 5, 5), 3, 7, 9, colorBlack);
     sizeQuad = new Quad(getPos() + vec3(10, 10, 10), 3, 8, Texture::get2DImgTexture("grass.png"), Quad::Axis::Z);
 
-    rotCube = new Cube(vec3(5, 8, 9), 2.0f, Texture::get2DImgTexture("wood.png"));
-    Cube* rotCubeOrigin = new Cube(rotCube->pos, 0.3f);
+    rotCube = new Cube(vec3(5, -5, 5), 2.0f, Texture::get2DImgTexture("wood.png"));
+    vecCube = new Cube(rotCube->direction + vec3(0, rotCube->pos.y, 0), 0.1f, 3.0f, 0.1f, vec3(180, 180, 180));
     entityShapes = 
     {
         lowerCube,
@@ -106,7 +112,9 @@ void Snowman::initSnowman()
         sizeCube,
         sizeQuad,
         rotCube,
-        rotCubeOrigin
+        vecCube
     };
+
+    rotCube->rotate(Shape::ROT_Y, 2*M_PI/32);
     setDirFacing(NORTH);
 }
