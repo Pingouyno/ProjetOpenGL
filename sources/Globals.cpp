@@ -100,4 +100,4 @@ float screenWidth = 1420.0f;
 float screenHeight = 900.0f;
 
 WorldState worldState = WorldState::GAME;
-GameMode gameMode = GameMode::SURVIVAL;
+GameMode gameMode = GameMode::CREATIVE;

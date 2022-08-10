@@ -3,9 +3,9 @@
 
 #include"Shape.h"
 
+//Un Quad doit être en axe Z pour utiliser lookAt(), car cette fonction fait pointer l'axe Z sur la position
 class Quad: public Shape {
     public:
-
         static int VERTICE_COUNT;
         static int INDICE_COUNT; 
         static vector<float> SHAPE_TEXMAP;

@@ -6,14 +6,7 @@
 class Snowman : public Entity
 {
     private:
-        Cube* lowerCube;
-        Cube* upperCube;
         Quad* faceQuad;
-
-        Shape* sizeCube;
-        Shape* sizeQuad;
-        Cube* rotCube;
-        Cube* vecCube;
 
     public:
         //l'entité à suivre

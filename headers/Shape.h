@@ -12,6 +12,7 @@ using namespace std;
 #include"../libraries/include/glm/gtc/type_ptr.hpp"
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"
 #include"../libraries/include/glm/gtx/vector_angle.hpp"
+#include"../libraries/include/glm/gtx/string_cast.hpp"
 using namespace glm;
 
 #include"Globals.h"
@@ -19,6 +20,12 @@ using namespace glm;
 
 //Le formes vont du SUD-OUEST (-x, -y) au NORD-OUEST (+x, +y) et du BAS vers le HAUT
 class Shape {
+    private:
+        //rotation verticale = x, horizontale = y, de côté = z
+        glm::vec3 dirVecX;
+        glm::vec3 dirVecY;
+        glm::vec3 dirVecZ;
+
     public:
         //axe sur lequel on peut "enfiler en brochette" le quad ; pour une plateforme horizontale on a 'Y'.
         enum Type : char;
@@ -31,6 +38,10 @@ class Shape {
         const static vec3 ROT_Y;
         const static vec3 ROT_Z;
 
+        const static vec4 AXIS_X;
+        const static vec4 AXIS_Y;
+        const static vec4 AXIS_Z;
+
         //propriétés hitbox Camera
         static float camBoxHeight;
         static float camBoxWidth;
@@ -40,7 +51,7 @@ class Shape {
         //variables/fonctions à utiliser et redéfinir;
 
         //rotation verticale = x, horizontale = y, de côté = z
-        glm::vec3 direction;
+        mat4 originTransposition;
         glm::vec3 pos;
         glm::vec3 color;
         float width;
@@ -68,7 +79,6 @@ class Shape {
         
         //**fin fonctions à redéfinir**
 
-
     //fonctions reliées à Shape, ne PAS redéfinir
     public:
         static void initVariables(float screenWidth, float screenHeight);
@@ -84,8 +94,16 @@ class Shape {
         void resize(float size);
         void rotate(vec3 axis, float radians);
         void lookAt(glm::vec3 targetPos);
+        void lookAtHorizontal(glm::vec3 targetPos);
+        void lookAtVertical(glm::vec3 targetPos);
+        void resetRotation();
         bool hasTexture();
         void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
+        vec3 getXAxis();
+        vec3 getYAxis();
+        vec3 getZAxis();
+
+
 
         //pour la redéfinition de variables statiques
         void refreshGLVertices();
@@ -95,7 +113,8 @@ class Shape {
         float degreesToRadians(float degrees);
         float radiansToDegrees(float radians);
         void printUndefinedErr(string funcName);
-        void printMat4(mat4 &mat);
+        float getAngleRadians(vec2 a, vec2 b);
+        float getAngleRadians(vec3 a, vec3 b);
 };
 
 #endif

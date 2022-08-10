@@ -15,22 +15,22 @@ void Snowman::setDirFacing(Direction dirFacing)
     {
         case NORTH:
             faceQuad->setAxis(Quad::Axis::Z);
-            faceQuad->moveTo(upperCube->pos + glm::vec3(0, 0, upperCube->width + 0.02f));
+            faceQuad->moveTo(getPos() + glm::vec3(0, 0, faceQuad->width + 0.02f));
             break;
         
         case WEST:
             faceQuad->setAxis(Quad::Axis::X);
-            faceQuad->moveTo(upperCube->pos + glm::vec3(upperCube->width + 0.02f, 0, 0.0f));
+            faceQuad->moveTo(getPos() + glm::vec3(faceQuad->width + 0.02f, 0, 0.0f));
             break;
         
         case EAST:
             faceQuad->setAxis(Quad::Axis::X);
-            faceQuad->moveTo(upperCube->pos + glm::vec3(-0.02f, 0, 0));
+            faceQuad->moveTo(faceQuad->pos + glm::vec3(-0.02f, 0, 0));
             break;
 
         case SOUTH:
             faceQuad->setAxis(Quad::Axis::Z);
-            faceQuad->moveTo(upperCube->pos + glm::vec3(0, 0, -0.02f));
+            faceQuad->moveTo(faceQuad->pos + glm::vec3(0, 0, -0.02f));
             break;
     };
 }
@@ -43,17 +43,17 @@ function <void(void)> Snowman::getDefaultClassBehavior()
     float minDistX = 0.7f;
     float minDistY = 0.1f;
     
-    //int* num = new int[1]{0};
-    //int* cpt = &num[0];
+    int* num = new int[1]{0};
+    int* cpt = &num[0];
 
-    return [this, speed, minDistX, minDistY]()
+    return [this, speed, minDistX, minDistY, cpt]()
     {
         //trouver les distances
         float distX = this->getPos(0) - targetEntity->getPos(0);
         float distY = this->getPos(1) - targetEntity->getPos(1);
         float distZ = this->getPos(2) - targetEntity->getPos(2);
 
-        //trouver le sens de l'orientation du visage
+        /*trouver le sens de l'orientation du visage
         if (abs(distX) > abs(distZ))
         {
             distX > 0 ? setDirFacing(EAST) : setDirFacing(WEST);
@@ -61,25 +61,21 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         {
             distZ > 0 ? setDirFacing(SOUTH) : setDirFacing(NORTH);
         }
+        */
 
         //trouver le sens du mouvement
         float factX = distX < 0 ? 1 : -1;
         float factY = distY < 0 ? 1 : -1;
         float factZ = distZ < 0 ? 1 : -1;
 
-        //arrêter de trmbler si l'axe est proche
+        //arrêter de trembler si l'axe est proche
         if (abs(distX) < minDistX) factX = 0;
         if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
 
         moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
-        //formes test
-        //((Cube*)this->sizeCube)->resize(this->sizeCube->width * 1.001f, this->sizeCube->height * 1.001f, ((Cube*)this->sizeCube)->depth * 1.001f);
-        //this->sizeQuad->resize(this->sizeQuad->width * 1.001f, this->sizeQuad->height * 1.001f);            
-        rotCube->lookAt(targetEntity->getPos());
-        vecCube->moveTo(rotCube->direction + rotCube->pos);
-        sizeQuad->lookAt(targetEntity->getPos());
-        sizeCube->lookAt(targetEntity->getPos());
+
+        faceQuad->lookAt(targetEntity->getPos());
     };
 }
 
@@ -87,34 +83,15 @@ void Snowman::initSnowman()
 {
     //corps
     vec3 colorBlack(0, 0, 0);
-    float cubeSize = 0.7f; 
+    float cubeSize = 2.0f; 
     float lowWidth = 0.2f;
     float lowHeight = 1.5f;
 
-    lowerCube = new Cube(getPos() - vec3(lowWidth, 2*lowHeight, lowWidth) / 2.0f, lowWidth, lowHeight, Texture::get2DImgTexture("wood.png"));
-    upperCube = new Cube(getPos() - vec3(cubeSize, 0, cubeSize) / 2.0f, cubeSize, colorBlack);
-
     //visage
-    faceQuad = new Quad(upperCube->pos, cubeSize, Texture::get3DImgTexture("obama.png"), Quad::Axis::Z);
+    faceQuad = new Quad(getPos(), cubeSize, Texture::get3DImgTexture("obama.png"), Quad::Axis::Z);
 
-
-        //snowman est à (10, 10, 10)
-    sizeCube = new Cube(getPos() + vec3(5, 5, 5), 3, 7, 9, colorBlack);
-    sizeQuad = new Quad(getPos() + vec3(10, 10, 10), 3, 8, Texture::get2DImgTexture("grass.png"), Quad::Axis::Z);
-
-    rotCube = new Cube(vec3(5, -5, 5), 2.0f, Texture::get2DImgTexture("wood.png"));
-    vecCube = new Cube(rotCube->direction + vec3(0, rotCube->pos.y, 0), 0.1f, 3.0f, 0.1f, vec3(180, 180, 180));
     entityShapes = 
     {
-        lowerCube,
-        upperCube,
-        faceQuad,
-        sizeCube,
-        sizeQuad,
-        rotCube,
-        vecCube
+        faceQuad
     };
-
-    rotCube->rotate(Shape::ROT_Y, 2*M_PI/32);
-    setDirFacing(NORTH);
 }

@@ -8,6 +8,10 @@ const vec3 Shape::ROT_X = vec3(1, 0, 0);
 const vec3 Shape::ROT_Y = vec3(0, 1, 0);
 const vec3 Shape::ROT_Z = vec3(0, 0, 1);
 
+const vec4 Shape::AXIS_X = vec4(ROT_X, 1.0f);
+const vec4 Shape::AXIS_Y = vec4(ROT_Y, 1.0f);
+const vec4 Shape::AXIS_Z = vec4(ROT_Z, 1.0f);
+
 glm::vec3 Shape::DEFAULT_COLOR({1.0f, 0.5f, 0.5f});
 std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
@@ -19,7 +23,10 @@ float Shape::camBoxWidth = 0.4f;
 Shape::Shape(){
     shouldReloadArrays = true;
     //TODO: changer la direction de base pour certaines classes de Quad (sinon on ne les voit pas ; deviennent parallèles à la caméra)
-    direction = vec3(0, 0, 1);
+    originTransposition = mat4(1.0f);
+    dirVecX = ROT_X;
+    dirVecY = ROT_Y;
+    dirVecZ = ROT_Z;
 }
 
 //**DÉBUT FONCTIONS D'HÉRITAGE VIRTUELLES**
@@ -103,7 +110,7 @@ void Shape::resize(float size)
     resize(size, size);
 }
 
-//tourne toujours dans le sens horaire
+//tourne toujours dans le de la règle de la main droite
 void Shape::rotate(vec3 axis, float radians)
 {
     //pour rotation autour d'un point (x, y, z), avec T = translate et R = rotate : T(x,y,z) * R * T(-x,-y,-z) 
@@ -114,49 +121,92 @@ void Shape::rotate(vec3 axis, float radians)
     mat4 minusTranslateMat = glm::translate(mat4(1), -pos); //T(-x, -y, -z)
 
     //obtention de la formule de rotation d'un vecteur autour d'un axe
-    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
+    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, vec3(originTransposition * vec4(axis, 1.0f))); //R
+    mat4 transformation = translateMat * rotationMat * minusTranslateMat;
 
     for (int i = 0 ; i < shapeVertices.size(); i+=3)
     {
-        vec3 currentVertice(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2]);
+        vec4 currentVertice = vec4(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2], 1.0);
         //multiplication de la coordonnée par la formule pour la rotation 
-        currentVertice = glm::vec3(translateMat * rotationMat * minusTranslateMat * glm::vec4(currentVertice, 1.0));
+        currentVertice = transformation * currentVertice;
         shapeVertices[i] = currentVertice[0];
         shapeVertices[i + 1] = currentVertice[1];
         shapeVertices[i + 2] = currentVertice[2];
     }
-    //on translate le vecteur de direction sur l'origin, puis on le rétablit à l'origine en soustrayant pos
-    direction = glm::vec3(translateMat * rotationMat * minusTranslateMat * glm::vec4(direction + pos, 1.0)) - pos;
+    //on rotationne les coordonnées locales de la forme en appliquant la rotation sur le repère local orthonormé
+    originTransposition = rotationMat * originTransposition;
     refreshGLVertices();
 }
 
-//angle = arccos[(xa * xb + ya * yb) / (√(xa2 + ya2) * √(xb2 + yb2))]
-//on sait que glm::length(vec2 a) = √(xa^2 + ya^2)
-/*https://stackoverflow.com/questions/5467007/inverting-rotation-in-3d-to-make-an-object-always-face-the-camera/5487981#5487981
- la fonctioon lookAt est faite pour la caméra, et donc elle fait une rotation entière du monde autour de la caméra.
- On utilise une formule qui pratique la rotation de lookAt, sans avoir le déplacement (comme ça la forme tourne sur elle même)*/
+/*Peut faire pointer l'axe Z d'un objet vers une position avec un maximum de 4 appels rotate()
+ **NOTE : Un Quad doit être en axe Z pour utiliser lookAt(), car cette fonction fait pointer l'axe Z sur la position*/
 void Shape::lookAt(vec3 targetPos)
 {
-    bool shouldRotateAgain;
-    do{
-        vec3 vecTowardTarget = targetPos - pos;
-        float formula = (direction.x * vecTowardTarget.x + direction.z * vecTowardTarget.z) / (glm::length(vec2(direction.x, direction.z)) * glm::length(vec2(vecTowardTarget.x, vecTowardTarget.z)));
-        float angleRadians = acos(formula);  
-        shouldRotateAgain = angleRadians > 0.01f;
-        if (shouldRotateAgain) 
-        {
-            rotate(Shape::ROT_Y, (angleRadians));
-        }
-    }while(shouldRotateAgain);
+    //obligé de reset pour s'assurer que l'axe X n'a pas été rotate, avant d'appeler lookAtVertical->(une fonction fragile)
+    resetRotation();
+    lookAtHorizontal(targetPos);
+    lookAtVertical(targetPos);
+    refreshGLVertices();
+}
 
-    /*
-    cout << "relativePos : " << vecTowardTarget[0] << " | " << vecTowardTarget[1] << " | " << vecTowardTarget[2]<< "\n";
-    cout << "direction : "<< direction[0] << " | " << direction[1] << " | " << direction[2]<< "\n";
-    cout << "distance : " << glm::length(vec2(vecTowardTarget.x, vecTowardTarget.z)) << "\n";
-    cout << "formula : " << formula << "\n";
-    cout <<  "angleRadian : " << angleRadians << "\n";
-    cout <<  "angleDegrees : " << radiansToDegrees(angleRadians) << "\n\n\n";
-    */
+//oriente l'axe Z de l'objet sur le joueur (horizontalement)
+void Shape::lookAtHorizontal(vec3 targetPos)
+{
+    //on fait abstraction de l'axe Y. On transpose donc les coordonnées sur un monde 2D plat.
+    //obtenir le vecteur de translation de l'objet vers target, ainsi que le vecteur de direction Z orthonormé
+    vec2 vecTowardsTarget2D = vec2(targetPos.x - pos.x, targetPos.z - pos.z);
+    vec2 dirVec2D = vec2(getZAxis().x, getZAxis().z);
+
+    //obtenir l'angle (horizontal) entre le vecteur de translation et celui de direction, pour savoir comment faire la rotation
+    //on ne peut pas connaître le sens de cet angle, donc on devra vérifier par la suite si l'on a tourné dans la bonne direction
+    float angleRadians = getAngleRadians(vecTowardsTarget2D, dirVec2D);
+
+    if (angleRadians > 0.01f)
+    {
+        rotate(ROT_Y, angleRadians);
+
+        //calculer le nouvel angle. Si celui-ci n'est pas bon alors on recommence mais en faisant -2*rotation. 
+        //nous permettra assurément de se centrer sur le vecteur de translation
+        vec2 dirVec2D = vec2(getZAxis().x, getZAxis().z);
+        float newAngle = getAngleRadians(vecTowardsTarget2D, dirVec2D);
+        if (newAngle > 0.01f)
+        {
+            rotate(ROT_Y, -2*angleRadians);
+        }
+    }
+}
+
+//peut seulement être utilisé DIRECTEMENT après lookAtHorizontal (pour le moment)
+//peut seulement être utilisé lorsqu'on sait que Y = 0, comme ça le vecteur de translation est normal à l'axe Y.
+void Shape::lookAtVertical(vec3 targetPos)
+{
+    //obtenir le vecteur de translation sur la cible
+    vec3 vecTowardsTarget = vec3(targetPos - pos);
+    //vecteur normal au vecteur de translation  ET à l'axe X. Nous donne le nouveau vecteur que nous voulons comme orientation verticale
+    //on fait "- getXAxis()" pour que le vecteur obtenu soit dans le sens inverse, et donc que (0, 0, 1) pointe sur nous plutôt que (0, 0 -1)
+    vec3 crossedVector = glm::cross( - getXAxis(), vecTowardsTarget);
+
+    float angleRadians = getAngleRadians(crossedVector, getYAxis());
+
+    if (angleRadians > 0.01f)
+    {
+        rotate(ROT_X, angleRadians);
+        
+        crossedVector = glm::cross( - getXAxis(), vecTowardsTarget);
+        float newAngle = getAngleRadians(crossedVector, getYAxis());
+        if (newAngle > 0.01f)
+        {
+           rotate(ROT_X, -2*angleRadians);
+        }
+    }
+}
+
+//reset la forme à la position de départ
+void Shape::resetRotation()
+{
+    originTransposition = mat4(1.0f);
+    initVertices();
+    refreshGLVertices();
 }
 
 bool Shape::hasTexture()
@@ -173,6 +223,24 @@ void Shape::reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::v
     if (isColliding(tryPosX)) collisionLog[0]++;
     if (isColliding(tryPosY)) collisionLog[1]++;
     if (isColliding(tryPosZ)) collisionLog[2]++;
+}
+
+vec3 Shape::getXAxis()
+{
+    return vec3(originTransposition * AXIS_X);
+    //return dirVecX;
+}
+
+vec3 Shape::getYAxis()
+{
+    return vec3(originTransposition * AXIS_Y);
+    //return dirVecY;
+}
+
+vec3 Shape::getZAxis()
+{
+    return vec3(originTransposition * AXIS_Z);
+    //return dirVecZ;
 }
 
 void Shape::refreshGLVertices()
@@ -229,47 +297,20 @@ void Shape::printUndefinedErr(string funcName)
     cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
 }
 
-void Shape::printMat4(mat4 &mat)
+/*angle = arccos[(xa * xb + ya * yb) / (√(xa2 + ya2) * √(xb2 + yb2))]
+ on sait que glm::length(vec2 a) = √(xa^2 + ya^2)*/
+float Shape::getAngleRadians(vec2 a, vec2 b)
 {
-    cout << "\nmat4 : {";
-    float* matArr = glm::value_ptr(mat);
-    for (int i = 0 ; i < mat.length(); i++)
-    {
-        cout << "\n\t";
-        for (int j = 0 ; j < 4; j++)
-        {
-            cout << matArr[4*i + j] << ", ";
-        }
-    }
-    cout << "\n};\n";
+    return acos(
+             (a.x * b.x + a.y * b.y) 
+      / (glm::length(a) * glm::length(b))
+    );  
 }
 
-/*https://stackoverflow.com/questions/5467007/inverting-rotation-in-3d-to-make-an-object-always-face-the-camera/5487981#5487981
- la fonctioon lookAt est faite pour la caméra, et donc elle fait une rotation entière du monde autour de la caméra.
- On utilise une formule qui pratique la rotation de lookAt, sans avoir le déplacement (comme ça la forme tourne sur elle même)
-void Shape::lookAt(vec3 targetPos)
+float Shape::getAngleRadians(vec3 a, vec3 b)
 {
-    vec3 front = glm::normalize(pos - targetPos);
-    vec3 right = normalize(cross(Shape::ROT_Y, front));
-
-    vec3 up = cross(front, right);
-    mat4 transformation
-               (right.x, up.x, front.x, pos.x,
-                right.y, up.y, front.y, pos.y,
-                right.z, up.z, front.z, pos.z,
-                0,       0,    0,       1);
-    
-    for (int i = 0 ; i < shapeVertices.size(); i+=3)
-    {
-        vec3 currentVertice(shapeVertices[i], shapeVertices[i+1], shapeVertices[i+2]);
-        
-        //multiplication de la coordonnée par la formule pour la rotation 
-        currentVertice = glm::vec3(transformation * glm::vec4(currentVertice, 1.0));
-
-        shapeVertices[i] = currentVertice[0];
-        shapeVertices[i + 1] = currentVertice[1];
-        shapeVertices[i + 2] = currentVertice[2];
-    }
-    refreshGLVertices();
+    return acos(
+        (a.x * b.x + a.y * b.y + a.z * b.z) 
+      / (glm::length(a) * glm::length(b))
+    );  
 }
-*/
