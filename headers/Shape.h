@@ -86,6 +86,9 @@ class Shape {
         static float toYRatio(float pixSize);
         static float toXPixelCoord(float xRatio);
         static float toYPixelCoord(float yRatio);
+        static float getAngleRadians(vec2 a, vec2 b);
+        static float getAngleRadians(vec3 a, vec3 b);
+        static vec4 getVecIfRotate(vec3 axis, float radians, vec3 vectorToRotate);
 
         void spawn();
         void despawn();
@@ -93,6 +96,7 @@ class Shape {
         void moveTo(glm::vec3 pos);
         void resize(float size);
         void rotate(vec3 axis, float radians);
+        void rotateAround(vec3 pos, vec3 axis, float radians);
         void lookAt(glm::vec3 targetPos);
         void lookAtHorizontal(glm::vec3 targetPos);
         void lookAtVertical(glm::vec3 targetPos);
@@ -103,8 +107,6 @@ class Shape {
         vec3 getYAxis();
         vec3 getZAxis();
 
-
-
         //pour la redéfinition de variables statiques
         void refreshGLVertices();
         void generate();
@@ -113,8 +115,6 @@ class Shape {
         float degreesToRadians(float degrees);
         float radiansToDegrees(float radians);
         void printUndefinedErr(string funcName);
-        float getAngleRadians(vec2 a, vec2 b);
-        float getAngleRadians(vec3 a, vec3 b);
 };
 
 #endif

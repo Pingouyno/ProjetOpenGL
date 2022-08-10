@@ -6,7 +6,14 @@
 class Snowman : public Entity
 {
     private:
-        Quad* faceQuad;
+        //formes du cube
+        Cube* body;
+        Cube* leftArm;
+        Cube* rightArm;
+        Cube* leftLeg;
+        Cube* rightLeg;
+        Cube* neck;
+        Cube* head;
 
     public:
         //l'entité à suivre
@@ -15,7 +22,7 @@ class Snowman : public Entity
         Snowman(glm::vec3 pos, Entity* targetEntity);
         
         //fonctions redéfinies
-        void setDirFacing(Direction dirFacing);
+        //void setDirFacing(Direction dirFacing);
         function <void(void)> getDefaultClassBehavior();
 
     private:

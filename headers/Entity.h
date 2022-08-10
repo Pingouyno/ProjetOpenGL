@@ -24,6 +24,7 @@ class Entity
     private:
         //privé car on doit le protéger pour Player (qui utilise camera.pos)
         glm::vec3 pos;
+        mat4 originTransposition;
 
     protected:
         function<void(void)> behavior;
@@ -38,8 +39,12 @@ class Entity
         void doBehavior();
         void setBehavior(function<void(void)> behavior);
         void addShape(Shape* ptrShape);
-        
         void moveTo(glm::vec3 newPos);
+        void rotate(vec3 axis, float radians);
+        void lookAtHorizontal(vec3 targetPos);
+        vec3 getXAxis();
+        vec3 getYAxis();
+        vec3 getZAxis();
 
         //fonctions à redéfinir (facultatif)
         virtual glm::vec3& getPos();
@@ -48,7 +53,7 @@ class Entity
         virtual void setPos(glm::vec3 &newPos);
         
         //fonctions à redéfinir OBLIGATOIREMENT
-        virtual void setDirFacing(Direction dirFacing);
+        //virtual void setDirFacing(Direction dirFacing);
         virtual function<void(void)> getDefaultClassBehavior();
 
 };

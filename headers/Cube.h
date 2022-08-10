@@ -13,6 +13,7 @@ class Cube : public Shape {
         float depth;
 
         void initCube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color, Texture* tex);
+        Cube(glm::vec3 pos, glm::vec3 dimensions, Texture* tex);
         Cube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color);
         Cube(glm::vec3 pos, float width, float height, Texture* tex);
         Cube(glm::vec3 pos, float width, float height, glm::vec3 color);

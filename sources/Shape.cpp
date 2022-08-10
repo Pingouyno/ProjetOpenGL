@@ -75,6 +75,31 @@ float Shape::toYPixelCoord(float yRatio)
     return (1.0f - ((yRatio + 1.0f) / 2.0f)) * screenHeight;
 }
 
+/*angle = arccos[(xa * xb + ya * yb) / (√(xa2 + ya2) * √(xb2 + yb2))]
+ on sait que glm::length(vec2 a) = √(xa^2 + ya^2)*/
+float Shape::getAngleRadians(vec2 a, vec2 b)
+{
+    return acos(
+             (a.x * b.x + a.y * b.y) 
+      / (glm::length(a) * glm::length(b))
+    );  
+}
+
+float Shape::getAngleRadians(vec3 a, vec3 b)
+{
+    return acos(
+        (a.x * b.x + a.y * b.y + a.z * b.z) 
+      / (glm::length(a) * glm::length(b))
+    );  
+}
+
+//Permet d'obtenir le vecteur si l'on appliquait une rotation sur celui-ci.
+vec4 Shape::getVecIfRotate(vec3 axis, float radians, vec3 vectorToRotate)
+{
+    glm::mat rotationMat = glm::rotate(mat4(1), radians, axis); //R
+    return rotationMat * vec4(vectorToRotate, 1);
+}
+
 void Shape::spawn()
 {
     active = true;
@@ -110,18 +135,24 @@ void Shape::resize(float size)
     resize(size, size);
 }
 
-//tourne toujours dans le de la règle de la main droite
+//tourner sur soi-même, avec comme repère d'axe l'origine du monde (0, 0, 0) -> (1, 1, 1)
 void Shape::rotate(vec3 axis, float radians)
+{
+   rotateAround(pos, axis, radians);
+}
+
+//tourne autour d'un point selon un axe entre (0, 0, 0) et (1, 1, 1)
+void Shape::rotateAround(vec3 centerPos, vec3 axis, float radians)
 {
     //pour rotation autour d'un point (x, y, z), avec T = translate et R = rotate : T(x,y,z) * R * T(-x,-y,-z) 
     //applique règle de la main droite : on multiplie le vecteur à gauche pour un sens, et à droite pour l'auter sens
    
     //translation de l'origine de 3 vecteurs orthonormés sur pos
-    mat4 translateMat = glm::translate(mat4(1), pos); //T(x, y, z)
-    mat4 minusTranslateMat = glm::translate(mat4(1), -pos); //T(-x, -y, -z)
+    mat4 translateMat = glm::translate(mat4(1), centerPos); //T(x, y, z)
+    mat4 minusTranslateMat = glm::translate(mat4(1), -centerPos); //T(-x, -y, -z)
 
     //obtention de la formule de rotation d'un vecteur autour d'un axe
-    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, vec3(originTransposition * vec4(axis, 1.0f))); //R
+    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
     mat4 transformation = translateMat * rotationMat * minusTranslateMat;
 
     for (int i = 0 ; i < shapeVertices.size(); i+=3)
@@ -135,10 +166,11 @@ void Shape::rotate(vec3 axis, float radians)
     }
     //on rotationne les coordonnées locales de la forme en appliquant la rotation sur le repère local orthonormé
     originTransposition = rotationMat * originTransposition;
+    if (centerPos != pos)pos = vec3(transformation * vec4(pos, 1));
     refreshGLVertices();
 }
 
-/*Peut faire pointer l'axe Z d'un objet vers une position avec un maximum de 4 appels rotate()
+/*Peut faire pointer l'axe Z d'un objet vers une position avec un maximum de 2 appels rotate()
  **NOTE : Un Quad doit être en axe Z pour utiliser lookAt(), car cette fonction fait pointer l'axe Z sur la position*/
 void Shape::lookAt(vec3 targetPos)
 {
@@ -163,15 +195,17 @@ void Shape::lookAtHorizontal(vec3 targetPos)
 
     if (angleRadians > 0.01f)
     {
-        rotate(ROT_Y, angleRadians);
-
+        vec4 testRotatedZAxis = getVecIfRotate(getYAxis(), angleRadians, getZAxis());
         //calculer le nouvel angle. Si celui-ci n'est pas bon alors on recommence mais en faisant -2*rotation. 
         //nous permettra assurément de se centrer sur le vecteur de translation
-        vec2 dirVec2D = vec2(getZAxis().x, getZAxis().z);
+        vec2 dirVec2D = vec2(testRotatedZAxis.x, testRotatedZAxis.z);
         float newAngle = getAngleRadians(vecTowardsTarget2D, dirVec2D);
+        
         if (newAngle > 0.01f)
         {
-            rotate(ROT_Y, -2*angleRadians);
+            rotate(getYAxis(), -angleRadians);
+        }else{
+            rotate(getYAxis(), angleRadians);
         }
     }
 }
@@ -190,13 +224,18 @@ void Shape::lookAtVertical(vec3 targetPos)
 
     if (angleRadians > 0.01f)
     {
-        rotate(ROT_X, angleRadians);
+        vec3 rotatedXAxis = vec3(getVecIfRotate(getXAxis(), angleRadians, getXAxis()));
+        vec3 rotatedYAxis = vec3(getVecIfRotate(getXAxis(), angleRadians, getYAxis()));
         
-        crossedVector = glm::cross( - getXAxis(), vecTowardsTarget);
-        float newAngle = getAngleRadians(crossedVector, getYAxis());
+        crossedVector = glm::cross( - rotatedXAxis, vecTowardsTarget);
+        float newAngle = getAngleRadians(crossedVector, rotatedYAxis);
+
         if (newAngle > 0.01f)
         {
-           rotate(ROT_X, -2*angleRadians);
+           rotate(getXAxis(), -angleRadians);
+        }else
+        {
+           rotate(getXAxis(), angleRadians);
         }
     }
 }
@@ -295,22 +334,4 @@ float Shape::radiansToDegrees(float radians)
 void Shape::printUndefinedErr(string funcName)
 {
     cout << "\n\n**ERREUR : fonction <" << funcName << "> non redéfinie hors de Shape**\n\n";
-}
-
-/*angle = arccos[(xa * xb + ya * yb) / (√(xa2 + ya2) * √(xb2 + yb2))]
- on sait que glm::length(vec2 a) = √(xa^2 + ya^2)*/
-float Shape::getAngleRadians(vec2 a, vec2 b)
-{
-    return acos(
-             (a.x * b.x + a.y * b.y) 
-      / (glm::length(a) * glm::length(b))
-    );  
-}
-
-float Shape::getAngleRadians(vec3 a, vec3 b)
-{
-    return acos(
-        (a.x * b.x + a.y * b.y + a.z * b.z) 
-      / (glm::length(a) * glm::length(b))
-    );  
 }

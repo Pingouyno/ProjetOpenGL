@@ -7,6 +7,7 @@ Snowman::Snowman(glm::vec3 pos, Entity* targetEntity) : Entity(pos)
     initSnowman();
 }
 
+/*
 //On rappelle que Z sud est négatif (sud)
 void Snowman::setDirFacing(Direction dirFacing)
 {
@@ -34,6 +35,7 @@ void Snowman::setDirFacing(Direction dirFacing)
             break;
     };
 }
+*/
 
 //traquer la cible
 function <void(void)> Snowman::getDefaultClassBehavior()
@@ -74,24 +76,33 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         if (abs(distZ) < minDistX) factZ = 0;
 
         moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
-
-        faceQuad->lookAt(targetEntity->getPos());
-    };
+        this->lookAtHorizontal(targetEntity->getPos());
+        head->lookAt(targetEntity->getPos() + vec3(0, 1, 0));
+    };  
 }
 
 void Snowman::initSnowman()
 {
+    Texture* wood_png = Texture::get3DImgTexture("wood.png");
+    Texture* obama_png = Texture::get3DImgTexture("obama.png");
+    
     //corps
-    vec3 colorBlack(0, 0, 0);
-    float cubeSize = 2.0f; 
-    float lowWidth = 0.2f;
-    float lowHeight = 1.5f;
-
-    //visage
-    faceQuad = new Quad(getPos(), cubeSize, Texture::get3DImgTexture("obama.png"), Quad::Axis::Z);
+    body = new Cube(getPos(), vec3(3, 4, 1.5), wood_png);
+    leftArm = new Cube(getPos() + vec3(2, 0.5, 0), vec3(1, 3, 1), wood_png);
+    rightArm = new Cube(getPos() + vec3(-2, 0.5, 0), vec3(1, 3, 1), wood_png);
+    leftLeg = new Cube(getPos() + vec3(0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
+    rightLeg = new Cube(getPos() + vec3(-0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
+    neck = new Cube(getPos() + vec3(0, 2.5, 0), vec3(0.75, 1, 0.75), wood_png);
+    head = new Cube(getPos() + vec3(0, 3, 0), vec3(1.5, 1.5, 1.5), wood_png);
 
     entityShapes = 
     {
-        faceQuad
+        body,
+        leftArm,
+        rightArm,
+        leftLeg,
+        rightLeg,
+        neck,
+        head
     };
 }

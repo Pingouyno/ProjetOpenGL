@@ -41,6 +41,12 @@ void Cube::initCube(glm::vec3 pos, float width, float height, float depth, glm::
     generate(); 
 }
 
+//dimensions : x = width, y = height, z = depth
+Cube::Cube(glm::vec3 pos, glm::vec3 dimensions, Texture* tex)
+{
+    initCube(pos, dimensions.x, dimensions.y, dimensions.z, DEFAULT_COLOR, tex);
+}
+
 Cube::Cube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color)
 {
     initCube(pos, width, height, depth, color, nullptr);
