@@ -20,6 +20,7 @@ class Entity
         */
         enum Direction: char {NORTH = 'N', WEST = 'W', EAST = 'E', SOUTH = 'S'};
         const static Direction DEFAULT_DIRECTION = NORTH;
+        const static float RADIAN_CIRCLE;
 
     private:
         //privé car on doit le protéger pour Player (qui utilise camera.pos)
@@ -42,6 +43,7 @@ class Entity
         void moveTo(glm::vec3 newPos);
         void rotate(vec3 axis, float radians);
         void lookAtHorizontal(vec3 targetPos);
+        vec3 getLocalEquivalent(vec3 axis);
         vec3 getXAxis();
         vec3 getYAxis();
         vec3 getZAxis();
@@ -51,6 +53,7 @@ class Entity
         virtual float getPos(int i);
         //seulement pour usage interne, voir moveTo() à la place
         virtual void setPos(glm::vec3 &newPos);
+        virtual void doAnimation();
         
         //fonctions à redéfinir OBLIGATOIREMENT
         //virtual void setDirFacing(Direction dirFacing);

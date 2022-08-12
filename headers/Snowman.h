@@ -5,7 +5,15 @@
 
 class Snowman : public Entity
 {
+    enum AnimationType : int;
+
     private:
+        //pour avoir une référence pour les animations
+        int time;
+        int articulationTimer;
+        int articulationDirection;
+        AnimationType animationType;
+
         //formes du cube
         Cube* body;
         Cube* leftArm;
@@ -20,13 +28,16 @@ class Snowman : public Entity
         Entity* targetEntity;
 
         Snowman(glm::vec3 pos, Entity* targetEntity);
+
+        void setAnimation(AnimationType animationType);
+        void doAnimation();
         
         //fonctions redéfinies
         //void setDirFacing(Direction dirFacing);
         function <void(void)> getDefaultClassBehavior();
 
     private:
+        void doWalkingAnimation();
         void initSnowman();
-
 };
 #endif

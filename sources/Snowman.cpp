@@ -1,7 +1,10 @@
 #include"../headers/Snowman.h"
 
+enum Snowman::AnimationType : int {WALKING = 0};
+
 Snowman::Snowman(glm::vec3 pos, Entity* targetEntity) : Entity(pos)
 {
+    setAnimation(WALKING);
     this->targetEntity = targetEntity;
     this->behavior = getDefaultClassBehavior();
     initSnowman();
@@ -36,6 +39,25 @@ void Snowman::setDirFacing(Direction dirFacing)
     };
 }
 */
+
+void Snowman::setAnimation(AnimationType animationType)
+{
+    this->animationType = animationType;
+    this->time = 0;
+
+    this->articulationDirection = 1;
+    this->articulationTimer = 0;
+}
+
+void Snowman::doAnimation()
+{
+    switch(animationType)
+    {
+        case WALKING:
+            doWalkingAnimation();
+            break;
+    };
+}
 
 //traquer la cible
 function <void(void)> Snowman::getDefaultClassBehavior()
@@ -75,10 +97,32 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
 
+        //mouvements de l'entité
         moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
         this->lookAtHorizontal(targetEntity->getPos());
         head->lookAt(targetEntity->getPos() + vec3(0, 1, 0));
+        doAnimation();
+        time++;
     };  
+}
+
+void Snowman::doWalkingAnimation()
+{
+    int animationLength = 30;
+    float rotation = (RADIAN_CIRCLE / 4) / animationLength;
+
+    //animation des articulations
+    this->rightArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, 1.5, 0)), getXAxis(), rotation * articulationDirection);
+    this->leftArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, 1.5, 0)), getXAxis(), rotation * -articulationDirection);
+    this->rightLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -2.5, 0)), getXAxis(), rotation * -articulationDirection);
+    this->leftLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -2.5, 0)), getXAxis(), rotation * articulationDirection);
+
+    //incrémenter et déterminer la prochaine direction
+    articulationTimer += articulationDirection;
+    if (articulationTimer == -animationLength / 2 || articulationTimer == animationLength / 2)
+    {
+        articulationDirection = -articulationDirection;
+    }
 }
 
 void Snowman::initSnowman()

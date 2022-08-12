@@ -1,5 +1,7 @@
 #include"../headers/Entity.h"
 
+const float Entity::RADIAN_CIRCLE = 2*M_PI;
+
 Entity::Entity(glm::vec3 pos)
 {
     this->pos = pos;
@@ -88,6 +90,12 @@ void Entity::lookAtHorizontal(vec3 targetPos)
     }
 }
 
+//permet d'obtenir l'équivalent d'un axe du monde NON NORMALISÉ, selon les coordonnées locales de la forme
+vec3 Entity::getLocalEquivalent(vec3 axis)
+{
+    return vec3(originTransposition * vec4(axis, 1.0f));
+}
+
 vec3 Entity::getXAxis()
 {
     return vec3(originTransposition * Shape::AXIS_X);
@@ -123,12 +131,10 @@ void Entity::setPos(glm::vec3 &newPos)
 
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
 
-/*
-void Entity::setDirFacing(Direction dirFacing)
+void Entity::doAnimation()
 {
-    cout << "\n\nERREUR : fonction Entity::setDirFacing(Direction dirFacing) non redéfinie dans la classe enfant!\n\n";
+    cout << "\n\nERREUR : fonction Entity::doAnimation() non redéfinie dans la classe enfant!\n\n";
 }
-*/
 
 function<void(void)> Entity::getDefaultClassBehavior()
 {
