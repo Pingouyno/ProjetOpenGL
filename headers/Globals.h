@@ -2,8 +2,9 @@
 #define MY_GLOBALS_H
 
 #include<vector>
-#include"shaderClass.h"
 using namespace std;
+
+#include"shaderClass.h"
 
 enum WorldState : int {GAME = 0, MENU = 1};
 enum GameMode : int {SURVIVAL = 0, CREATIVE = 1};

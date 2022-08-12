@@ -1,7 +1,7 @@
 #ifndef EVENT_CLASS_H
 #define EVENT_CLASS_H
 
-#include<glad/glad.h>
+#include"../libraries/include/GLAD/glad.h"
 #include"../libraries/include/glm/gtc/matrix_transform.hpp"
 #include"../libraries/include/glm/gtc/type_ptr.hpp"
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"

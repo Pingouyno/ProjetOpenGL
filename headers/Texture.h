@@ -5,7 +5,7 @@
 using namespace std;
 
 #include"../libraries/include/stb/stb_image.h"
-#include<glad/glad.h>
+#include"../libraries/include/GLAD/glad.h"
 
 #include"Globals.h"
 #include"shaderClass.h"

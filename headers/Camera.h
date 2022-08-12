@@ -6,8 +6,8 @@
 using namespace std;
 
 #include"shaderClass.h"
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include"../libraries/include/GLAD/glad.h"
+#include"../libraries/include/glfw/glfw3.h"
 #include"../libraries/include/glm/gtc/matrix_transform.hpp"
 #include"../libraries/include/glm/gtc/type_ptr.hpp"
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"

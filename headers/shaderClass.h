@@ -1,7 +1,7 @@
 #ifndef SHADER_CLASS_H
 #define SHADER_CLASS_H
 
-#include<glad/glad.h>
+#include"../libraries/include/GLAD/glad.h"
 #include<string>
 #include<fstream>
 #include<sstream>
