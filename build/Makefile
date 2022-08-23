@@ -201,6 +201,30 @@ sources/Cube.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.s
 .PHONY : sources/Cube.cpp.s
 
+sources/Cube3D.o: sources/Cube3D.cpp.o
+.PHONY : sources/Cube3D.o
+
+# target to build an object file
+sources/Cube3D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Cube3D.cpp.o
+.PHONY : sources/Cube3D.cpp.o
+
+sources/Cube3D.i: sources/Cube3D.cpp.i
+.PHONY : sources/Cube3D.i
+
+# target to preprocess a source file
+sources/Cube3D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Cube3D.cpp.i
+.PHONY : sources/Cube3D.cpp.i
+
+sources/Cube3D.s: sources/Cube3D.cpp.s
+.PHONY : sources/Cube3D.s
+
+# target to generate assembly for a file
+sources/Cube3D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Cube3D.cpp.s
+.PHONY : sources/Cube3D.cpp.s
+
 sources/EBO.o: sources/EBO.cpp.o
 .PHONY : sources/EBO.o
 
@@ -513,6 +537,54 @@ sources/Snowman.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Snowman.cpp.s
 .PHONY : sources/Snowman.cpp.s
 
+sources/TextEntity.o: sources/TextEntity.cpp.o
+.PHONY : sources/TextEntity.o
+
+# target to build an object file
+sources/TextEntity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity.cpp.o
+.PHONY : sources/TextEntity.cpp.o
+
+sources/TextEntity.i: sources/TextEntity.cpp.i
+.PHONY : sources/TextEntity.i
+
+# target to preprocess a source file
+sources/TextEntity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity.cpp.i
+.PHONY : sources/TextEntity.cpp.i
+
+sources/TextEntity.s: sources/TextEntity.cpp.s
+.PHONY : sources/TextEntity.s
+
+# target to generate assembly for a file
+sources/TextEntity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity.cpp.s
+.PHONY : sources/TextEntity.cpp.s
+
+sources/TextEntity2D.o: sources/TextEntity2D.cpp.o
+.PHONY : sources/TextEntity2D.o
+
+# target to build an object file
+sources/TextEntity2D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity2D.cpp.o
+.PHONY : sources/TextEntity2D.cpp.o
+
+sources/TextEntity2D.i: sources/TextEntity2D.cpp.i
+.PHONY : sources/TextEntity2D.i
+
+# target to preprocess a source file
+sources/TextEntity2D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity2D.cpp.i
+.PHONY : sources/TextEntity2D.cpp.i
+
+sources/TextEntity2D.s: sources/TextEntity2D.cpp.s
+.PHONY : sources/TextEntity2D.s
+
+# target to generate assembly for a file
+sources/TextEntity2D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/TextEntity2D.cpp.s
+.PHONY : sources/TextEntity2D.cpp.s
+
 sources/TextManager.o: sources/TextManager.cpp.o
 .PHONY : sources/TextManager.o
 
@@ -723,6 +795,9 @@ help:
 	@echo "... sources/Cube.o"
 	@echo "... sources/Cube.i"
 	@echo "... sources/Cube.s"
+	@echo "... sources/Cube3D.o"
+	@echo "... sources/Cube3D.i"
+	@echo "... sources/Cube3D.s"
 	@echo "... sources/EBO.o"
 	@echo "... sources/EBO.i"
 	@echo "... sources/EBO.s"
@@ -762,6 +837,12 @@ help:
 	@echo "... sources/Snowman.o"
 	@echo "... sources/Snowman.i"
 	@echo "... sources/Snowman.s"
+	@echo "... sources/TextEntity.o"
+	@echo "... sources/TextEntity.i"
+	@echo "... sources/TextEntity.s"
+	@echo "... sources/TextEntity2D.o"
+	@echo "... sources/TextEntity2D.i"
+	@echo "... sources/TextEntity2D.s"
 	@echo "... sources/TextManager.o"
 	@echo "... sources/TextManager.i"
 	@echo "... sources/TextManager.s"

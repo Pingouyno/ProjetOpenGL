@@ -7,6 +7,8 @@ Entity::Entity(glm::vec3 pos)
     this->pos = pos;
     this->behavior = [](){};
     this->entityShapes = {};
+    this->entityCubes3D = {};
+    this->subEntities = {};
     this->dirFacing = DEFAULT_DIRECTION;
     this->active = true;
     this->originTransposition = mat4(1.0f);
@@ -21,6 +23,38 @@ void Entity::render()
             ptrShape->render();
         }
     }
+    for (Cube3D* ptrCube : entityCubes3D)
+    {
+        if (ptrCube->active)
+        {
+            ptrCube->render();
+        }
+    }
+    for (Entity* ptrEntity : subEntities)
+    {
+        if (ptrEntity->active)
+        {
+            ptrEntity->render();
+        }
+    }
+}
+
+void Entity::render3DCubes()
+{
+    for (Cube3D* ptrCube : entityCubes3D)
+    {
+        if (ptrCube->active)
+        {
+            ptrCube->render();
+        }
+    }
+    for (Entity* ptrEntity : subEntities)
+    {
+        if (ptrEntity->active)
+        {
+            ptrEntity->render3DCubes();
+        }
+    }
 }
 
 void Entity::doBehavior()
@@ -33,9 +67,20 @@ void Entity::setBehavior(function<void(void)> behavior)
     this->behavior = behavior;
 }
 
+//utiliser addShape3D pour les cubes à texture 3D
 void Entity::addShape(Shape* ptrShape)
 {
     entityShapes.push_back(ptrShape);
+}
+
+void Entity::addCube3D(Cube3D* ptrCube)
+{
+    entityCubes3D.push_back(ptrCube);
+}
+
+void Entity::addEntity(Entity* entity)
+
+{this->subEntities.push_back(entity);
 }
 
 void Entity::moveTo(glm::vec3 newPos)
@@ -44,6 +89,14 @@ void Entity::moveTo(glm::vec3 newPos)
     {
         //déplacer les éléments de l'équivalent de la différence (x, y, z) entre newPos et oldPos
         ptrShape->moveTo(ptrShape->pos + (newPos - getPos()));
+    }
+    for (Cube3D* ptrCube : entityCubes3D)
+    {
+        ptrCube->moveTo(ptrCube->pos + (newPos - getPos()));
+    }
+    for (Entity* ptrEntity : subEntities)
+    {
+        ptrEntity->moveTo(ptrEntity->getPos() + (newPos - getPos()));
     }
     setPos(newPos);
 }
@@ -58,6 +111,33 @@ void Entity::rotate(vec3 axis, float radians)
     for (Shape* shape : entityShapes)
     {
         shape->rotateAround(getPos(), axis, radians);
+    }
+    for (Cube3D* cube : entityCubes3D)
+    {
+        cube->rotateAround(getPos(), axis, radians);
+    }
+    for (Entity* e : subEntities)
+    {
+        e->rotateAround(getPos(), axis, radians);
+    }
+}
+
+void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
+{
+      //obtention de la formule de rotation d'un vecteur autour d'un axe
+    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
+    originTransposition = rotationMat * originTransposition;
+    for (Shape* shape : entityShapes)
+    {
+        shape->rotateAround(pos, axis, radians);
+    }
+    for (Cube3D* cube : entityCubes3D)
+    {
+        cube->rotateAround(pos, axis, radians);
+    }
+    for (Entity* e : subEntities)
+    {
+        e->rotateAround(pos, axis, radians);
     }
 }
 
@@ -88,6 +168,14 @@ void Entity::lookAtHorizontal(vec3 targetPos)
             rotate(getYAxis(), angleRadians);
         }
     }
+}
+
+bool Entity::isColliding(vec3 pos)
+{
+    for (Shape* ptrShape : this->entityShapes) if (ptrShape->isColliding(pos)) return true;
+    for (Cube3D* ptrCube : this->entityCubes3D) if (ptrCube->isColliding(pos)) return true;
+    for (Entity* ptrEntity : this->subEntities) if (ptrEntity->isColliding(pos)) return true;
+    return false;
 }
 
 //permet d'obtenir l'équivalent d'un axe du monde NON NORMALISÉ, selon les coordonnées locales de la forme
@@ -124,11 +212,6 @@ float Entity::getPos(int i)
     return pos[i];
 }
 
-void Entity::setPos(glm::vec3 &newPos)
-{
-    this->pos = newPos;
-}
-
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
 
 void Entity::doAnimation()
@@ -140,4 +223,9 @@ function<void(void)> Entity::getDefaultClassBehavior()
 {
     cout << "\n\nERREUR : fonction Entity::getDefaultEntityBehavior() non redéfinie dans la classe enfant!\n\n";
     return [](){};
+}
+
+void Entity::setPos(glm::vec3 newPos)
+{
+    this->pos = newPos;
 }

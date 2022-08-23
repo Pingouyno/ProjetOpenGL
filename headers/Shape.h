@@ -94,6 +94,8 @@ class Shape {
         void despawn();
         void moveTo(float x, float y, float z);
         void moveTo(glm::vec3 pos);
+        void setColor(vec3 color);
+        void setTexture(Texture* tex);
         void resize(float size);
         void rotate(vec3 axis, float radians);
         void rotateAround(vec3 pos, vec3 axis, float radians);
@@ -108,6 +110,7 @@ class Shape {
         vec3 getZAxis();
 
         //pour la redéfinition de variables statiques
+        void refreshGLColors();
         void refreshGLVertices();
         void generate();
 

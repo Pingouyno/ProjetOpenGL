@@ -30,6 +30,12 @@ void Quad::initQuad(glm::vec3 pos, float width, float height, glm::vec3 color, T
     generate(); 
 }
 
+//utile pour le texte car ajuste le ratio Y selon les proportions de la texture
+Quad::Quad(vec3 pos, Texture* tex, float realWidth, Axis axis)
+{
+    initQuad(pos, realWidth, realWidth * ((float)tex->heightImg / tex->widthImg), DEFAULT_COLOR, tex, axis);
+}
+
 Quad::Quad(glm::vec3 pos, float width, float height, Texture* tex, Axis axis)
 {
     initQuad(pos, width, height, DEFAULT_COLOR, tex, axis);
@@ -39,6 +45,12 @@ Quad::Quad(glm::vec3 pos, float size, Texture* tex, Axis axis)
 {
     initQuad(pos, size, size, DEFAULT_COLOR, tex, axis);
 }
+
+Quad::Quad(glm::vec3 pos, float width, float height, glm::vec3 color, Axis axis)
+{
+    initQuad(pos, width, height, color, nullptr, axis);
+}
+
 
 Quad::Quad(glm::vec3 pos, float size, glm::vec3 color, Axis axis)
 {
@@ -78,9 +90,9 @@ void Quad::render()
     }
 }
 
+//va bugguer si la taille d'une coordonnée est de 0
 void Quad::resize(float width, float height)
 {   
-    
     float scaleX = width / this->width - 1;
     float scaleY = height / this->height - 1;
 

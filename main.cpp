@@ -72,11 +72,12 @@ int main()
 	// Créer le pipeline de shaders et les stocker globalement
 	shaderProgram2D = new Shader("resources/shaders/default.vert2D", "resources/shaders/default.frag"); 
     shaderProgram3D = new Shader("resources/shaders/default.vert", "resources/shaders/default.frag"); 
+	shaderProgramCube = new Shader("resources/shaders/cube.vert", "resources/shaders/cube.frag");
 
-	//pour que les images de texte soient liées au shader 2D
-	TextManager::bindToShader(shaderProgram2D);
+	//shaderProgramCube->Activate();
+	//glUniform1i(glGetUniformLocation(shaderProgramCube->ID, "cube"), 0);
 
-	// Create reference containers for the Vartex Array Object and the Vertex Buffer Object
+	// Create reference containers for the Vertex Array Object and the Vertex Buffer Object
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -99,6 +100,9 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 
+	Texture::init3DTextures();
+	TextManager::init();
+
 	World* world = new World();
 	EventManager* eventManager = new EventManager(world);
 
@@ -114,22 +118,21 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		// glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
-		shaderProgram3D->Activate();
 		
 		eventManager->Inputs(window);
-		world->camera->Matrix(45.0f, 0.01f, 200.0f, *shaderProgram3D, "camMatrix");
+
+		world->camera->Matrix(45.0f, 0.01f, (float)VIEW_DISTANCE);
+		//important de mettre à jour les positions avant de reload les vertices
+		world->doEntityBehaviors();
 
 		// Bind the VAO so OpenGL knows to use it
-		VAO1.Bind();
-		 
+		VAO1.Bind();		 
 		reloadVerticesInVBO(VBO1);
 		reloadIndicesInEBO(EBO1);
-
-		world->doEntityBehaviors();
 		world->render();
 
 		// Swap the back buffer with the front buffer

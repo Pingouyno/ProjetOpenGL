@@ -15,7 +15,8 @@ World::World()
 }
 
 void World::doEntityBehaviors()
-{
+{	
+	skyBox->moveTo(player->getPos());
 	for (Entity* ptrEntity : entities)
 	{
 		if (ptrEntity->active)
@@ -27,23 +28,40 @@ void World::doEntityBehaviors()
 
 void World::render()
 {
-    glEnable(GL_DEPTH_TEST);
+	float dir = score % 120 >= 60 ? 1 : -1;
+	testCube->rotate(Shape::AXIS_Y, 2*M_PI/90.0f);
+	testCube->moveTo(testCube->pos + dir * vec3(0, 5.0f/60.0f, 0));
+	score++;
+
+	shaderProgramCube->Activate();
+	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	renderActive3DShapes();
+
+	//render la skybox
+	glDepthFunc(GL_LEQUAL);
+	skyBox->render();
+	glDepthFunc(GL_LESS);
+
+	//render les cubeMaps
+	renderActive3DCubes();
+	renderActive3DCubesEntities();
+
+	//render les formes
+	shaderProgram3D->Activate();
+	renderActiveShapes();
 	renderActiveEntities();
 
-    shaderProgram2D -> Activate();
+	//render les overlays
+    shaderProgram2D->Activate();
     glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-
-	World::renderOverlays();
+	renderOverlays();
 
     shouldReloadArrays = false;
 }
 
-
 //Render toutes les entités, et désactive "newShapeCreated"
-void World::renderActive3DShapes()
+void World::renderActiveShapes()
 {
     for (Shape* ptrShape : shapes)
     {
@@ -65,6 +83,28 @@ void World::renderActiveEntities()
     }
 }
 
+//Render tous les cubes qui ont une texture 3D
+void World::renderActive3DCubes()
+{
+    for (Cube3D* ptrCube : cubes3D)
+    {
+        if (ptrCube->active)
+        {
+            ptrCube->render();
+        }
+    }
+}
+
+//TODO : remplir cette fonction
+void World::renderActive3DCubesEntities()
+{
+    
+	for (Entity* ptrEntity : entities)
+    {
+        ptrEntity->render3DCubes();
+    }
+}
+
 void World::renderOverlays()
 {
     gameOverlay->render();
@@ -76,6 +116,12 @@ void World::renderOverlays()
 
 void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 {
+	TextEntity2D* textBox = ((TextEntity2D*)selectedTextBox);
+	if (textBox != nullptr && !textBox->isColliding(mousePos)) 
+	{
+		textBox->deselect();
+	}
+
     if (worldState == MENU)
 	{
 		menuOverlay->checkCollisions(mousePos);
@@ -90,6 +136,12 @@ vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &ne
         if ((*ptrShape).active && (*ptrShape).isColliding(newPos))
             (*ptrShape).reportCollision(collisionLog, oldPos, newPos);
     }
+
+	for (Cube3D* ptrCube : cubes3D)
+    {
+        if (ptrCube->active && ptrCube->isColliding(newPos))
+            ptrCube->reportCollision(collisionLog, oldPos, newPos);
+    }
     return collisionLog;
 }
 
@@ -103,6 +155,11 @@ void World::addShape(Shape* shape)
     shapes.push_back(shape);    
 }
 
+//obligatoire pour les cubes 3D
+void World::addCube3D(Cube3D* cube)
+{   
+    cubes3D.push_back(cube);    
+}
 
 void World::deleteAllShapes()
 {
@@ -132,6 +189,11 @@ void World::updateScore()
 	gameOverlay->updateScoreDisplay(score);
 }
 
+void World::deselectTextBox()
+{
+	if (selectedTextBox != nullptr) ((TextEntity2D*)selectedTextBox)->deselect();
+}
+
 //fin fonctions dynamiques______________________________________________________________
 
 //méthodes privées
@@ -140,15 +202,17 @@ void World::setupEntities()
 {
 	Snowman* firstSnowman = new Snowman(glm::vec3(10, 10, 10), player);
 
+	firstSnowman->targetEntity = firstSnowman;
+
 	entities = 
 	{
 		firstSnowman,
 	};
 
+	//ajouter un train de snowmans	
+	
 	Snowman* lastSnowman = firstSnowman;
 	Snowman* newSnowman = nullptr;
-	//ajouter un train de snowmans
-	
 	for (int i = 0 ; i < 50 ; i++)
 	{
 		newSnowman = new Snowman(vec3(lastSnowman->getPos() + vec3(10.0f, 0, 12.0f)), lastSnowman);
@@ -160,6 +224,7 @@ void World::setupEntities()
 
 void World::setup3DShapes()
 {
+	/*
 	Texture* deux_png = Texture::get2DImgTexture("deux_icon.png");
 	Texture* grass_png = Texture::get2DImgTexture("grass.png");
 
@@ -211,5 +276,67 @@ void World::setup3DShapes()
 			pos[0] -= LAB_SIZE * wallSize;
 			pos[2] += wallSize;
 		}
+	}
+	*/
+
+	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
+	this->skyBox = new Cube3D(vec3(0, 0, 0), vec3(1), Texture::get3DImgTexture(Texture::TEX3D::FIELD));
+	skyBox->setToBackground();
+
+	testCube = new Cube3D(vec3(0, 0, 0), vec3(5), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK));
+	addCube3D(testCube);
+
+	float cubeSize = 3.0f;
+	vec3 default_pos = vec3(-10.0f);
+
+	vec3 pos = default_pos;
+	for (int x = 0 ; x < 10 ; x++)
+	{
+		for (int z = 10 ; z > 0 ; z--)
+		{
+			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
+			pos.z -= cubeSize;
+		}
+		pos.x += cubeSize;
+		pos.z += 10*cubeSize;
+	}
+
+	pos = default_pos;
+	pos.y -= 1*cubeSize;
+	for (int x = 0 ; x < 10 ; x++)
+	{
+		for (int z = 10 ; z > 0 ; z--)
+		{
+			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
+			pos.z -= cubeSize;
+		}
+		pos.x += cubeSize;
+		pos.z += 10*cubeSize;
+	}
+
+	pos = default_pos;
+	pos.y -= 2*cubeSize;
+	for (int x = 0 ; x < 10 ; x++)
+	{
+		for (int z = 10 ; z > 0 ; z--)
+		{
+			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
+			pos.z -= cubeSize;
+		}
+		pos.x += cubeSize;
+		pos.z += 10*cubeSize;
+	}
+
+	pos = default_pos;
+	pos.y -= 3*cubeSize;
+	for (int x = 0 ; x < 10 ; x++)
+	{
+		for (int z = 10 ; z > 0 ; z--)
+		{
+			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
+			pos.z -= cubeSize;
+		}
+		pos.x += cubeSize;
+		pos.z += 10*cubeSize;
 	}
 }

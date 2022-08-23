@@ -24,6 +24,7 @@ vector<float> Cube::SHAPE_TEXMAP(
     }
 );
 
+//on met Generate() à l'exétiruer, pour que les Cube3D puissent appeler leur PROPRE fonction initVertices()
 void Cube::initCube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color, Texture* tex)
 {
     this->pos = pos;
@@ -38,44 +39,53 @@ void Cube::initCube(glm::vec3 pos, float width, float height, float depth, glm::
             texMap.insert(texMap.end(), NO_TEXMAP.begin(), NO_TEXMAP.end());
     else
         texMap.insert(texMap.end(), SHAPE_TEXMAP.begin(), SHAPE_TEXMAP.end());
-    generate(); 
 }
 
 //dimensions : x = width, y = height, z = depth
 Cube::Cube(glm::vec3 pos, glm::vec3 dimensions, Texture* tex)
 {
     initCube(pos, dimensions.x, dimensions.y, dimensions.z, DEFAULT_COLOR, tex);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float width, float height, float depth, glm::vec3 color)
 {
     initCube(pos, width, height, depth, color, nullptr);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float width, float height, Texture* tex)
 {
     initCube(pos, width, height, width, DEFAULT_COLOR, tex);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float width, float height, glm::vec3 color)
 {
     initCube(pos, width, height, width, color, nullptr);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float size, Texture* tex)
 {
     initCube(pos, size, size, size, DEFAULT_COLOR, tex);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float size, glm::vec3 color)
 {
     initCube(pos, size, size, size, color, nullptr);
+    generate(); 
 }
 
 Cube::Cube(glm::vec3 pos, float size)
 {
     initCube(pos, size, size, size, DEFAULT_COLOR, nullptr);
+    generate(); 
 }
+
+//à utiliser seulement lorsqu'on veut appeler son propre initVertices()
+Cube::Cube(void* dummy){}
 
 int Cube::getVerticeCount()
 {
@@ -143,23 +153,23 @@ void Cube::initIndices()
 
     shapeIndices = 
     {
-        i,   i+1, i+3,
-        i+1, i+3, i+2, //bottom
-
-        i+5, i+4, i+6,
-        i+4, i+6, i+7, //top
-
-        i,   i+3, i+4,
-        i+3, i+4, i+7, //front
-
-        i+2, i+1, i+6,
-        i+1, i+6, i+5, //back
+        i+2, i+3, i+10,
+        i+3, i+10,i+11,//right
 
         i,   i+1, i+8,
         i+1, i+8, i+9, //left
 
-        i+2, i+3, i+10,
-        i+3, i+10,i+11  //right
+        i+5, i+4, i+6,
+        i+4, i+6, i+7, //top
+
+        i,   i+1, i+3,
+        i+1, i+3, i+2, //bottom
+
+        i+2, i+1, i+6,
+        i+1, i+6, i+5, //back
+
+        i,   i+3, i+4,
+        i+3, i+4, i+7  //front
     };
 }
 
@@ -171,21 +181,21 @@ void Cube::initVertices()
 
     shapeVertices = 
     {
-        x,         y,        z,          //0 Bottom near left    
-        x,         y,        z  + depth,  //1 Bottom far left   
-        x + width, y,        z  + depth,  //2 Bottom far right   
-        x + width, y,        z,          //3 Bottom near right
+        x,         y,          z + depth,      //0 Bottom near left    
+        x,         y,          z,              //1 Bottom far left   
+        x + width, y,          z,              //2 Bottom far right   
+        x + width, y,          z + depth,      //3 Bottom near right
 
-        x,         y + height, z,           //4 Top near left    
-        x,         y + height, z  + depth,  //5 Top far left   
-        x + width, y + height, z  + depth,  //6 Top far right   
-        x + width, y + height, z,           //7 Top near right
+        x,         y + height, z + depth,      //4 Top near left    
+        x,         y + height, z,              //5 Top far left   
+        x + width, y + height, z,              //6 Top far right   
+        x + width, y + height, z + depth,      //7 Top near right
 
        //ces coordonnées sont nécessaires pour le texture mapping
-        x,         y + height, z,           //8  Top near left (copie 4)    
-        x,         y + height, z  + depth,  //9  Top far left (copie 5)  
-        x + width, y + height, z  + depth,  //10 Top far right (copie 6)  
-        x + width, y + height, z            //11 Top near right (copie 7)
+        x,         y + height, z + depth,      //8  Top near left  (copie 4)    
+        x,         y + height, z,              //9  Top far left   (copie 5)  
+        x + width, y + height, z,              //10 Top far right  (copie 6)  
+        x + width, y + height, z + depth       //11 Top near right (copie 7)
     };
 
     //centrer le cube sur pos, plutôt que de commencer sur pos

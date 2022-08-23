@@ -5,7 +5,6 @@ MenuOverlay::MenuOverlay(Camera* camera) : Overlay(camera){
 	setupOverlay();
 }
 
-
 void MenuOverlay::setupOverlay()
 {
 	Texture* square_png = Texture::get2DImgTexture("square.png");
@@ -25,4 +24,7 @@ void MenuOverlay::setupOverlay()
 	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); gameMode = GameMode::SURVIVAL; camera->fall();};
 	addClickShape(creativeButton);
 	addClickShape(survivalButton);
+
+	TextEntity2D* textEntity2D = new TextEntity2D(vec3(0, -0.5, 0), 20, TextEntity2D::DEFAULT_TEXT);
+	addTextEntity2D(textEntity2D);
 }

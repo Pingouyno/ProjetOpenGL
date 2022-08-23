@@ -127,26 +127,30 @@ void Snowman::doWalkingAnimation()
 
 void Snowman::initSnowman()
 {
-    Texture* wood_png = Texture::get3DImgTexture("wood.png");
-    Texture* obama_png = Texture::get3DImgTexture("obama.png");
+    Texture* wood_png = Texture::get2DImgTexture("wood.png");
+    Texture* obama_png = Texture::get2DImgTexture("obama.png");
     
     //corps
-    body = new Cube(getPos(), vec3(3, 4, 1.5), wood_png);
+    body = new Cube3D(getPos(), vec3(3, 4, 1.5), Texture::get3DImgTexture(Texture::TEX3D::GRASS));
     leftArm = new Cube(getPos() + vec3(2, 0.5, 0), vec3(1, 3, 1), wood_png);
     rightArm = new Cube(getPos() + vec3(-2, 0.5, 0), vec3(1, 3, 1), wood_png);
     leftLeg = new Cube(getPos() + vec3(0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
     rightLeg = new Cube(getPos() + vec3(-0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
     neck = new Cube(getPos() + vec3(0, 2.5, 0), vec3(0.75, 1, 0.75), wood_png);
-    head = new Cube(getPos() + vec3(0, 3, 0), vec3(1.5, 1.5, 1.5), wood_png);
+    head = new Cube3D(getPos() + vec3(0, 3, 0), vec3(1.5, 1.5, 1.5), Texture::get3DImgTexture(Texture::TEX3D::EARTH));
 
     entityShapes = 
     {
-        body,
         leftArm,
         rightArm,
         leftLeg,
         rightLeg,
-        neck,
+        neck
+    };
+
+    entityCubes3D = 
+    {
+        body,
         head
     };
 }

@@ -9,23 +9,27 @@ using namespace std;
 //Les coordonnées d'un quad2D commencent en bas à gauche, plutôt qu'au centre de gravité de la forme
 class Quad2D : public Quad {
 
-    float pixWidth;
-    float pixHeight;
-    float pixPosX;
-    float pixPosY;
+    private:
+        float pixWidth;
+        float pixHeight;
+        float pixPosX;
+        float pixPosY;
+        Quad2D(glm::vec2 pos, float pixWidth, float pixheight, vec3 color, Texture* tex, function <void(void)> clickLogic);
 
-    //potentiellement remettre public
     public:
         function <void(void)> clickLogic;
-
-    public:
         Quad2D(glm::vec2 pos, float pixWidth, float pixheight, Texture* tex, function <void(void)> clickLogic);
         Quad2D(glm::vec2 pos, float pixWidth, float pixheight, Texture* tex);
+        Quad2D(glm::vec2 pos, float pixWidth, float pixheight, vec3 color);
         Quad2D(glm::vec2 pos, Texture* tex);
 
+        //redéfinitions
+        void resize(float pixWidth, float pixHeight);
+        void moveTo(vec3 pos);
         bool isColliding(glm::vec3 &mousePos);
         
         void doClickLogic();
+
 };
 
 #endif

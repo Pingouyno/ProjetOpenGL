@@ -35,6 +35,7 @@ std::vector<int> indices =
 	9, 11, 12, //plateforme
 };
 
+const int VIEW_DISTANCE = 200;
 const int LAB_SIZE = 50;
 
 std::vector<int> labyrinth = 
@@ -95,9 +96,13 @@ bool shouldReloadArrays = false;
 
 Shader* shaderProgram2D = nullptr;
 Shader* shaderProgram3D = nullptr;
+Shader* shaderProgramCube = nullptr;
 
 float screenWidth = 1420.0f;
 float screenHeight = 900.0f;
 
-WorldState worldState = WorldState::GAME;
-GameMode gameMode = GameMode::CREATIVE;
+WorldState worldState = GAME;
+GameMode gameMode = CREATIVE;
+
+//TextEntity2D*
+void* selectedTextBox = nullptr;

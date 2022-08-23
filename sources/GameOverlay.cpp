@@ -43,4 +43,3 @@ void GameOverlay::updateScoreDisplay(int newScore)
 	newScore = newScore / 10;
 	scoreQuads[1]->tex = TextManager::getNumberTexture(newScore % 10);
 }
-

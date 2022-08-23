@@ -6,6 +6,7 @@ using namespace std;
 
 #include"TextManager.h"
 #include"Quad2D.h"
+#include"TextEntity2D.h"
 #include"Camera.h"
 #include"Globals.h"
 
@@ -14,6 +15,7 @@ class Overlay
     private:
         vector<Quad2D*> staticShapes;
         vector<Quad2D*> clickableShapes;
+        vector<TextEntity2D*> textEntities;
 
     public:
         Camera* camera;
@@ -22,6 +24,7 @@ class Overlay
         void checkCollisions(glm::vec3 &mousePos);
         void addStaticShape(Quad2D* shape);
         void addClickShape(Quad2D* shape);
+        void addTextEntity2D(TextEntity2D* entity);
 
     //fonctions virtuelles (À ÊTRE REDÉFINIES)
     protected:

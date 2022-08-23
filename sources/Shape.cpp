@@ -130,6 +130,17 @@ void Shape::moveTo(glm::vec3 pos)
     moveTo(pos[0], pos[1], pos[2]);
 }
 
+void Shape::setColor(vec3 color)
+{
+    this->color = color;
+    refreshGLColors();
+}
+
+void Shape::setTexture(Texture* tex)
+{
+    this->tex = tex;
+}
+
 void Shape::resize(float size)
 {
     resize(size, size);
@@ -282,6 +293,22 @@ vec3 Shape::getZAxis()
     //return dirVecZ;
 }
 
+void Shape::refreshGLColors()
+{
+    const int COLOR_OFFSET = 3;
+    int i = indexInVertices + COLOR_OFFSET;
+
+    for (int c = 0 ; c < getVerticeCount(); c++)
+    {
+        for (int inc = 0 ; inc < 3 ; inc++)
+        {
+            vertices[i + inc] = color[inc];
+        }      
+        i += 8; //on passe au prochain vertex dans vertices[]
+    }
+}
+
+
 void Shape::refreshGLVertices()
 {
     //vertices[]
@@ -309,10 +336,11 @@ void Shape::generate()
 
     initIndices();         //init indices avant pour trouver index de début d'insertion vertices
     initVertices();
-
+    
+    //insérer les vertices, les couleurs et le textureMapping
     for (int i = 0 ; i < getVerticeCount() ; i++){
         vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
-        for (int i = 0 ; i < 3 ; i++) vertices.push_back(color[i]);
+        for (int k = 0 ; k < 3 ; k++) vertices.push_back(color[k]);
         vertices.insert(vertices.end(), texMap.begin() + 2 * i, texMap.begin() + 2 * i + 2);
     }
     indices.insert(indices.end(), shapeIndices.begin(), shapeIndices.end());

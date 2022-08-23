@@ -13,6 +13,7 @@ std::string get_file_contents(const char* filename)
 		in.close();
 		return(contents);
 	}
+	std::cout << "\n\n**Erreur dans l'accès du shader!**\n\n";
 	throw(errno);
 }
 

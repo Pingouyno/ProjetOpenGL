@@ -11,7 +11,7 @@ void PlaySound::startEngine()
     //vérifier que l'engin a pu démarrer, donc ptr != nullptr
 	if (soundEngine == nullptr)
 	{
-		printf("Engin audio impossible à démarrer\n");
+		printf("\n\nEngin audio impossible à démarrer\n\n");
 		throw 0;
 	}
 }

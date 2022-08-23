@@ -15,13 +15,13 @@ class Snowman : public Entity
         AnimationType animationType;
 
         //formes du cube
-        Cube* body;
+        Cube3D* body;
         Cube* leftArm;
         Cube* rightArm;
         Cube* leftLeg;
         Cube* rightLeg;
         Cube* neck;
-        Cube* head;
+        Cube3D* head;
 
     public:
         //l'entité à suivre

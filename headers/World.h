@@ -9,6 +9,7 @@ using namespace std;
 #include"Shape.h"
 #include"Quad.h"
 #include"Cube.h"
+#include"Cube3D.h"
 #include"shaderClass.h"
 #include"Entity.h"
 #include"Snowman.h"
@@ -23,9 +24,13 @@ class World
     private:
         vector<Entity*> entities; 
         vector<Shape*> shapes;
+        vector<Cube3D*> cubes3D;
 
         //variables reliées au monde dynamique
         int score;
+
+        Cube3D* skyBox;
+        Cube3D* testCube;
 
     public:
         Player* player;
@@ -37,18 +42,22 @@ class World
 
         void doEntityBehaviors();
         void render();
-        void renderActive3DShapes();
+        void renderActiveShapes();
         void renderActiveEntities();
+        void renderActive3DCubes();
+        void renderActive3DCubesEntities();
         void renderOverlays();
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
         vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
         bool isAnyColliding(vector<int> &collisionLog);
         void addShape(Shape* shape);
+        void addCube3D(Cube3D* cube);
         void deleteAllShapes();
 
         //fonctions reliées à la logique dynamique
         void incrementScore(int amount);
         void updateScore();
+        void deselectTextBox();
 
     //méthodes pour initialiser le monde
     private:

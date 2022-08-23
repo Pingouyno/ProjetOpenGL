@@ -28,6 +28,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 	//passer du mode menu au mode jeu
 	}else if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && waitingForTPress)
 	{
+		world->deselectTextBox();
 		//inverser l'état de jeu
 		waitingForTPress = false;
 		worldState = worldState == WorldState::GAME ? WorldState::MENU : WorldState::GAME;

@@ -8,6 +8,7 @@ using namespace std;
 #include"Shape.h"
 #include"Quad.h"
 #include"Cube.h"
+#include"Cube3D.h"
 
 class Entity
 {
@@ -30,6 +31,8 @@ class Entity
     protected:
         function<void(void)> behavior;
         vector<Shape*> entityShapes;
+        vector<Cube3D*> entityCubes3D;
+        vector<Entity*> subEntities;
         Direction dirFacing;
         
     public:
@@ -37,12 +40,17 @@ class Entity
         Entity(glm::vec3 pos);
 
         void render();
+        void render3DCubes();
         void doBehavior();
         void setBehavior(function<void(void)> behavior);
         void addShape(Shape* ptrShape);
+        void addCube3D(Cube3D* ptrCube);
+        void addEntity(Entity* entity);
         void moveTo(glm::vec3 newPos);
         void rotate(vec3 axis, float radians);
+        void rotateAround(vec3 pos, vec3 axis, float radians);
         void lookAtHorizontal(vec3 targetPos);
+        bool isColliding(vec3 pos);
         vec3 getLocalEquivalent(vec3 axis);
         vec3 getXAxis();
         vec3 getYAxis();
@@ -51,13 +59,15 @@ class Entity
         //fonctions à redéfinir (facultatif)
         virtual glm::vec3& getPos();
         virtual float getPos(int i);
-        //seulement pour usage interne, voir moveTo() à la place
-        virtual void setPos(glm::vec3 &newPos);
         virtual void doAnimation();
         
         //fonctions à redéfinir OBLIGATOIREMENT
         //virtual void setDirFacing(Direction dirFacing);
         virtual function<void(void)> getDefaultClassBehavior();
+
+    protected:
+        //seulement pour usage interne, voir moveTo() à la place
+        virtual void setPos(glm::vec3 newPos);
 
 };
 #endif

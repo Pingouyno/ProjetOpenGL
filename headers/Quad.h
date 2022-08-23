@@ -16,7 +16,9 @@ class Quad: public Shape {
         Axis axis;
 
         void initQuad(glm::vec3 pos, float width, float height, glm::vec3 color, Texture* tex, Axis axis);
+        Quad(vec3 pos, Texture* tex, float scale, Axis axis);
         Quad(glm::vec3 pos, float width, float height, Texture* tex, Axis axis);
+        Quad(glm::vec3 pos, float size, float width, glm::vec3 color, Axis axis);
         Quad(glm::vec3 pos, float size, Texture* texture, Axis axis);
         Quad(glm::vec3 pos, float size, glm::vec3 color, Axis axis);
         Quad(glm::vec3 pos, float size, Axis axis);

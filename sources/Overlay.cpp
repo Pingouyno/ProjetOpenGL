@@ -5,6 +5,7 @@ Overlay::Overlay(Camera *camera)
 {
     staticShapes = {};
     clickableShapes = {};
+    textEntities = {};
     this->camera = camera;
 }
 
@@ -25,6 +26,14 @@ void Overlay::render()
             ptrShape->render();
         }
     }
+
+    for (TextEntity2D* ptrEntity : textEntities)
+    {
+        if (ptrEntity->active)
+        {
+            ptrEntity->render();
+        }
+    }
 }
 
 void Overlay::checkCollisions(glm::vec3 &mousePos)
@@ -41,6 +50,11 @@ void Overlay::checkCollisions(glm::vec3 &mousePos)
             break;
         }
     }
+
+    for (TextEntity2D* ptrEntity : textEntities)
+    {
+        ptrEntity->checkCollisions(mousePos);
+    }
 }
 
 void Overlay::addStaticShape(Quad2D* shape)
@@ -51,6 +65,11 @@ void Overlay::addStaticShape(Quad2D* shape)
 void Overlay::addClickShape(Quad2D* shape)
 {
     clickableShapes.push_back(shape);
+}
+
+void Overlay::addTextEntity2D(TextEntity2D* entity)
+{
+    this->textEntities.push_back(entity);
 }
 
 //fonctions virtuelles (À ÊTRE REDÉFINIES)_________________________________________

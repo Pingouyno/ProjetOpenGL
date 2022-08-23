@@ -20,6 +20,7 @@ class Cube : public Shape {
         Cube(glm::vec3 pos, float size, Texture* tex);
         Cube(glm::vec3 pos, float size, glm::vec3 color);
         Cube(glm::vec3 pos, float size);
+        Cube(void* dummy);
         
         int getVerticeCount();
         int getIndiceCount();
