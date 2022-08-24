@@ -16,11 +16,11 @@ class Snowman : public Entity
 
         //formes du cube
         Cube3D* body;
-        Cube* leftArm;
-        Cube* rightArm;
-        Cube* leftLeg;
-        Cube* rightLeg;
-        Cube* neck;
+        Cube3D* leftArm;
+        Cube3D* rightArm;
+        Cube3D* leftLeg;
+        Cube3D* rightLeg;
+        //Cube3D* neck;
         Cube3D* head;
 
     public:

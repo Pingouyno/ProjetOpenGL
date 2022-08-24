@@ -9,7 +9,13 @@ const vector<string> Texture::tex3DNames =
 	"city",
 	"dirt",
 	"stone",
-	"bedrock"
+	"bedrock",
+	"stevehead",
+	"stevebody",
+	"steverightleg",
+	"steveleftleg",
+	"steverightarm",
+	"steveleftarm"
 };
 
 vector<Texture*> Texture::textures3D = {};

@@ -1,0 +1,16 @@
+https://thegimptutorials.com/how-to-resize-image/
+
+1) aller sur gimp, zoomer et sélectionner l'image
+    a) faire image->rogner selon la sélection
+    b) fichier->exporter sous...
+    c) ne pas oublier d'échanger les z positis/négatifs, et d'inverse le posx.jpg
+
+2) ouvrir chaque image individuellement, et changer la mise à l'échelle :
+    a) image->échelle et taille de l'image
+    b) cliquer sur la chaîne pour ENLEVER le verrou de dimensions (permettre de refaire l'échelle)
+    c) re-dimensionner en assurant que TOUTES LES FORMES aient les mêmes dimensions (256x256 partout)
+    c) fichier->écraser "image.txt", puis cliquer sur x pour fermer (abandonner les modifications)
+
+Notes :
+    ->inverser pz et nz (à cause de openGL)
+    ->flip px 

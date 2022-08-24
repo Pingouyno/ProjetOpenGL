@@ -8,6 +8,7 @@
 #							__|+Y|_____
 #NOTE : suit la convention |-X|+Z|+X|-Z|
 #							  |-Y|
+
 #												__|+Y|_____
 #mais à cause de openGL, nous chargeons  :     |-X|-Z|+X|+Z|  (les Z sont inversés)
 #							                      |-Y|
@@ -21,21 +22,27 @@ processed = False
 
 def processImage(path, name):
 	img = Image.open(os.path.join(path, name))
-	size = img.size[0] / 4 # on split le width par 4, en se fiant sur la layout du cube minecraft
 
+
+	#on inverse pz et nz car openGL utilise une convention différente des autres engins
 	arr = []
 	if extension == ".png":
 		arr = ["px", "pz", "nx", "ny", "py", "nz"]
 	elif extension == ".jpg":
 		arr = ["posx", "posz", "negx", "negy", "posy", "negz"]
-		
-	 #on commence DANS LE VIDE, en haut à gauche, à 0, 0
+
+
+	#tête
+	size = img.size[0] / 8 # on split le width par 4, en se fiant sur la layout du cube minecraft
 	splitAndSave(img, size*2, size,   size, addToFilename(name, arr[0])) #px OK
 	splitAndSave(img, size*3, size,   size, addToFilename(name, arr[1])) #nz OK
 	splitAndSave(img, 0     , size,   size, addToFilename(name, arr[2])) #nx OK
-	splitAndSave(img, size  , size*2, size, addToFilename(name, arr[3])) #ny OK
+	splitAndSave(img, size*2, 0   ,   size, addToFilename(name, arr[3])) #ny OK
 	splitAndSave(img, size  , 0   ,   size, addToFilename(name, arr[4])) #py OK
 	splitAndSave(img, size  , size,   size, addToFilename(name, arr[5])) #pz OK
+	
+
+
 
 def addToFilename(name, add):
 	name = name.split('.')

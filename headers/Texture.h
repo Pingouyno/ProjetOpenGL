@@ -28,7 +28,13 @@ class Texture {
 			CITY = 4,
 			DIRT = 5,
 			STONE = 6,
-			BEDROCK = 7
+			BEDROCK = 7,
+			STEVE_HEAD = 8,
+			STEVE_BODY = 9,
+			STEVE_RIGHT_LEG = 10,
+			STEVE_LEFT_LEG = 11,
+			STEVE_RIGHT_ARM = 12,
+			STEVE_LEFT_ARM = 13
 		};
 		const static vector<string> tex3DNames;
 		static vector<Texture*> textures3D;

@@ -283,9 +283,6 @@ void World::setup3DShapes()
 	this->skyBox = new Cube3D(vec3(0, 0, 0), vec3(1), Texture::get3DImgTexture(Texture::TEX3D::FIELD));
 	skyBox->setToBackground();
 
-	testCube = new Cube3D(vec3(0, 0, 0), vec3(5), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK));
-	addCube3D(testCube);
-
 	float cubeSize = 3.0f;
 	vec3 default_pos = vec3(-10.0f);
 
@@ -339,4 +336,10 @@ void World::setup3DShapes()
 		pos.x += cubeSize;
 		pos.z += 10*cubeSize;
 	}
+
+	testCube = new Cube3D(vec3(0, 0, 0), vec3(5), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK));
+	addCube3D(testCube);
+	
+
+	addCube3D(new Cube3D(vec3(-10, 10, -10), vec3(3), Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD))); 
 }

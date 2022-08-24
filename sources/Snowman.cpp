@@ -131,26 +131,22 @@ void Snowman::initSnowman()
     Texture* obama_png = Texture::get2DImgTexture("obama.png");
     
     //corps
-    body = new Cube3D(getPos(), vec3(3, 4, 1.5), Texture::get3DImgTexture(Texture::TEX3D::GRASS));
-    leftArm = new Cube(getPos() + vec3(2, 0.5, 0), vec3(1, 3, 1), wood_png);
-    rightArm = new Cube(getPos() + vec3(-2, 0.5, 0), vec3(1, 3, 1), wood_png);
-    leftLeg = new Cube(getPos() + vec3(0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
-    rightLeg = new Cube(getPos() + vec3(-0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), wood_png);
-    neck = new Cube(getPos() + vec3(0, 2.5, 0), vec3(0.75, 1, 0.75), wood_png);
-    head = new Cube3D(getPos() + vec3(0, 3, 0), vec3(1.5, 1.5, 1.5), Texture::get3DImgTexture(Texture::TEX3D::EARTH));
-
-    entityShapes = 
-    {
-        leftArm,
-        rightArm,
-        leftLeg,
-        rightLeg,
-        neck
-    };
+    body = new Cube3D(getPos(), vec3(3, 4, 1.5), Texture::get3DImgTexture(Texture::TEX3D::STEVE_BODY));
+    leftArm = new Cube3D(getPos() + vec3(2, 0.5, 0), vec3(1, 3, 1), Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_ARM));
+    rightArm = new Cube3D(getPos() + vec3(-2, 0.5, 0), vec3(1, 3, 1), Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_ARM));
+    leftLeg = new Cube3D(getPos() + vec3(0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_LEG));
+    rightLeg = new Cube3D(getPos() + vec3(-0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_LEG));
+    //neck = new Cube3D(getPos() + vec3(0, 2.5, 0), vec3(0.75, 1, 0.75), wood_png);
+    head = new Cube3D(getPos() + vec3(0, 2.9, 0), vec3(1.5, 1.5, 1.5), Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD));
 
     entityCubes3D = 
     {
         body,
+        leftArm,
+        rightArm,
+        leftLeg,
+        rightLeg,
+        //neck,
         head
     };
 }
