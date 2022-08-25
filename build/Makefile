@@ -369,6 +369,30 @@ sources/MenuOverlay.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MenuOverlay.cpp.s
 .PHONY : sources/MenuOverlay.cpp.s
 
+sources/MousePicker.o: sources/MousePicker.cpp.o
+.PHONY : sources/MousePicker.o
+
+# target to build an object file
+sources/MousePicker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MousePicker.cpp.o
+.PHONY : sources/MousePicker.cpp.o
+
+sources/MousePicker.i: sources/MousePicker.cpp.i
+.PHONY : sources/MousePicker.i
+
+# target to preprocess a source file
+sources/MousePicker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MousePicker.cpp.i
+.PHONY : sources/MousePicker.cpp.i
+
+sources/MousePicker.s: sources/MousePicker.cpp.s
+.PHONY : sources/MousePicker.s
+
+# target to generate assembly for a file
+sources/MousePicker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/MousePicker.cpp.s
+.PHONY : sources/MousePicker.cpp.s
+
 sources/Overlay.o: sources/Overlay.cpp.o
 .PHONY : sources/Overlay.o
 
@@ -392,6 +416,30 @@ sources/Overlay.s: sources/Overlay.cpp.s
 sources/Overlay.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Overlay.cpp.s
 .PHONY : sources/Overlay.cpp.s
+
+sources/PerlinNoise.o: sources/PerlinNoise.cpp.o
+.PHONY : sources/PerlinNoise.o
+
+# target to build an object file
+sources/PerlinNoise.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PerlinNoise.cpp.o
+.PHONY : sources/PerlinNoise.cpp.o
+
+sources/PerlinNoise.i: sources/PerlinNoise.cpp.i
+.PHONY : sources/PerlinNoise.i
+
+# target to preprocess a source file
+sources/PerlinNoise.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PerlinNoise.cpp.i
+.PHONY : sources/PerlinNoise.cpp.i
+
+sources/PerlinNoise.s: sources/PerlinNoise.cpp.s
+.PHONY : sources/PerlinNoise.s
+
+# target to generate assembly for a file
+sources/PerlinNoise.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/PerlinNoise.cpp.s
+.PHONY : sources/PerlinNoise.cpp.s
 
 sources/PlaySound.o: sources/PlaySound.cpp.o
 .PHONY : sources/PlaySound.o
@@ -816,9 +864,15 @@ help:
 	@echo "... sources/MenuOverlay.o"
 	@echo "... sources/MenuOverlay.i"
 	@echo "... sources/MenuOverlay.s"
+	@echo "... sources/MousePicker.o"
+	@echo "... sources/MousePicker.i"
+	@echo "... sources/MousePicker.s"
 	@echo "... sources/Overlay.o"
 	@echo "... sources/Overlay.i"
 	@echo "... sources/Overlay.s"
+	@echo "... sources/PerlinNoise.o"
+	@echo "... sources/PerlinNoise.i"
+	@echo "... sources/PerlinNoise.s"
 	@echo "... sources/PlaySound.o"
 	@echo "... sources/PlaySound.i"
 	@echo "... sources/PlaySound.s"

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 
 project(ProjetOpenGL)
 
+include_directories("headers")
+
 link_directories("libraries/link")
 
 file(GLOB SOURCES_DIR "sources/*")

@@ -116,6 +116,36 @@ void Quad::setAxis(Axis axis)
 
 bool Quad::isColliding(glm::vec3 &camPos)
 {
+    const float MIN_DISTANCE = 0.01f;
+
+    float distX = abs(pos[0] - camPos[0]);
+    float distY = abs(pos[1] - camPos[1]);
+    float distZ = abs(pos[2] - camPos[2]);
+
+    switch(axis){
+        case X:
+            return (distX <= MIN_DISTANCE / 2.0f
+                && distY <= (width + MIN_DISTANCE) / 2.0f
+                && distZ <= (height + MIN_DISTANCE) / 2.0f);
+            break;
+
+        case Y:
+            return (distX <= (height + MIN_DISTANCE) / 2.0f
+                && distY <= MIN_DISTANCE / 2.0f
+                && distZ <= (width + MIN_DISTANCE) / 2.0f);
+            break;
+
+        case Z:
+            return (distX <= (height + MIN_DISTANCE) / 2.0f
+                && distY <= (width + MIN_DISTANCE) / 2.0f
+                && distZ <= MIN_DISTANCE / 2.0f);
+            break;
+    }
+    return false;
+}
+
+bool Quad::isCollidingHuman(glm::vec3 &camPos)
+{
     float distX = abs(pos[0] - camPos[0]);
     float distY = abs(pos[1] - camPos[1]);
     float distZ = abs(pos[2] - camPos[2]);

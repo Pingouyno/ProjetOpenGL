@@ -37,6 +37,7 @@ void reloadIndicesInEBO(EBO &EBO1);
 
 int main()
 {	
+
 	PlaySound::startEngine();
 
 	// Initialize GLFW
@@ -122,12 +123,12 @@ int main()
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
-		
-		eventManager->Inputs(window);
 
-		world->camera->Matrix(45.0f, 0.01f, (float)VIEW_DISTANCE);
+		eventManager->Inputs(window);
 		//important de mettre à jour les positions avant de reload les vertices
 		world->doEntityBehaviors();
+
+		world->camera->Matrix(45.0f, 0.01f, (float)VIEW_DISTANCE);
 
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();		 

@@ -43,8 +43,8 @@ class Shape {
         const static vec4 AXIS_Z;
 
         //propriétés hitbox Camera
-        static float camBoxHeight;
-        static float camBoxWidth;
+        const static float camBoxHeight;
+        const static float camBoxWidth;
 
         Shape();
 
@@ -67,7 +67,8 @@ class Shape {
 
         virtual void render();
         virtual void resize(float width, float height);
-        virtual bool isColliding(glm::vec3 &camPos);
+        virtual bool isColliding(glm::vec3 &targetPos);
+        virtual bool isCollidingHuman(glm::vec3 &camPos);
         virtual int getVerticeCount();
         virtual int getIndiceCount();
         virtual vector<float> getShapeTexMap();
@@ -104,7 +105,7 @@ class Shape {
         void lookAtVertical(glm::vec3 targetPos);
         void resetRotation();
         bool hasTexture();
-        void reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
+        void reportCollisionWithHuman(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
         vec3 getXAxis();
         vec3 getYAxis();
         vec3 getZAxis();

@@ -1,5 +1,11 @@
 #include"../headers/Snowman.h"
 
+const float Snowman::size = 0.2f;
+const vec3 Snowman::headFormat = vec3(size*1.5, size*1.5, size*1.5);
+const vec3 Snowman::bodyFormat = vec3(size*2.5, size*3.25, size*1.5);
+const vec3 Snowman::armFormat = vec3(size*0.9f, size*3, size*0.9f);
+const vec3 Snowman::legFormat = vec3(size*1.25, size*3.5, size*1.25);
+
 enum Snowman::AnimationType : int {WALKING = 0};
 
 Snowman::Snowman(glm::vec3 pos, Entity* targetEntity) : Entity(pos)
@@ -100,7 +106,7 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         //mouvements de l'entité
         moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
         this->lookAtHorizontal(targetEntity->getPos());
-        head->lookAt(targetEntity->getPos() + vec3(0, 1, 0));
+        head->lookAt(targetEntity->getPos());
         doAnimation();
         time++;
     };  
@@ -112,10 +118,10 @@ void Snowman::doWalkingAnimation()
     float rotation = (RADIAN_CIRCLE / 4) / animationLength;
 
     //animation des articulations
-    this->rightArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, 1.5, 0)), getXAxis(), rotation * articulationDirection);
-    this->leftArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, 1.5, 0)), getXAxis(), rotation * -articulationDirection);
-    this->rightLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -2.5, 0)), getXAxis(), rotation * -articulationDirection);
-    this->leftLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -2.5, 0)), getXAxis(), rotation * articulationDirection);
+    this->rightArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, bodyFormat.y/2 - armFormat.y/4, 0)), getXAxis(), rotation * articulationDirection);
+    this->leftArm->rotateAround(getPos() + getLocalEquivalent(vec3(0, bodyFormat.y/2 - armFormat.y/4, 0)), getXAxis(), rotation * -articulationDirection);
+    this->rightLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -bodyFormat.y/2, 0)), getXAxis(), rotation * -articulationDirection);
+    this->leftLeg->rotateAround(getPos() + getLocalEquivalent(vec3(0, -bodyFormat.y/2, 0)), getXAxis(), rotation * articulationDirection);
 
     //incrémenter et déterminer la prochaine direction
     articulationTimer += articulationDirection;
@@ -131,13 +137,12 @@ void Snowman::initSnowman()
     Texture* obama_png = Texture::get2DImgTexture("obama.png");
     
     //corps
-    body = new Cube3D(getPos(), vec3(3, 4, 1.5), Texture::get3DImgTexture(Texture::TEX3D::STEVE_BODY));
-    leftArm = new Cube3D(getPos() + vec3(2, 0.5, 0), vec3(1, 3, 1), Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_ARM));
-    rightArm = new Cube3D(getPos() + vec3(-2, 0.5, 0), vec3(1, 3, 1), Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_ARM));
-    leftLeg = new Cube3D(getPos() + vec3(0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_LEG));
-    rightLeg = new Cube3D(getPos() + vec3(-0.75, -3.75, 0), vec3(1.25, 3.5, 1.25), Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_LEG));
-    //neck = new Cube3D(getPos() + vec3(0, 2.5, 0), vec3(0.75, 1, 0.75), wood_png);
-    head = new Cube3D(getPos() + vec3(0, 2.9, 0), vec3(1.5, 1.5, 1.5), Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD));
+    body = new Cube3D(getPos(), bodyFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_BODY));
+    leftArm = new Cube3D(getPos() + vec3((bodyFormat.x + armFormat.x)/2, (bodyFormat.y - armFormat.y)/2, 0), armFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_ARM));
+    rightArm = new Cube3D(getPos() + vec3(-(bodyFormat.x + armFormat.x)/2, (bodyFormat.y - armFormat.y)/2, 0), armFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_ARM));
+    leftLeg = new Cube3D(getPos() + vec3((bodyFormat.x - legFormat.x)/2, -(bodyFormat.y + legFormat.y)/2 + legFormat.y/12, 0), legFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_LEG));
+    rightLeg = new Cube3D(getPos() + vec3(-(bodyFormat.x - legFormat.x)/2, -(bodyFormat.y + legFormat.y)/2 + legFormat.y/12, 0), legFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_LEG));
+    head = new Cube3D(getPos() + vec3(0, (bodyFormat.y + headFormat.y)/2 + headFormat.y/16, 0), headFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD));
 
     entityCubes3D = 
     {
@@ -146,7 +151,6 @@ void Snowman::initSnowman()
         rightArm,
         leftLeg,
         rightLeg,
-        //neck,
         head
     };
 }

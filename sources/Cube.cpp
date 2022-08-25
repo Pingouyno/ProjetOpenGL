@@ -141,6 +141,17 @@ bool Cube::isColliding(glm::vec3 &camPos)
     float distY = abs(pos[1] - camPos[1]);
     float distZ = abs(pos[2] - camPos[2]);
 
+    return (distX <= width / 2.0f
+        && distY <= height / 2.0f
+        && distZ <= depth / 2.0f);
+}
+
+bool Cube::isCollidingHuman(glm::vec3 &camPos)
+{
+    float distX = abs(pos[0] - camPos[0]);
+    float distY = abs(pos[1] - camPos[1]);
+    float distZ = abs(pos[2] - camPos[2]);
+
     return (distX <= (width + camBoxWidth) / 2.0f
         && distY <= (height + camBoxHeight) / 2.0f
         && distZ <= (depth + camBoxWidth) / 2.0f);

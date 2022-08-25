@@ -17,8 +17,8 @@ std::vector<float> Shape::DEFAULT_TEXMAP({0.0f, 1.0f});
 std::vector<float> Shape::NO_TEXMAP({0.0f, 0.0f});
 
 //ces valeurs sont divisées par deux car on calculer les colissions devant et derrière (diamètre plutôt que rayon)
-float Shape::camBoxHeight = 2.8f;
-float Shape::camBoxWidth = 0.4f;
+const float Shape::camBoxHeight = 2.8f;
+const float Shape::camBoxWidth = 0.4f;
 
 Shape::Shape(){
     shouldReloadArrays = true;
@@ -33,7 +33,8 @@ Shape::Shape(){
 
 void Shape::render(){printUndefinedErr("RENDER");}
 void Shape::resize(float width, float height){printUndefinedErr("RESIZE");}
-bool Shape::isColliding(glm::vec3 &camPos){printUndefinedErr("COLLIDING"); return false;}
+bool Shape::isColliding(glm::vec3 &targetPos){printUndefinedErr("COLLIDING"); return false;}
+bool Shape::isCollidingHuman(glm::vec3 &camPos){printUndefinedErr("COLLIDINGHUMAN"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}
 vector<float> Shape::getShapeTexMap(){printUndefinedErr("TEXMAP"); return DEFAULT_TEXMAP;}
@@ -264,15 +265,15 @@ bool Shape::hasTexture()
     return this->tex != nullptr;
 }
 
-void Shape::reportCollision(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
+void Shape::reportCollisionWithHuman(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
 {
     glm::vec3 tryPosX = glm::vec3(newPos[0], oldPos.y, oldPos.z);
     glm::vec3 tryPosY = glm::vec3(oldPos.x, newPos[1], oldPos.z);
     glm::vec3 tryPosZ = glm::vec3(oldPos.x, oldPos.y, newPos[2]);
 
-    if (isColliding(tryPosX)) collisionLog[0]++;
-    if (isColliding(tryPosY)) collisionLog[1]++;
-    if (isColliding(tryPosZ)) collisionLog[2]++;
+    if (isCollidingHuman(tryPosX)) collisionLog[0]++;
+    if (isCollidingHuman(tryPosY)) collisionLog[1]++;
+    if (isCollidingHuman(tryPosZ)) collisionLog[2]++;
 }
 
 vec3 Shape::getXAxis()

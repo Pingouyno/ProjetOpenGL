@@ -9,10 +9,12 @@
 
 #include"PlaySound.h"
 #include"World.h"
+#include"MousePicker.h"
 
 class EventManager
 {
     private:
+	    MousePicker* mousePicker;
         World* world;
         Camera* camera;
 
@@ -27,6 +29,7 @@ class EventManager
     private:
         void checkKeyEvents(GLFWwindow* window);
         void checkMouseEvents(GLFWwindow* window); 
+        void checkPhysicMouseEvents(GLFWwindow* window);
         
         //à activer et désactiver au besoin (raisons de performance)
         void checkKeyboardCamMovement(GLFWwindow* window);

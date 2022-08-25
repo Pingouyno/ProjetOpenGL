@@ -8,6 +8,12 @@ class Snowman : public Entity
     enum AnimationType : int;
 
     private:
+        const static float size;
+        const static vec3 headFormat;
+        const static vec3 bodyFormat;
+        const static vec3 armFormat;
+        const static vec3 legFormat;
+
         //pour avoir une référence pour les animations
         int time;
         int articulationTimer;
@@ -20,7 +26,6 @@ class Snowman : public Entity
         Cube3D* rightArm;
         Cube3D* leftLeg;
         Cube3D* rightLeg;
-        //Cube3D* neck;
         Cube3D* head;
 
     public:

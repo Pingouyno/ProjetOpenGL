@@ -17,11 +17,14 @@ using namespace std;
 #include"Player.h"
 #include"GameOverlay.h"
 #include"MenuOverlay.h"
+#include"PerlinNoise.h"
 
 class World
 {
     //variables statiques
     private:
+        //générateur de perlin noise
+        PerlinNoise* perlinNoise;
         vector<Entity*> entities; 
         vector<Shape*> shapes;
         vector<Cube3D*> cubes3D;
@@ -30,7 +33,6 @@ class World
         int score;
 
         Cube3D* skyBox;
-        Cube3D* testCube;
 
     public:
         Player* player;
@@ -47,6 +49,7 @@ class World
         void renderActive3DCubes();
         void renderActive3DCubesEntities();
         void renderOverlays();
+        Cube3D* getFirstCubeCollidingWithRay(vec3 startingPos, vec3 ray);
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
         vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
         bool isAnyColliding(vector<int> &collisionLog);

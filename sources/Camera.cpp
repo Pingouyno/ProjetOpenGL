@@ -15,26 +15,27 @@ Camera::Camera(int width, int height, glm::vec3 position)
 	Camera::width = width;
 	Camera::height = height;
 	Position = position;
+	projectionMatrix = mat4(1.0f);
+	viewMatrix = mat4(1.0f);
 }
 
+//met à jour les matrices et les shaders selon la position (et orientation de la caméra)
 void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane)
 {
 	// Initializes matrices since otherwise they will be the null matrix
-	glm::mat4 view = glm::mat4(1.0f);
-	glm::mat4 projection = glm::mat4(1.0f);
-
-	// Makes camera look in the right direction from the right position
-	view = glm::lookAt(Position, Position + Orientation, Up);
+	viewMatrix = glm::lookAt(Position, Position + Orientation, Up);
+	projectionMatrix = glm::mat4(1.0f);
+	
 	// Adds perspective to the scene
-	projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
+	projectionMatrix = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
 
 	shaderProgramCube->Activate();
 	//la variable camMatrix pour le shader cube également
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramCube->ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(projection * view));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramCube->ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(projectionMatrix * viewMatrix));
 
 	shaderProgram3D->Activate();
 	// Exports the camera matrix to the Vertex Shader
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram3D->ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(projection * view));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram3D->ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(projectionMatrix * viewMatrix));
 }
 
 void Camera::jump()
@@ -56,4 +57,11 @@ void Camera::fall()
 {
 	isInAir = true;
 	timeInAir = DEFAULT_TIME_AIR;	
+}
+
+void Camera::updateMousePos(GLFWwindow* window)
+{
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+	mousePos = vec2(x, y);
 }

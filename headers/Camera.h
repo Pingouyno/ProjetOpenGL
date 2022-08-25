@@ -5,14 +5,16 @@
 #include<fstream>
 using namespace std;
 
-#include"shaderClass.h"
-#include"Globals.h"
 #include"../libraries/include/GLAD/glad.h"
 #include"../libraries/include/glfw/glfw3.h"
 #include"../libraries/include/glm/gtc/matrix_transform.hpp"
 #include"../libraries/include/glm/gtc/type_ptr.hpp"
 #include"../libraries/include/glm/gtx/rotate_vector.hpp"
 #include"../libraries/include/glm/gtx/vector_angle.hpp"
+using namespace glm;
+
+#include"shaderClass.h"
+#include"Globals.h"
 
 class Camera
 {
@@ -30,6 +32,10 @@ class Camera
         glm::vec3 Position;
         glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec2 mousePos;
+
+        mat4 projectionMatrix;
+        mat4 viewMatrix;
 
         // Prevents the camera from jumping around when first clicking left click
         bool isInAir = true;
@@ -53,6 +59,8 @@ class Camera
         void jump();
         void land();
         void fall();
+        
+        void updateMousePos(GLFWwindow* window);
 
 };
 #endif

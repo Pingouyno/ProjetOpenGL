@@ -2,7 +2,8 @@
 
 World::World()
 {
-	this->player = new Player(glm::vec3(0.0f, 0.0f, 0.2f));
+	this->perlinNoise = new PerlinNoise();
+	this->player = new Player(glm::vec3(0.0f, 0.0f, 0.0f));
 	this->camera = this->player->camera;
     setupEntities();
     setup3DShapes();
@@ -28,11 +29,6 @@ void World::doEntityBehaviors()
 
 void World::render()
 {
-	float dir = score % 120 >= 60 ? 1 : -1;
-	testCube->rotate(Shape::AXIS_Y, 2*M_PI/90.0f);
-	testCube->moveTo(testCube->pos + dir * vec3(0, 5.0f/60.0f, 0));
-	score++;
-
 	shaderProgramCube->Activate();
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -114,6 +110,25 @@ void World::renderOverlays()
 	}
 }
 
+//trouve la première forme qui entre en collisions avec le rayon
+Cube3D* World::getFirstCubeCollidingWithRay(vec3 startingPos, vec3 ray)
+{
+	const int playerRange = 6;
+	vec3 currentRayPos = startingPos;
+	for (int i = 0 ; i < playerRange ; i++)
+	{
+		for (Cube3D* cube : cubes3D)
+		{
+			if (cube->isColliding(currentRayPos)) 
+			{
+				return cube;
+			}
+		}
+		currentRayPos += ray;
+	}
+	return nullptr;
+}
+
 void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 {
 	TextEntity2D* textBox = ((TextEntity2D*)selectedTextBox);
@@ -133,14 +148,14 @@ vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &ne
     vector<int> collisionLog({0, 0, 0});
     for (Shape* ptrShape : shapes)
     {
-        if ((*ptrShape).active && (*ptrShape).isColliding(newPos))
-            (*ptrShape).reportCollision(collisionLog, oldPos, newPos);
+        if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
+            (*ptrShape).reportCollisionWithHuman(collisionLog, oldPos, newPos);
     }
 
 	for (Cube3D* ptrCube : cubes3D)
     {
-        if (ptrCube->active && ptrCube->isColliding(newPos))
-            ptrCube->reportCollision(collisionLog, oldPos, newPos);
+        if (ptrCube->active && ptrCube->isCollidingHuman(newPos))
+            ptrCube->reportCollisionWithHuman(collisionLog, oldPos, newPos);
     }
     return collisionLog;
 }
@@ -202,15 +217,16 @@ void World::setupEntities()
 {
 	Snowman* firstSnowman = new Snowman(glm::vec3(10, 10, 10), player);
 
-	firstSnowman->targetEntity = firstSnowman;
-
 	entities = 
 	{
 		firstSnowman,
 	};
 
 	//ajouter un train de snowmans	
-	
+
+	//firstSnowman->targetEntity = firstSnowman;
+
+	/*
 	Snowman* lastSnowman = firstSnowman;
 	Snowman* newSnowman = nullptr;
 	for (int i = 0 ; i < 50 ; i++)
@@ -219,11 +235,58 @@ void World::setupEntities()
 		entities.push_back(newSnowman);
 		lastSnowman = newSnowman;
 	}
-	
+	*/
 }
 
 void World::setup3DShapes()
 {
+	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
+	this->skyBox = new Cube3D(vec3(0, 0, 0), vec3(1), Texture::get3DImgTexture(Texture::TEX3D::FIELD));
+	skyBox->setToBackground();
+
+	const float worldWidth = 16.0f;
+	const float worldHeight = 64;
+	const vec3 defaultPos(20, worldHeight, 20);
+	const float chunkSize = 20.0f;
+	const float cubeSize = 1.0f;
+	vec3 pos = defaultPos;
+
+	for (int x = 0 ; x < chunkSize ; x++)
+	{
+		for (int z = 0 ; z < chunkSize ; z++)
+		{
+			float perlinOut = perlinNoise->noise((double)x/worldWidth, 1, (double)z/worldHeight);
+			pos.y = std::round(worldHeight * perlinOut);
+			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
+
+			//mettre jusqu'en bas (0)
+			vec3 currentPos = pos;
+			for (int y = 0 ; y < pos.y ; y++)
+			{	
+				currentPos.y -= 1;
+
+				/*
+				if (currentPos.y < 3) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
+				else if (currentPos.y < 25) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
+				else addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
+				*/
+
+				//optimiser pour ne render que les bords
+				if (!(x != 0 && z != 0 && x != chunkSize && z != chunkSize) || y < 2)
+				{
+					if (currentPos.y < 3) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
+					else if (currentPos.y < 25) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
+					else addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
+				}
+			}
+
+			pos.x += cubeSize;
+		}
+
+		pos.z += cubeSize;
+		pos.x -= cubeSize * chunkSize;
+	}
+
 	/*
 	Texture* deux_png = Texture::get2DImgTexture("deux_icon.png");
 	Texture* grass_png = Texture::get2DImgTexture("grass.png");
@@ -279,10 +342,7 @@ void World::setup3DShapes()
 	}
 	*/
 
-	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
-	this->skyBox = new Cube3D(vec3(0, 0, 0), vec3(1), Texture::get3DImgTexture(Texture::TEX3D::FIELD));
-	skyBox->setToBackground();
-
+	/*
 	float cubeSize = 3.0f;
 	vec3 default_pos = vec3(-10.0f);
 
@@ -336,10 +396,5 @@ void World::setup3DShapes()
 		pos.x += cubeSize;
 		pos.z += 10*cubeSize;
 	}
-
-	testCube = new Cube3D(vec3(0, 0, 0), vec3(5), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK));
-	addCube3D(testCube);
-	
-
-	addCube3D(new Cube3D(vec3(-10, 10, -10), vec3(3), Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD))); 
+	*/
 }

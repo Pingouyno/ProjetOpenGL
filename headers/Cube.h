@@ -29,7 +29,8 @@ class Cube : public Shape {
         void render();
         void resize(float width, float height);
         void resize(float width, float height, float depth);
-        bool isColliding(glm::vec3 &camPos);  
+        bool isColliding(glm::vec3 &targetPos);
+        bool isCollidingHuman(glm::vec3 &camPos);  
 
     private:
         void initIndices();

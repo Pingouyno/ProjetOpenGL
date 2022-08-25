@@ -5,6 +5,7 @@ EventManager::EventManager(World* world)
 {
     this->world = world;
     this->camera = world->camera;
+	this->mousePicker = new MousePicker(camera);
 }
 
 
@@ -12,6 +13,7 @@ void EventManager::Inputs(GLFWwindow* window)
 {
     checkKeyEvents(window);
 	checkMouseEvents(window);
+	checkPhysicMouseEvents(window);
 
 	//potentiellement à retirer au besoin et performance
 	checkKeyboardCamMovement(window);
@@ -130,6 +132,7 @@ void EventManager::checkKeyEvents(GLFWwindow* window)
 
 void EventManager::checkMouseEvents(GLFWwindow* window)
 {
+	camera->updateMousePos(window);
 	//Gère le mouvement de caméra ou clics via souris, x = vertical et y = horizontal
 	//bouger la souris
 
@@ -143,9 +146,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 			waitingForLClick = false;
 
 			//détecter la collision avec les overlays
-			double x, y;
-			glfwGetCursorPos(window, &x, &y);
-			glm::vec3 mousePos((float)x, (float)y, 0.0f);
+			glm::vec3 mousePos(camera->mousePos.x, camera->mousePos.y, 0.0f);
 			world->checkCameraCollidingAnyOverlay(mousePos);
 		}
 	}else
@@ -185,6 +186,18 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 		glfwSetCursorPos(window, (screenWidth / 2), (screenHeight / 2));
 	}
 	
+}
+
+void EventManager::checkPhysicMouseEvents(GLFWwindow* window)
+{
+	//met à jour le ray de la caméra
+	mousePicker->update();
+
+	Cube3D* lookedCube = world->getFirstCubeCollidingWithRay(world->player->getPos(), mousePicker->currentRay);
+	if (lookedCube != nullptr)
+	{
+		lookedCube->rotate(Shape::AXIS_Y, 2*M_PI/60.0f);
+	}
 }
 
 void EventManager::checkKeyboardCamMovement(GLFWwindow* window)

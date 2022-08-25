@@ -5,13 +5,13 @@
 # compile CXX with /usr/bin/c++
 C_DEFINES = 
 
-C_INCLUDES = 
+C_INCLUDES = -I/home/will/Prog/CPP/ProjetOpenGL/headers
 
 C_FLAGS = 
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/will/Prog/CPP/ProjetOpenGL/headers
 
 CXX_FLAGS = 
 

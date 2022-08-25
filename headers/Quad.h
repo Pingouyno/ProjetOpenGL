@@ -32,6 +32,7 @@ class Quad: public Shape {
         void resize(float width, float height);
         void setAxis(Axis axis);
         bool isColliding(glm::vec3 &camPos);
+        bool isCollidingHuman(glm::vec3 &camPos);
     
     private:
         void initIndices();
