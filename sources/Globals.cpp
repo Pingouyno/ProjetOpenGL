@@ -35,7 +35,7 @@ std::vector<int> indices =
 	9, 11, 12, //plateforme
 };
 
-const int VIEW_DISTANCE = 200;
+const int VIEW_DISTANCE = 500;
 const int LAB_SIZE = 50;
 
 std::vector<int> labyrinth = 
@@ -92,8 +92,6 @@ std::vector<int> labyrinth =
 	1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 
 };
 
-bool shouldReloadArrays = false;
-
 Shader* shaderProgram2D = nullptr;
 Shader* shaderProgram3D = nullptr;
 Shader* shaderProgramCube = nullptr;
@@ -102,7 +100,13 @@ float screenWidth = 1420.0f;
 float screenHeight = 900.0f;
 
 WorldState worldState = GAME;
-GameMode gameMode = CREATIVE;
+GameMode gameMode = SURVIVAL;
 
 //TextEntity2D*
 void* selectedTextBox = nullptr;
+
+bool shouldCenterCursor = true;
+
+VAO* VAO1 = nullptr;
+VBO* VBO1 = nullptr;
+EBO* EBO1 = nullptr;

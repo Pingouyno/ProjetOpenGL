@@ -27,4 +27,7 @@ void MenuOverlay::setupOverlay()
 
 	TextEntity2D* textEntity2D = new TextEntity2D(vec3(0, -0.5, 0), 20, TextEntity2D::DEFAULT_TEXT);
 	addTextEntity2D(textEntity2D);
+
+	fpsBar = new TextEntity2D(vec3(-0.6, 0.75, 0), 16, TextEntity2D::DEFAULT_TEXT);
+	addTextEntity2D(fpsBar);
 }

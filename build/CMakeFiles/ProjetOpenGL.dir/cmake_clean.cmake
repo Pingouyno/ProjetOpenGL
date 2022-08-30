@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/main.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/main.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o"
@@ -13,6 +15,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/GameOverlay.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Globals.cpp.o"

@@ -1,16 +1,28 @@
 #include"../headers/World.h"
 
+const int World::PLAYER_RANGE = 11;
+const float World::COLLISION_PRECISION = 50.0f;
+const int World::WORLD_SIZE = 384; //384; //12 chunks * 16 blocks par chunk
+const int World::WORLD_HEIGHT = 64.0f;
+const int World::CHUNK_SIZE = WORLD_SIZE;
+
 World::World()
 {
 	this->perlinNoise = new PerlinNoise();
-	this->player = new Player(glm::vec3(0.0f, 0.0f, 0.0f));
+	this->player = new Player(glm::vec3(8.0f, 40.0f, 8.0f));
 	this->camera = this->player->camera;
     setupEntities();
+	blocksToRenderMat = {};
+	for (int i = 0 ; i < Texture::tex3DNames.size(); i++)
+	{
+		blocksToRenderMat.push_back({});
+	}
     setup3DShapes();
+	
 	this->score = 0;
-
     //Pour blend les endroits vides des png
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     this->gameOverlay = new GameOverlay(camera);
     this->menuOverlay = new MenuOverlay(camera);
 }
@@ -29,6 +41,8 @@ void World::doEntityBehaviors()
 
 void World::render()
 {
+	VAO1->Bind();
+
 	shaderProgramCube->Activate();
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -41,6 +55,7 @@ void World::render()
 	//render les cubeMaps
 	renderActive3DCubes();
 	renderActive3DCubesEntities();
+	renderBlocks();
 
 	//render les formes
 	shaderProgram3D->Activate();
@@ -52,8 +67,6 @@ void World::render()
     glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	renderOverlays();
-
-    shouldReloadArrays = false;
 }
 
 //Render toutes les entités, et désactive "newShapeCreated"
@@ -82,7 +95,7 @@ void World::renderActiveEntities()
 //Render tous les cubes qui ont une texture 3D
 void World::renderActive3DCubes()
 {
-    for (Cube3D* ptrCube : cubes3D)
+	for (Cube3D* ptrCube : cubes3D)
     {
         if (ptrCube->active)
         {
@@ -91,14 +104,37 @@ void World::renderActive3DCubes()
     }
 }
 
+
 //TODO : remplir cette fonction
 void World::renderActive3DCubesEntities()
 {
-    
 	for (Entity* ptrEntity : entities)
     {
         ptrEntity->render3DCubes();
     }
+}
+
+void World::renderBlocks()
+{
+	for (auto &textureVec : blocksToRenderMat)
+	{
+		if (textureVec.size() != 0)
+		{
+			void* blockStarts[textureVec.size()];
+			GLsizei blockCounts[textureVec.size()];
+
+			for (int i = 0 ; i < textureVec.size() ; i++)
+			{
+				blockStarts[i] = (void*)(textureVec[i]->indexInIndices * sizeof(int));
+				blockCounts[i] = textureVec[i]->getIndiceCount();
+			}
+			textureVec[0]->tex->Bind();
+
+			glMultiDrawElements(GL_TRIANGLES, blockCounts, GL_UNSIGNED_INT, blockStarts, textureVec.size());
+
+			textureVec[0]->tex->Unbind();
+		}
+	}
 }
 
 void World::renderOverlays()
@@ -110,21 +146,32 @@ void World::renderOverlays()
 	}
 }
 
-//trouve la première forme qui entre en collisions avec le rayon
-Cube3D* World::getFirstCubeCollidingWithRay(vec3 startingPos, vec3 ray)
+//trouve la première forme qui entre en collisions avec le rayon* 
+Block* World::getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray)
 {
-	const int playerRange = 6;
+	const vec3 oneRayStep = ray / COLLISION_PRECISION;
+
 	vec3 currentRayPos = startingPos;
-	for (int i = 0 ; i < playerRange ; i++)
+	vec3 lastRoundedPos = vec3(NAN);
+	vec3 newRoundedPos;
+	Block* currentBlock;
+
+	int i = 0;
+	while (i < PLAYER_RANGE)
 	{
-		for (Cube3D* cube : cubes3D)
+		currentRayPos += oneRayStep;
+		newRoundedPos = glm::round(currentRayPos);
+
+		if (newRoundedPos != lastRoundedPos)
 		{
-			if (cube->isColliding(currentRayPos)) 
+			currentBlock = getBlockAt(newRoundedPos);
+			if (currentBlock != nullptr && currentBlock->active && currentBlock->isColliding(currentRayPos)) 
 			{
-				return cube;
+				return currentBlock;
 			}
+			i++;
 		}
-		currentRayPos += ray;
+		lastRoundedPos = newRoundedPos;
 	}
 	return nullptr;
 }
@@ -143,20 +190,34 @@ void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 	}
 }
 
+
 vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
 {
     vector<int> collisionLog({0, 0, 0});
     for (Shape* ptrShape : shapes)
     {
         if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
-            (*ptrShape).reportCollisionWithHuman(collisionLog, oldPos, newPos);
+            ptrShape->reportCollisionWithHuman(collisionLog, oldPos, newPos);
     }
 
-	for (Cube3D* ptrCube : cubes3D)
-    {
-        if (ptrCube->active && ptrCube->isCollidingHuman(newPos))
-            ptrCube->reportCollisionWithHuman(collisionLog, oldPos, newPos);
-    }
+	//trouver les blocs près du joueur
+	vec3 playerPos = glm::round(player->getPos());
+	playerPos.y -= 1;
+
+	vector<Block*> nearbyBlocks({});
+	for (float x = -1 ; x <= 1 ; x++)
+		for (float y = -1 ; y <= 1 ; y++)
+			for (float z = -1 ; z <= 1 ; z++)
+				nearbyBlocks.push_back(getBlockAt(playerPos + vec3(x*Shape::ROT_X + y*Shape::ROT_Y + z*Shape::ROT_Z)));
+			
+	for (int i = 0 ; i < nearbyBlocks.size() ; i++)
+	{
+		if (nearbyBlocks[i] != nullptr && nearbyBlocks[i]->active && nearbyBlocks[i]->isCollidingHuman(newPos))
+		{
+			nearbyBlocks[i]->reportCollisionWithHuman(collisionLog, oldPos, newPos);
+		}
+	}
+	
     return collisionLog;
 }
 
@@ -165,15 +226,65 @@ bool World::isAnyColliding(vector<int> &collisionLog)
     return collisionLog[0] != 0 || collisionLog[1] != 0 || collisionLog[2] != 0;
 }
 
-void World::addShape(Shape* shape)
-{   
-    shapes.push_back(shape);    
+void World::spawnBlockAt(vec3 pos, Texture* tex)
+{	
+	Block* spawnedBlock = getBlockAt(pos);
+	if (spawnedBlock != nullptr)
+	{
+		spawnedBlock->tex = tex;
+		spawnedBlock->active = true;
+		updateBlock(spawnedBlock);
+	}
 }
 
-//obligatoire pour les cubes 3D
-void World::addCube3D(Cube3D* cube)
-{   
-    cubes3D.push_back(cube);    
+void World::despawnBlockAt(vec3 pos)
+{	
+	Block* despawnedBlock = getBlockAt(pos);
+	if (despawnedBlock != nullptr)
+	{
+		despawnedBlock->active = false;
+		updateBlock(despawnedBlock);
+	}
+}
+
+Block* World::getBlockAt(vec3 pos)
+{
+	if (pos.x < 0 || pos.x >= WORLD_SIZE 
+	   || pos.z < 0 || pos.z >= WORLD_SIZE 
+	   || pos.y < 0 || pos.y >= WORLD_HEIGHT) 
+	    return nullptr;
+	return blockMat[pos.x][pos.y][pos.z];
+}
+
+//donne le adjacent à la fae sur laquelle le joueur regarde
+vec3 World::getPosAdjacentToLookedFace(Block* block, vec3 raySource, vec3 ray)
+{	
+
+	const vec3 oneRayStep = ray / COLLISION_PRECISION;
+	vec3 currentRayPos = raySource;
+
+	for (int i = 0; i < PLAYER_RANGE * COLLISION_PRECISION; i++)
+	{
+		currentRayPos += oneRayStep;
+
+		if (block->isColliding(currentRayPos))
+		{
+			break;
+		}
+	}
+
+	vec3 collisionPoint = glm::normalize(currentRayPos - block->pos);
+	vec3 diff = glm::abs(collisionPoint);
+
+	vec3 adjacentCoord = vec3(NAN);
+	if (diff.x >= diff.y && diff.x >= diff.z) adjacentCoord = Shape::AXIS_X;
+	else if (diff.y >= diff.x && diff.y >= diff.z) adjacentCoord = Shape::AXIS_Y;
+	else if (diff.z >= diff.x && diff.z >= diff.y) adjacentCoord = Shape::AXIS_Z;
+
+	vec3 direction = collisionPoint / diff;  //(1, -1, 1) par exemple
+	adjacentCoord = adjacentCoord * direction + block->pos;
+
+	return adjacentCoord;
 }
 
 void World::deleteAllShapes()
@@ -187,7 +298,6 @@ void World::deleteAllShapes()
     }
     vertices.clear();
     indices.clear();
-    shouldReloadArrays = true;
 }
 
 
@@ -205,13 +315,147 @@ void World::updateScore()
 }
 
 void World::deselectTextBox()
-{
+{    
 	if (selectedTextBox != nullptr) ((TextEntity2D*)selectedTextBox)->deselect();
+}
+
+void World::setHeldItemSlot(int slot)
+{	gameOverlay->setActiveHotBarSlot(slot);
+	player->textureInHand = gameOverlay->getTextureFromSlot(slot);
 }
 
 //fin fonctions dynamiques______________________________________________________________
 
 //méthodes privées
+
+void World::addShape(Shape* shape)
+{   
+    shapes.push_back(shape);    
+}
+
+//obligatoire pour les cubes 3D
+void World::addCube3D(Cube3D* cube)
+{   
+    cubes3D.push_back(cube);  
+}
+
+//obligatoire pour les cubes 3D
+void World::addBlock(Block* block)
+{   
+	blockMat[block->pos.x][block->pos.y][block->pos.z] = block;   
+}
+
+//un block "air" est un bloc active->false
+bool World::isBlockNearAir(Block* block)
+{
+	Block* nearbyBlocks[] = 
+	{
+		getBlockAt(block->pos + Shape::ROT_Y),
+		getBlockAt(block->pos - Shape::ROT_Y),
+		getBlockAt(block->pos + Shape::ROT_X),
+		getBlockAt(block->pos - Shape::ROT_X),
+		getBlockAt(block->pos + Shape::ROT_Z),
+		getBlockAt(block->pos - Shape::ROT_Z)
+	};
+
+	for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
+	{
+		if (nearbyBlocks[i] != nullptr && !nearbyBlocks[i]->active) return true;
+	}
+
+	return false;
+}
+
+//met à jour le block, soit render le block s'il est près d'air ou de-render s,Il n'est pas à côté d'air
+void World::updateBlock(Block* block)
+{	
+	Block* nearbyBlocks[] = 
+	{
+		getBlockAt(block->pos + Shape::ROT_Y),
+		getBlockAt(block->pos - Shape::ROT_Y),
+		getBlockAt(block->pos + Shape::ROT_X),
+		getBlockAt(block->pos - Shape::ROT_X),
+		getBlockAt(block->pos + Shape::ROT_Z),
+		getBlockAt(block->pos - Shape::ROT_Z)
+	};
+
+	//si block courant actif (donc pas de l'air)
+	if (block->active)
+	{
+		//vérifier qu'il est près d'air pour savoir s'il faut render
+		if (!block->isInRenderingVec() && isBlockNearAir(block))
+		{
+			addBlockToRendering(block);
+		}
+
+		//puisqu'on a ajouté un bloc, vérifier s'il faut retirer les blocs proches du rendering
+		for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
+		{
+			if (nearbyBlocks[i] != nullptr && nearbyBlocks[i]->active && nearbyBlocks[i]->isInRenderingVec() && !isBlockNearAir(nearbyBlocks[i]))
+			{
+				removeBlockFromRendering(nearbyBlocks[i]);
+			}
+		}
+	}
+	//sinon le cube n'est pas actif donc updater tous les cubes autour
+	else
+	{	
+		//retirer le cube courant   //TODO : remplacer par quelque-chose qui ne va pas laisser de nullptr dans le tableau
+		if (block->isInRenderingVec()) removeBlockFromRendering(block);
+		Block* nearbyBlock;
+		//ajouter les adjacents actifs dans le tableau à render    //TODO : remplacer par quelque-chose qui ne va pas dupliquer 
+		for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
+		{
+			nearbyBlock = nearbyBlocks[i];
+			if (nearbyBlock != nullptr && nearbyBlock->active)
+			{
+				if (!nearbyBlock->isInRenderingVec()) addBlockToRendering(nearbyBlock);
+			}
+		}
+	}
+}
+
+void World::addBlockToRendering(Block* block)
+{
+	vector<Block*> &textureVec = blocksToRenderMat[block->tex->tex3Did];
+	block->indexInRendering = textureVec.size();
+	textureVec.push_back(block);
+
+	GLBufferManager::mallocBlockIntoGLBuffer(block);
+	block->generate();
+}
+
+//retirer efficacement un objet de l'array, en échangeant sa position avec le dernier élément et en supprimant le dernier indice
+void World::removeBlockFromRendering(Block* blockToRemove)
+{
+	vector<Block*> &textureVec = blocksToRenderMat[blockToRemove->tex->tex3Did];
+	Block* lastBlock = textureVec.back();
+	
+	textureVec[blockToRemove->indexInRendering] = lastBlock;
+	lastBlock->indexInRendering = blockToRemove->indexInRendering;
+	blockToRemove->indexInRendering = -1;
+
+	textureVec.pop_back();
+
+	GLBufferManager::freeBlockFromGLBuffer(blockToRemove);
+}
+
+void World::setupBlocksToRender()
+{
+	for (auto &vecX : blockMat)
+	{
+		for (auto &vecY : vecX)
+		{
+			for (Block* block : vecY)
+			{
+				if (block->active && isBlockNearAir(block))
+				{
+					addBlockToRendering(block);
+				}
+			}
+		}
+	}
+}
 
 void World::setupEntities()
 {
@@ -224,177 +468,65 @@ void World::setupEntities()
 
 	//ajouter un train de snowmans	
 
-	//firstSnowman->targetEntity = firstSnowman;
-
-	/*
-	Snowman* lastSnowman = firstSnowman;
-	Snowman* newSnowman = nullptr;
-	for (int i = 0 ; i < 50 ; i++)
-	{
-		newSnowman = new Snowman(vec3(lastSnowman->getPos() + vec3(10.0f, 0, 12.0f)), lastSnowman);
-		entities.push_back(newSnowman);
-		lastSnowman = newSnowman;
-	}
-	*/
+	firstSnowman->targetEntity = firstSnowman;
 }
 
 void World::setup3DShapes()
 {
 	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
-	this->skyBox = new Cube3D(vec3(0, 0, 0), vec3(1), Texture::get3DImgTexture(Texture::TEX3D::FIELD));
+	this->skyBox = new Cube3D(vec3(0), vec3(1), Texture::get3DImgTexture(Texture::FIELD));
 	skyBox->setToBackground();
 
-	const float worldWidth = 16.0f;
-	const float worldHeight = 64;
-	const vec3 defaultPos(20, worldHeight, 20);
-	const float chunkSize = 20.0f;
-	const float cubeSize = 1.0f;
+	const vec3 defaultPos(0, 0, 0);
 	vec3 pos = defaultPos;
 
-	for (int x = 0 ; x < chunkSize ; x++)
+	//initialiser la matrice des blocs
+	blockMat.resize(CHUNK_SIZE);
+	for (int x = 0 ; x < CHUNK_SIZE ; x++)
 	{
-		for (int z = 0 ; z < chunkSize ; z++)
+		blockMat[x].resize(WORLD_HEIGHT);
+		for (int y = 0 ; y < WORLD_HEIGHT ; y++)
 		{
-			float perlinOut = perlinNoise->noise((double)x/worldWidth, 1, (double)z/worldHeight);
-			pos.y = std::round(worldHeight * perlinOut);
-			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
+			blockMat[x][y].resize(CHUNK_SIZE);
+		}
+	}
 
-			//mettre jusqu'en bas (0)
+	for (int x = 0 ; x < CHUNK_SIZE ; x++)
+	{
+		for (int z = 0 ; z < CHUNK_SIZE ; z++)
+		{
+			float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_HEIGHT);
+			float perlinHeight = std::round(WORLD_HEIGHT * perlinOut);
+
+			//mettre y jusqu'en bas (0)
 			vec3 currentPos = pos;
-			for (int y = 0 ; y < pos.y ; y++)
-			{	
-				currentPos.y -= 1;
 
-				/*
-				if (currentPos.y < 3) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
-				else if (currentPos.y < 25) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-				else addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
-				*/
-
-				//optimiser pour ne render que les bords
-				if (!(x != 0 && z != 0 && x != chunkSize && z != chunkSize) || y < 2)
-				{
-					if (currentPos.y < 3) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
-					else if (currentPos.y < 25) addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-					else addCube3D(new Cube3D(currentPos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
-				}
-			}
-
-			pos.x += cubeSize;
-		}
-
-		pos.z += cubeSize;
-		pos.x -= cubeSize * chunkSize;
-	}
-
-	/*
-	Texture* deux_png = Texture::get2DImgTexture("deux_icon.png");
-	Texture* grass_png = Texture::get2DImgTexture("grass.png");
-
-	glm::vec3 pos(-10.0f, -10.0f, -10.0f);
-	float wallSize = 2.5f;
-	int x = 0;
-
-	camera->Position = glm::vec3(pos[0]+wallSize/2, pos[1] + wallSize/1.5, pos[2]+wallSize/2);
-	camera->Orientation = glm::rotate(camera->Orientation, glm::radians(240.0f), glm::vec3(0, 1.0f, 0));
-
-	//générer les murs du labyrinthe
-	for (int z = 0 ; z < LAB_SIZE + 1; z++)
-	{
-		for (int x = 0 ; x < LAB_SIZE + 1 ; x++)
-		{
-			if (z != LAB_SIZE)
+			for (int y = 0 ; y < WORLD_HEIGHT ; y++)
 			{
-				if (x != LAB_SIZE)
-					addShape(new Quad(pos - vec3(0, wallSize/2, 0), wallSize, deux_png, Quad::Axis::Y));
-
-				if (x == 0 || (x == LAB_SIZE && z != LAB_SIZE - 1)) 
-					addShape(new Quad(pos - vec3(wallSize/2, 0, 0), wallSize, grass_png, Quad::Axis::X));
+				if (currentPos.y < perlinHeight) 
+				{
+					if (currentPos.y < 3) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
+					else if (currentPos.y < 25) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::STONE)));
+					else addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
+				}
+				else if (currentPos.y == perlinHeight) 
+				{
+					addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
+				}
+				else if  (currentPos.y > perlinHeight)
+				{
+					Block* addedBlock = new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::EARTH));
+					addedBlock->active = false;
+					addBlock(addedBlock);
+				}
+				currentPos.y += Block::BLOCK_SIZE;
 			}
 
-			if (z % LAB_SIZE == 0 && x != LAB_SIZE) 
-				addShape(new Quad(pos - vec3(0, 0, wallSize/2), wallSize, grass_png, Quad::Axis::Z));
-
-			pos[0] += wallSize;
-
+			pos.x += Block::BLOCK_SIZE;
 		}
-
-		pos[0] -= (LAB_SIZE + 1) * wallSize;
-		pos[2] += wallSize;
+		pos.z += Block::BLOCK_SIZE;
+		pos.x -= Block::BLOCK_SIZE * CHUNK_SIZE;
 	}
 
-	pos = {-10.0f, -10.0f, -10.0f};
-	int cpt = 0;
-	for (int i = 0 ; i < labyrinth.size(); i++)
-	{
-
-		if (labyrinth[i] == 1)
-			addShape(new Cube(pos, wallSize, grass_png));
-		pos[0] += wallSize;
-
-		cpt++;
-		if (cpt == LAB_SIZE)
-		{
-			cpt = 0;
-			pos[0] -= LAB_SIZE * wallSize;
-			pos[2] += wallSize;
-		}
-	}
-	*/
-
-	/*
-	float cubeSize = 3.0f;
-	vec3 default_pos = vec3(-10.0f);
-
-	vec3 pos = default_pos;
-	for (int x = 0 ; x < 10 ; x++)
-	{
-		for (int z = 10 ; z > 0 ; z--)
-		{
-			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
-			pos.z -= cubeSize;
-		}
-		pos.x += cubeSize;
-		pos.z += 10*cubeSize;
-	}
-
-	pos = default_pos;
-	pos.y -= 1*cubeSize;
-	for (int x = 0 ; x < 10 ; x++)
-	{
-		for (int z = 10 ; z > 0 ; z--)
-		{
-			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
-			pos.z -= cubeSize;
-		}
-		pos.x += cubeSize;
-		pos.z += 10*cubeSize;
-	}
-
-	pos = default_pos;
-	pos.y -= 2*cubeSize;
-	for (int x = 0 ; x < 10 ; x++)
-	{
-		for (int z = 10 ; z > 0 ; z--)
-		{
-			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-			pos.z -= cubeSize;
-		}
-		pos.x += cubeSize;
-		pos.z += 10*cubeSize;
-	}
-
-	pos = default_pos;
-	pos.y -= 3*cubeSize;
-	for (int x = 0 ; x < 10 ; x++)
-	{
-		for (int z = 10 ; z > 0 ; z--)
-		{
-			addCube3D(new Cube3D(pos, vec3(cubeSize), Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
-			pos.z -= cubeSize;
-		}
-		pos.x += cubeSize;
-		pos.z += 10*cubeSize;
-	}
-	*/
+	setupBlocksToRender();
 }

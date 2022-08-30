@@ -14,5 +14,6 @@ class Player : public Entity
         glm::vec3& getPos();
         float getPos(int i);
         void setPos(glm::vec3 &newPos);
+        Texture* textureInHand;
 };
 #endif

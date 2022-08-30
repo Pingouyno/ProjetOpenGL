@@ -21,7 +21,6 @@ const float Shape::camBoxHeight = 2.8f;
 const float Shape::camBoxWidth = 0.4f;
 
 Shape::Shape(){
-    shouldReloadArrays = true;
     //TODO: changer la direction de base pour certaines classes de Quad (sinon on ne les voit pas ; deviennent parallèles à la caméra)
     originTransposition = mat4(1.0f);
     dirVecX = ROT_X;
@@ -104,6 +103,7 @@ vec4 Shape::getVecIfRotate(vec3 axis, float radians, vec3 vectorToRotate)
 void Shape::spawn()
 {
     active = true;
+
 }
 
 void Shape::despawn()
@@ -307,8 +307,8 @@ void Shape::refreshGLColors()
         }      
         i += 8; //on passe au prochain vertex dans vertices[]
     }
+    reloadVerticesInVBO();
 }
-
 
 void Shape::refreshGLVertices()
 {
@@ -327,6 +327,32 @@ void Shape::refreshGLVertices()
         i += 8; //on passe au prochain vertex dans vertices[]
         c += 3; //on passe au prochain (x, y, z) dans CUBE_VERTICES
     }
+    reloadVerticesInVBO();   
+}
+
+void Shape::reloadVerticesInVBO(){
+	//Mettre à jour le tableau et re-charger le VBO. On prend SubData pour optimisation
+    VBO1->Bind();
+    const float floatsInSingleVertice = 8;
+	glBufferSubData
+    (
+        GL_ARRAY_BUFFER, 
+        indexInVertices * sizeof(float), 
+        shapeVertices.size() * floatsInSingleVertice * sizeof(float),
+        &vertices[indexInVertices]
+    );
+}
+
+void Shape::reloadIndicesInEBO()
+{
+    EBO1->Bind();
+    glBufferSubData
+    (
+        GL_ELEMENT_ARRAY_BUFFER,  
+        indexInIndices * sizeof(float), 
+        shapeIndices.size() * sizeof(float), 
+        &indices[indexInIndices]
+    );
 }
 
 void Shape::generate()
@@ -338,14 +364,46 @@ void Shape::generate()
     initIndices();         //init indices avant pour trouver index de début d'insertion vertices
     initVertices();
     
-    //insérer les vertices, les couleurs et le textureMapping
-    for (int i = 0 ; i < getVerticeCount() ; i++){
-        vertices.insert(vertices.end(), shapeVertices.begin() + 3 * i, shapeVertices.begin() + 3 * i + 3);
-        for (int k = 0 ; k < 3 ; k++) vertices.push_back(color[k]);
-        vertices.insert(vertices.end(), texMap.begin() + 2 * i, texMap.begin() + 2 * i + 2);
-    }
-    indices.insert(indices.end(), shapeIndices.begin(), shapeIndices.end());
+    uploadDataIntoVerticesAndIndices();
+    reloadVerticesInVBO();
+    reloadIndicesInEBO();
+
     spawn();
+}
+
+
+//insérer les indices et les vertices dans les buffers openGL
+void Shape::uploadDataIntoVerticesAndIndices()
+{
+
+    //resize au besoin
+    if (indexInVertices == vertices.size()) vertices.resize(vertices.size() + getVerticeCount() * 8);
+    if (indexInIndices == indices.size()) indices.resize(indices.size() + getIndiceCount());
+
+    const int offset = indexInVertices;
+
+    //upload dans vertices
+    const int verticeCount = getVerticeCount();
+    for (int v = 0 ; v < verticeCount ; v++){
+        const int base = offset + v*8;
+        vertices[base + 0] = shapeVertices[v*3 + 0];
+        vertices[base + 1] = shapeVertices[v*3 + 1];
+        vertices[base + 2] = shapeVertices[v*3 + 2];
+
+        vertices[base + 3] = color[0];
+        vertices[base + 4] = color[1];
+        vertices[base + 5] = color[2];
+
+        vertices[base + 6] = texMap[v*2 + 0];
+        vertices[base + 7] = texMap[v*2 + 1];
+    }
+    
+    //upload dans indices
+    const int indiceCount = getIndiceCount();
+    for (int i = 0 ; i < indiceCount; i++)
+    {
+        indices[indexInIndices + i] = shapeIndices[i];
+    }
 }
 
 /*on utilise une approximation de PI, donc sin(degreesToRadians) ne va pas être exact. Utiliser sinf();

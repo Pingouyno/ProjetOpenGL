@@ -56,7 +56,7 @@ void TextEntity2D::setText(string text)
         {
             createdQuads[i]->setTexture(TextManager::getTextTexture(text[i]));
             createdQuads[i]->moveTo(vec3(pos + offSet, 0));
-        }else
+        }else 
         {
             createdQuads[i] = new Quad2D(pos + offSet, pixFontSize, TextEntity::Y_TO_X_RATIO * pixFontSize, TextManager::getTextTexture(text[i]));
         }

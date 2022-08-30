@@ -9,20 +9,21 @@
   -> pour se rendre dans le répertoire TEXTURES : **goTexture** (alias) */
 
 class Cube3D : public Cube {
-    private:
-        const static vector<float> NORMAL_COORDS; 
-        vector<Texture*> textures;  
+    protected:
+        const static vector<float> NORMAL_COORDS;  
 
     public:
         static int VERTICE_COUNT;
         static int INDICE_COUNT;
+
         Cube3D(glm::vec3 pos, glm::vec3 dimensions, Texture* tex);
+        Cube3D(void* dummy);
         void render();
         int getVerticeCount();
         int getIndiceCount();
         void setToBackground();
 
-    private:
+    protected:
         void replaceColorWithTexCoords();
         void initIndices();
         void initVertices();

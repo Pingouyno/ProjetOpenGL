@@ -63,5 +63,11 @@ void Camera::updateMousePos(GLFWwindow* window)
 {
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
-	mousePos = vec2(x, y);
+	mousePos = vec2((float)x, (float)y);
+}
+
+void Camera::centerMouseOnWindow(GLFWwindow* window)
+{
+	glfwSetCursorPos(window, (screenWidth / 2), (screenHeight / 2));
+	updateMousePos(window);
 }

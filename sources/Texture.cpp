@@ -117,8 +117,9 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 Texture::Texture(string imgHeadName) : Texture(imgHeadName.c_str(), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE){}
 
 
-Texture::Texture(string cubeMapHeadName, GLenum texType)
+Texture::Texture(string cubeMapHeadName, GLenum texType, TEX3D tex3Did)
 {
+	this->tex3Did = tex3Did;
 	vector<string> texPaths = getTexPathsFromFileName(cubeMapHeadName);
 
 	// Assigns the type of the texture ot the texture object
@@ -222,16 +223,16 @@ Texture* Texture::get3DImgTexture(TEX3D textureName)
 
 void Texture::init3DTextures()
 {
-	for (string s : tex3DNames)
+	for (int tex3Did = 0 ; tex3Did < tex3DNames.size() ; tex3Did++)
 	{
-		textures3D.push_back(load3DImgTexture(s));
+		textures3D.push_back(load3DImgTexture((TEX3D)tex3Did));
 	}
 }
 
 //permet de loader une texture 3D sans avoir à la binder à la ligne suivante
-Texture* Texture::load3DImgTexture(string textureFileName)
+Texture* Texture::load3DImgTexture(TEX3D tex3Did)
 {
-	Texture* texture = new Texture(CUBEMAP_PATH + textureFileName, GL_TEXTURE_CUBE_MAP);
+	Texture* texture = new Texture(CUBEMAP_PATH + tex3DNames[tex3Did], GL_TEXTURE_CUBE_MAP, tex3Did);
     //mettre les données de texture dans SampleCube
 	texture->texUnit(*shaderProgramCube, "cube", GL_TEXTURE0);
 	return texture;

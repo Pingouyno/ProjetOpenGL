@@ -21,11 +21,13 @@ int Cube3D::INDICE_COUNT = 36;    //2 triangles par côté, 6 côtés par cube =
 /*Texture* vaut (Texture*)1 pour ne pas avoir de nullptr dans la classe parent
  on appeller Cube(void* dummy) car la fonction generate() doît être appelée dans la même classe qui a initVertices() et initIndice()*/
 Cube3D::Cube3D(glm::vec3 pos, glm::vec3 dimensions, Texture* tex) : Cube(nullptr)
-{    
-    Cube::initCube(pos, dimensions[0], dimensions[1], dimensions[2], DEFAULT_COLOR, tex);
-    generate(); 
+{   
+    Cube::initCube(pos, dimensions.x, dimensions.y, dimensions.z, DEFAULT_COLOR, tex);
+    Shape::generate(); 
     replaceColorWithTexCoords();
 }
+
+Cube3D::Cube3D(void* dummy) : Cube(nullptr){}
 
 void Cube3D::render()
 {

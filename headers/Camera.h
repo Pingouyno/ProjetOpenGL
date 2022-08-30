@@ -59,8 +59,9 @@ class Camera
         void jump();
         void land();
         void fall();
-        
+
         void updateMousePos(GLFWwindow* window);
+        void centerMouseOnWindow(GLFWwindow* window);
 
 };
 #endif

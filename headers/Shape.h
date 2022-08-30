@@ -113,7 +113,10 @@ class Shape {
         //pour la redéfinition de variables statiques
         void refreshGLColors();
         void refreshGLVertices();
-        void generate();
+        void reloadVerticesInVBO();
+        void reloadIndicesInEBO();
+        virtual void uploadDataIntoVerticesAndIndices();
+        virtual void generate();
 
     private:
         float degreesToRadians(float degrees);

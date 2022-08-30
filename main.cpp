@@ -26,13 +26,18 @@ using namespace std::chrono;
 #include"headers/World.h"
 #include"headers/EventManager.h"
 
+const int SPACE_TO_RESERVE = 512 * 512 * 64 * 6; //* 64 * 6;  //charger 6 couches de blocs sur 512 x 512 avec 64 floats par vertice
+
 const int FRAME_MILLI = 17;
+/* On a un render distance de 8 chunks donc on voit 16 * 16 chunks et 8 vertex de 8 floats chaque
+   on a 16 * 16 * 64 * (16 * 16) * (8 * 8) = 268 435 456
+*/
 
 //MÉTHODES UTILISÉES____________________________________________________________
 
 void checkProgramKill(GLFWwindow *window);
-void reloadVerticesInVBO(VBO &VBO1);
-void reloadIndicesInEBO(EBO &EBO1);
+void reserveSpaceInVBOAndEBO();
+void checkNearBufferOverflow();
 //______________________________________________________________________________
 
 int main()
@@ -61,6 +66,7 @@ int main()
 		glfwTerminate();
 		return -1;
 	}
+
 	// Introduce the window into the current context
 	glfwMakeContextCurrent(window);
 
@@ -79,27 +85,29 @@ int main()
 	//glUniform1i(glGetUniformLocation(shaderProgramCube->ID, "cube"), 0);
 
 	// Create reference containers for the Vertex Array Object and the Vertex Buffer Object
-	VAO VAO1;
-	VAO1.Bind();
+	VAO1 = new VAO();
+	VAO1->Bind();
 
-	VBO VBO1(&vertices[0], vertices.size()* sizeof(float));
+	VBO1 = new VBO(&vertices[0], vertices.size()* sizeof(float));
 
-	EBO EBO1(&indices[0], indices.size() * sizeof(float));
+	EBO1 = new EBO(&indices[0], indices.size() * sizeof(float));
 
 	//void LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
 
 	//On lie la première moitié de l'ensemble de 8 composants aux coordonnées (x, y, z). Donc vec0 et offset = 0
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*)0);
+	VAO1->LinkAttrib(*VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*)0);
 
 	//On lie la partie des couleurs, soit la deuxième moitié des 8 composants (r, g, b) Donc vec1 et offset = 3 * (taille de float en bits)
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3 * sizeof(float)));
+	VAO1->LinkAttrib(*VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3 * sizeof(float)));
 
 	//On lie la partie du mapping texture, qui correspond aux 2 derniers des 8 composantes (x, y)
-	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6 * sizeof(float)));
+	VAO1->LinkAttrib(*VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6 * sizeof(float)));
 
-	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();
+	VAO1->Unbind();
+	VBO1->Unbind();
+	EBO1->Unbind();
+
+	reserveSpaceInVBOAndEBO();
 
 	Texture::init3DTextures();
 	TextManager::init();
@@ -110,10 +118,12 @@ int main()
 	//cacher le curseur
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-	EBO1.Bind();
+	EBO1->Bind();
 
-	auto targetTime = high_resolution_clock::now();
-	targetTime += milliseconds(FRAME_MILLI);
+	auto nextMinute = high_resolution_clock::now() + seconds(1);
+	int framesSinceLastSecond = 0;
+	
+	auto targetTime = high_resolution_clock::now() + milliseconds(FRAME_MILLI);
 
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -129,11 +139,7 @@ int main()
 		world->doEntityBehaviors();
 
 		world->camera->Matrix(45.0f, 0.01f, (float)VIEW_DISTANCE);
-
-		// Bind the VAO so OpenGL knows to use it
-		VAO1.Bind();		 
-		reloadVerticesInVBO(VBO1);
-		reloadIndicesInEBO(EBO1);
+	
 		world->render();
 
 		// Swap the back buffer with the front buffer
@@ -142,23 +148,28 @@ int main()
 		// Take care of all GLFW events
 		glfwPollEvents();
 
+		checkNearBufferOverflow();
 		checkProgramKill(window);
 
+		framesSinceLastSecond++;
+		if (high_resolution_clock::now() >= nextMinute)
+		{
+			world->menuOverlay->fpsBar->setText("FPS : " + to_string(framesSinceLastSecond));
+			nextMinute = high_resolution_clock::now() + seconds(1);
+			framesSinceLastSecond = 0;
+		}
+
 		std::this_thread::sleep_until(targetTime);
-		targetTime = high_resolution_clock::now();
-		targetTime += milliseconds(FRAME_MILLI);
+		targetTime = high_resolution_clock::now() + milliseconds(FRAME_MILLI);
 	}
 
 
 	// Delete all the objects we've created
 
 	world->deleteAllShapes();
-	VAO1.Delete();
-	VBO1.Delete();
-	EBO1.Delete();
-	//deux_png.Delete();
-	//flag_png.Delete();
-	//grass_png.Delete();
+	VAO1->Delete();
+	VBO1->Delete();
+	EBO1->Delete();
 	shaderProgram3D->Delete();
 	shaderProgram2D->Delete();
 
@@ -175,36 +186,31 @@ int main()
 
 void checkProgramKill(GLFWwindow* window){
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS 
-			&& glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+		&& glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
 
-
-void reloadVerticesInVBO(VBO &VBO1){
-	//Mettre à jour le tableau et re-charger le VBO. On prend SubData pour optimisation
-	VBO1.Bind();
-	
-	if (shouldReloadArrays)
-	{
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_DYNAMIC_DRAW);
-	}else
-	{
-		glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), &vertices[0]);
-	}
-	
+//on copie le data, commençant par nullptr car on se fiche de la mémoire, seulement réserver
+void reserveSpaceInVBOAndEBO()
+{
+	VBO1->Bind();
+	glBufferData(GL_ARRAY_BUFFER, SPACE_TO_RESERVE * sizeof(float), nullptr, GL_STATIC_DRAW);
+	EBO1->Bind();
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, SPACE_TO_RESERVE * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 }
 
-void reloadIndicesInEBO(EBO &EBO1){
-	EBO1.Bind();
-	if (shouldReloadArrays)
-	{
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), &indices[0], GL_DYNAMIC_DRAW);
-	}else
-	{
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indices.size() * sizeof(float), &indices[0]);
-	}
+void checkNearBufferOverflow()
+{
+	//cout << "currentSize : " << vertices.size() << " | " << ((float)vertices.size() / SPACE_TO_RESERVE * 100.0f) << "%" << endl;
+	
+	if (vertices.size() > SPACE_TO_RESERVE) cout << "\n**ATTENTION : vertices OVERFLOW!!**\n";
+	else if (vertices.size() > SPACE_TO_RESERVE / 2) cout << "\nATTENTION : vertices rendu à 50% de la capacité du VBO openGL!\n";
+	else if (vertices.size() > SPACE_TO_RESERVE / 8) cout << "\nATTENTION : vertices rendu à 12.5% de la capacité du VBO openGL!\n";
 
+
+	if (indices.size() > SPACE_TO_RESERVE) cout << "\n**ATTENTION : indices OVERFLOW!!**\n";
+	if (indices.size() > SPACE_TO_RESERVE / 2) cout << "\nATTENTION : indices rendu à 50% de la capacité du EBO openGL!\n";
+	if (indices.size() > SPACE_TO_RESERVE / 8) cout << "\nATTENTION : indices rendu à 12.5% de la capacité du EBO openGL!\n";
 }
-

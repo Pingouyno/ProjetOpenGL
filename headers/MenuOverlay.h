@@ -9,6 +9,8 @@ class MenuOverlay : public Overlay
         //mettre des variables éventuellement
 
     public:
+        TextEntity2D* fpsBar;
+
         MenuOverlay(Camera* camera);
         void setupOverlay();
 };

@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+sources/Block.o: sources/Block.cpp.o
+.PHONY : sources/Block.o
+
+# target to build an object file
+sources/Block.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.o
+.PHONY : sources/Block.cpp.o
+
+sources/Block.i: sources/Block.cpp.i
+.PHONY : sources/Block.i
+
+# target to preprocess a source file
+sources/Block.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.i
+.PHONY : sources/Block.cpp.i
+
+sources/Block.s: sources/Block.cpp.s
+.PHONY : sources/Block.s
+
+# target to generate assembly for a file
+sources/Block.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.s
+.PHONY : sources/Block.cpp.s
+
 sources/Camera.o: sources/Camera.cpp.o
 .PHONY : sources/Camera.o
 
@@ -296,6 +320,30 @@ sources/EventManager.s: sources/EventManager.cpp.s
 sources/EventManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.s
 .PHONY : sources/EventManager.cpp.s
+
+sources/GLBufferManager.o: sources/GLBufferManager.cpp.o
+.PHONY : sources/GLBufferManager.o
+
+# target to build an object file
+sources/GLBufferManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.o
+.PHONY : sources/GLBufferManager.cpp.o
+
+sources/GLBufferManager.i: sources/GLBufferManager.cpp.i
+.PHONY : sources/GLBufferManager.i
+
+# target to preprocess a source file
+sources/GLBufferManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.i
+.PHONY : sources/GLBufferManager.cpp.i
+
+sources/GLBufferManager.s: sources/GLBufferManager.cpp.s
+.PHONY : sources/GLBufferManager.s
+
+# target to generate assembly for a file
+sources/GLBufferManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.s
+.PHONY : sources/GLBufferManager.cpp.s
 
 sources/GameOverlay.o: sources/GameOverlay.cpp.o
 .PHONY : sources/GameOverlay.o
@@ -837,6 +885,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... sources/Block.o"
+	@echo "... sources/Block.i"
+	@echo "... sources/Block.s"
 	@echo "... sources/Camera.o"
 	@echo "... sources/Camera.i"
 	@echo "... sources/Camera.s"
@@ -855,6 +906,9 @@ help:
 	@echo "... sources/EventManager.o"
 	@echo "... sources/EventManager.i"
 	@echo "... sources/EventManager.s"
+	@echo "... sources/GLBufferManager.o"
+	@echo "... sources/GLBufferManager.i"
+	@echo "... sources/GLBufferManager.s"
 	@echo "... sources/GameOverlay.o"
 	@echo "... sources/GameOverlay.i"
 	@echo "... sources/GameOverlay.s"

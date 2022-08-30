@@ -20,18 +20,21 @@ class EventManager
 
         bool waitingForTPress = true;
         bool waitingForLClick = true;
-        bool firstClick = true;
+        bool waitingForRClick = true;
+        bool waitingFor1Press = true;
+        bool waitingFor2Press = true;
 
     public:
         EventManager(World* world);
         void Inputs(GLFWwindow* window);
     
     private:
-        void checkKeyEvents(GLFWwindow* window);
-        void checkMouseEvents(GLFWwindow* window); 
-        void checkPhysicMouseEvents(GLFWwindow* window);
-        
-        //à activer et désactiver au besoin (raisons de performance)
         void checkKeyboardCamMovement(GLFWwindow* window);
+        void checkMouseCamMovement(GLFWwindow* window); 
+
+        void checkKeyboardEvents(GLFWwindow* window);
+        void checkMouseEvents(GLFWwindow* window);
+
+        void checkMoveAndPhysics(GLFWwindow* window);
 };
 #endif

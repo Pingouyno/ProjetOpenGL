@@ -42,6 +42,7 @@ class Texture {
 		const static string TEXTURE_PATH;
 		const static string CUBEMAP_PATH;
 		
+		TEX3D tex3Did;
 		GLuint ID;
 		GLenum type;
 		int widthImg;
@@ -49,7 +50,7 @@ class Texture {
 		Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType);
 		Texture(string imgHeadName);
 		//pour un cube 3D
-		Texture(string cubeMapHeadName, GLenum texType);
+		Texture(string cubeMapHeadName, GLenum texType, TEX3D tex3Did);
 
 		// Assigns a texture unit to a texture
 		void texUnit(Shader& shader, const char* uniform, GLuint unit);
@@ -66,7 +67,7 @@ class Texture {
 		static void init3DTextures();
 
 	private:
-		static Texture* load3DImgTexture(string textureFileName);
+		static Texture* load3DImgTexture(TEX3D tex3Did);
 		static vector<string> getTexPathsFromFileName(string cubeMapHeadName);	
 };
 #endif
