@@ -2,22 +2,15 @@
 
 const int World::PLAYER_RANGE = 11;
 const float World::COLLISION_PRECISION = 50.0f;
-const int World::WORLD_SIZE = 384; //384; //12 chunks * 16 blocks par chunk
-const int World::WORLD_HEIGHT = 64.0f;
-const int World::CHUNK_SIZE = WORLD_SIZE;
 
 World::World()
 {
-	this->perlinNoise = new PerlinNoise();
 	this->player = new Player(glm::vec3(8.0f, 40.0f, 8.0f));
 	this->camera = this->player->camera;
     setupEntities();
-	blocksToRenderMat = {};
-	for (int i = 0 ; i < Texture::tex3DNames.size(); i++)
-	{
-		blocksToRenderMat.push_back({});
-	}
     setup3DShapes();
+
+	setupChunks();
 	
 	this->score = 0;
     //Pour blend les endroits vides des png
@@ -247,13 +240,29 @@ void World::despawnBlockAt(vec3 pos)
 	}
 }
 
-Block* World::getBlockAt(vec3 pos)
+/*retourne le chunk avec un calcul de la position sur la taille d'un chunk
+ fonctionne SEULEMENT pour les positions positives*/
+Chunk* World::getChunkAt(vec3 pos)
 {
 	if (pos.x < 0 || pos.x >= WORLD_SIZE 
-	   || pos.z < 0 || pos.z >= WORLD_SIZE 
-	   || pos.y < 0 || pos.y >= WORLD_HEIGHT) 
-	    return nullptr;
-	return blockMat[pos.x][pos.y][pos.z];
+	   || pos.z < 0 || pos.z >= WORLD_SIZE) 
+		return nullptr;
+	return chunkMat[pos.x / CHUNK_SIZE][pos.z / CHUNK_SIZE];
+}
+
+//retourne le bloc du chunk qui contient celui-ci. on calcule en divisant la position par la taille d'un chunk
+Block* World::getBlockAt(vec3 pos)
+{
+	Chunk* chunk = getChunkAt(pos);
+	if (chunk != nullptr)
+	{
+		Block* block = chunk->getBlockAt(pos);
+		if (block != nullptr)
+		{
+			return block;
+		}
+	}
+	return nullptr;
 }
 
 //donne le adjacent à la fae sur laquelle le joueur regarde
@@ -337,12 +346,6 @@ void World::addShape(Shape* shape)
 void World::addCube3D(Cube3D* cube)
 {   
     cubes3D.push_back(cube);  
-}
-
-//obligatoire pour les cubes 3D
-void World::addBlock(Block* block)
-{   
-	blockMat[block->pos.x][block->pos.y][block->pos.z] = block;   
 }
 
 //un block "air" est un bloc active->false
@@ -442,15 +445,21 @@ void World::removeBlockFromRendering(Block* blockToRemove)
 
 void World::setupBlocksToRender()
 {
-	for (auto &vecX : blockMat)
+	for (auto &chunkVec : chunkMat)
 	{
-		for (auto &vecY : vecX)
+		for (Chunk* chunk : chunkVec)
 		{
-			for (Block* block : vecY)
+			for (auto &vecX : chunk->blockMat)
 			{
-				if (block->active && isBlockNearAir(block))
+				for (auto &vecY : vecX)
 				{
-					addBlockToRendering(block);
+					for (Block* block : vecY)
+					{
+						if (block->active && isBlockNearAir(block))
+						{
+							addBlockToRendering(block);
+						}
+					}
 				}
 			}
 		}
@@ -476,56 +485,37 @@ void World::setup3DShapes()
 	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
 	this->skyBox = new Cube3D(vec3(0), vec3(1), Texture::get3DImgTexture(Texture::FIELD));
 	skyBox->setToBackground();
+}
 
-	const vec3 defaultPos(0, 0, 0);
-	vec3 pos = defaultPos;
-
-	//initialiser la matrice des blocs
-	blockMat.resize(CHUNK_SIZE);
-	for (int x = 0 ; x < CHUNK_SIZE ; x++)
+void World::setupChunks()
+{
+	//initialiser la matrice de rendering selon le nombre de texture qui existent
+    blocksToRenderMat = {};
+	for (int i = 0 ; i < Texture::tex3DNames.size(); i++)
 	{
-		blockMat[x].resize(WORLD_HEIGHT);
-		for (int y = 0 ; y < WORLD_HEIGHT ; y++)
-		{
-			blockMat[x][y].resize(CHUNK_SIZE);
-		}
+		blocksToRenderMat.push_back({});
 	}
 
-	for (int x = 0 ; x < CHUNK_SIZE ; x++)
+	//initialiser la matrice de chunks selon la taille du monde
+	chunkMat = {};
+	for (int i = 0 ; i < WORLD_CHUNK_COUNT; i++)
 	{
-		for (int z = 0 ; z < CHUNK_SIZE ; z++)
+		chunkMat.push_back({});
+	}
+
+	const vec3 chunkOffsetX = vec3(CHUNK_SIZE, 0, 0);
+	const vec3 chunkOffsetZ = vec3(0, 0, CHUNK_SIZE);
+
+	vec3 chunkPos = vec3(0, 0, 0);
+	for (int x = 0 ; x < WORLD_CHUNK_COUNT ; x++)
+	{
+		for (int z = 0 ; z < WORLD_CHUNK_COUNT ; z++)
 		{
-			float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_HEIGHT);
-			float perlinHeight = std::round(WORLD_HEIGHT * perlinOut);
-
-			//mettre y jusqu'en bas (0)
-			vec3 currentPos = pos;
-
-			for (int y = 0 ; y < WORLD_HEIGHT ; y++)
-			{
-				if (currentPos.y < perlinHeight) 
-				{
-					if (currentPos.y < 3) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
-					else if (currentPos.y < 25) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-					else addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
-				}
-				else if (currentPos.y == perlinHeight) 
-				{
-					addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
-				}
-				else if  (currentPos.y > perlinHeight)
-				{
-					Block* addedBlock = new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::EARTH));
-					addedBlock->active = false;
-					addBlock(addedBlock);
-				}
-				currentPos.y += Block::BLOCK_SIZE;
-			}
-
-			pos.x += Block::BLOCK_SIZE;
+			chunkMat[x].push_back(new Chunk(chunkPos));
+			chunkPos += chunkOffsetZ;
 		}
-		pos.z += Block::BLOCK_SIZE;
-		pos.x -= Block::BLOCK_SIZE * CHUNK_SIZE;
+		chunkPos -= (float)WORLD_CHUNK_COUNT * chunkOffsetZ;
+		chunkPos += chunkOffsetX;
 	}
 
 	setupBlocksToRender();

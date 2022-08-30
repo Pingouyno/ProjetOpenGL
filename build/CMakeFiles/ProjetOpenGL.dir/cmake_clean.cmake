@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/Block.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Chunk.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/Chunk.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Cube.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Cube3D.cpp.o"

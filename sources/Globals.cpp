@@ -110,3 +110,8 @@ bool shouldCenterCursor = true;
 VAO* VAO1 = nullptr;
 VBO* VBO1 = nullptr;
 EBO* EBO1 = nullptr;
+
+const int CHUNK_SIZE = 16;
+const int CHUNK_HEIGHT = 64;
+const int WORLD_CHUNK_COUNT = 12;
+const int WORLD_SIZE = WORLD_CHUNK_COUNT * CHUNK_SIZE; 

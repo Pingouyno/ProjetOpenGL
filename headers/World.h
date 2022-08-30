@@ -18,8 +18,8 @@ using namespace std;
 #include"Player.h"
 #include"GameOverlay.h"
 #include"MenuOverlay.h"
-#include"PerlinNoise.h"
 #include"GLBufferManager.h"
+#include"Chunk.h"
 
 class World
 {
@@ -29,22 +29,16 @@ class World
         const static int PLAYER_RANGE;
         //précision de déplacement du ray lorsqu'on teste la collision
         const static float COLLISION_PRECISION;
-
-        const static int WORLD_SIZE;
-        const static int WORLD_HEIGHT;
-        const static int CHUNK_SIZE;
-
+        
     //variables statiques
     private:
-        //générateur de perlin noise
-        PerlinNoise* perlinNoise;
         vector<Entity*> entities; 
         vector<Shape*> shapes;
         vector<Cube3D*> cubes3D;
 
-        //x, y, z
-        vector<vector<vector<Block*>>>blockMat;
         vector<vector<Block*>> blocksToRenderMat;
+        //x, z (le y n'est pas important)
+        vector<vector<Chunk*>> chunkMat;
 
         //variables reliées au monde dynamique
         int score;
@@ -74,6 +68,7 @@ class World
         bool isAnyColliding(vector<int> &collisionLog);
         void spawnBlockAt(vec3 pos, Texture* tex);
         void despawnBlockAt(vec3 pos);
+        Chunk* getChunkAt(vec3 pos);
         Block* getBlockAt(vec3 pos);
         vec3 getPosAdjacentToLookedFace(Block* block, vec3 raySource, vec3 ray);
         void deleteAllShapes();
@@ -88,7 +83,6 @@ class World
     private:
         void addShape(Shape* shape);
         void addCube3D(Cube3D* cube);
-        void addBlock(Block* block);
         bool isBlockNearAir(Block* block);
         void updateBlock(Block* block);
         void addBlockToRendering(Block* block);
@@ -96,6 +90,7 @@ class World
         void setupBlocksToRender();
         void setupEntities();
         void setup3DShapes();
+        void setupChunks();
 
 };
 #endif

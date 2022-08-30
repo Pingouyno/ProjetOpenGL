@@ -201,6 +201,30 @@ sources/Camera.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Camera.cpp.s
 .PHONY : sources/Camera.cpp.s
 
+sources/Chunk.o: sources/Chunk.cpp.o
+.PHONY : sources/Chunk.o
+
+# target to build an object file
+sources/Chunk.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Chunk.cpp.o
+.PHONY : sources/Chunk.cpp.o
+
+sources/Chunk.i: sources/Chunk.cpp.i
+.PHONY : sources/Chunk.i
+
+# target to preprocess a source file
+sources/Chunk.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Chunk.cpp.i
+.PHONY : sources/Chunk.cpp.i
+
+sources/Chunk.s: sources/Chunk.cpp.s
+.PHONY : sources/Chunk.s
+
+# target to generate assembly for a file
+sources/Chunk.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Chunk.cpp.s
+.PHONY : sources/Chunk.cpp.s
+
 sources/Cube.o: sources/Cube.cpp.o
 .PHONY : sources/Cube.o
 
@@ -891,6 +915,9 @@ help:
 	@echo "... sources/Camera.o"
 	@echo "... sources/Camera.i"
 	@echo "... sources/Camera.s"
+	@echo "... sources/Chunk.o"
+	@echo "... sources/Chunk.i"
+	@echo "... sources/Chunk.s"
 	@echo "... sources/Cube.o"
 	@echo "... sources/Cube.i"
 	@echo "... sources/Cube.s"

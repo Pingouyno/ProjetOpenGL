@@ -31,5 +31,9 @@ extern bool shouldCenterCursor;
 extern VAO* VAO1;
 extern VBO* VBO1;
 extern EBO* EBO1;
+extern const int CHUNK_SIZE;
+extern const int CHUNK_HEIGHT;
+extern const int WORLD_CHUNK_COUNT;
+extern const int WORLD_SIZE;
 
 #endif
