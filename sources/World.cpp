@@ -193,6 +193,12 @@ vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &ne
             ptrShape->reportCollisionWithHuman(collisionLog, oldPos, newPos);
     }
 
+	for (Quad* ptrShape : worldBorders)
+    {
+        if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
+            ptrShape->reportCollisionWithHuman(collisionLog, oldPos, newPos);
+    }
+
 	//trouver les blocs près du joueur
 	vec3 playerPos = glm::round(player->getPos());
 	playerPos.y -= 1;
@@ -340,6 +346,10 @@ fait une seule opération par appel (pour ne pas réduire le framerate)
 */
 void World::updateChunks()
 {
+	//devient not NAN si on a trouvé un chunk à charger
+	vec3 chunkPosToLoad = vec3(NAN);
+	bool foundChunkToLoad = false;
+
 	vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE);
 	currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
 
@@ -362,6 +372,15 @@ void World::updateChunks()
 						chunk->isUnloading = true;
 					}
 				}
+				else if (!foundChunkToLoad)
+					{
+						//seulement loader s'il ne reste rien à unloaded
+						if (getChunkAt(currentPos) == nullptr)
+						{
+							foundChunkToLoad = true;
+							chunkPosToLoad = currentPos;
+						}
+					}
 			}
 
 			currentPos.z += CHUNK_SIZE;
@@ -370,46 +389,14 @@ void World::updateChunks()
 		currentPos.x += CHUNK_SIZE;
 	}
 
-	//APPEL 2, loader un chunk s'il ne reste rien à unload
+	//unloader un chunk s'il loader un chunk s'il ne reste rien à unload, sinon loader un chunk si l'on a trouvé
 	if (chunksToUnload.size() > 0)
 	{
 		unloadChunk(chunksToUnload.back());
 		chunksToUnload.pop_back();
-	}
-	else
+	}else if (foundChunkToLoad)
 	{
-		vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE);
-		currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
-
-		for (int x = -(CHUNK_RENDER_DISTANCE + 1) ; x <= (CHUNK_RENDER_DISTANCE + 1); x++)
-		{
-			for (int z = -(CHUNK_RENDER_DISTANCE + 1) ; z <= (CHUNK_RENDER_DISTANCE + 1); z++)
-			{
-				//vérifier que l'on est pas sur le bord du monde
-				if (currentPos.x >= 0 && currentPos.x < WORLD_SIZE 
-				&& currentPos.z >= 0 && currentPos.z < WORLD_SIZE)
-				{
-					if (x == -(CHUNK_RENDER_DISTANCE + 1) || x == (CHUNK_RENDER_DISTANCE + 1) 
-				   	   || z == -(CHUNK_RENDER_DISTANCE + 1) || z == (CHUNK_RENDER_DISTANCE + 1))
-					{
-
-					}
-					else
-					{
-						//seulement loader s'il ne reste rien à unloaded
-						if (getChunkAt(currentPos) == nullptr)
-						{
-							loadChunk(new Chunk(currentPos));
-							return;
-						}
-					}
-				}
-
-				currentPos.z += CHUNK_SIZE;
-			}
-			currentPos.z -= (2*(CHUNK_RENDER_DISTANCE + 1) + 1)* CHUNK_SIZE;
-			currentPos.x += CHUNK_SIZE;
-		}
+		loadChunk(new Chunk(chunkPosToLoad));
 	}
 }
 
@@ -567,8 +554,17 @@ void World::setupEntities()
 void World::setup3DShapes()
 {
 	//La taille n'est pas importante car le shader tracera comme si il est à la distance maximale
-	this->skyBox = new Cube3D(vec3(0), vec3(1), Texture::get3DImgTexture(Texture::FIELD));
+	this->skyBox = new Cube3D(vec3(0), vec3(1), Texture::get3DImgTexture(Texture::SKYBOX));
 	skyBox->setToBackground();
+
+	//bords de monde
+	worldBorders = 
+	{
+		new Quad(vec3(-Block::BLOCK_SIZE / 2, CHUNK_HEIGHT / 2, WORLD_SIZE / 2), WORLD_SIZE + Block::BLOCK_SIZE, Texture::get2DImgTexture("sadge.png"), Quad::Axis::X),
+		new Quad(vec3(-Block::BLOCK_SIZE / 2 + WORLD_SIZE, CHUNK_HEIGHT / 2, WORLD_SIZE / 2), WORLD_SIZE + Block::BLOCK_SIZE, Texture::get2DImgTexture("sadge.png"), Quad::Axis::X),
+		new Quad(vec3(WORLD_SIZE / 2, CHUNK_HEIGHT / 2, -Block::BLOCK_SIZE / 2), WORLD_SIZE + Block::BLOCK_SIZE, Texture::get2DImgTexture("sadge.png"), Quad::Axis::Z),
+		new Quad(vec3(WORLD_SIZE / 2, CHUNK_HEIGHT / 2, -Block::BLOCK_SIZE / 2 + WORLD_SIZE), WORLD_SIZE + Block::BLOCK_SIZE, Texture::get2DImgTexture("sadge.png"), Quad::Axis::Z),
+	};
 }
 
 /*réserve les matrices de blocks et de chunks, puis load tous les chunks

@@ -3,9 +3,16 @@
 
 #include"Cube3D.h"
 
+
+
 class Block : public Cube3D
 {
+    private:
+        //texmap où pour chaque vertice, 
+        static vector<float> BLOCK_TEXMAP;
+
     public:
+
         const static float BLOCK_SIZE;
         int indexInRendering;
 

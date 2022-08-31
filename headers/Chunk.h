@@ -30,6 +30,8 @@ class Chunk
     
         static bool wouldBlockBeAirAt(vec3 &blockPos);
         static float getPerlinHeightOf(float x, float z);
+        static vec3 getNearestFloorChunkPosOf(vec3 posToRound);
+        static Texture* getBlockTextureToGenerateAt(vec3 &targetPos, float perlinHeight);
     
     private:
         //seulement utilisée pour la GÉNÉRATION de terrain

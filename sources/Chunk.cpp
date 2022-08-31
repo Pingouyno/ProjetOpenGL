@@ -39,23 +39,7 @@ void Chunk::setupBlocks()
 
 			for (int y = chunkPos.y ; y < chunkPos.y + CHUNK_HEIGHT ; y++)
 			{
-				if (currentPos.y < perlinHeight) 
-				{
-					if (currentPos.y < 3) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
-					else if (currentPos.y < 25) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-					else addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::DIRT)));
-				}
-				else if (currentPos.y == perlinHeight) 
-				{
-					if (currentPos.y < 25) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::STONE)));
-					else addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
-				}
-				else if  (currentPos.y > perlinHeight)
-				{
-					Block* addedBlock = new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::EARTH));
-					addedBlock->active = false;
-					addBlock(addedBlock);
-				}
+				addBlock(new Block(currentPos, getBlockTextureToGenerateAt(currentPos, perlinHeight)));
 				currentPos.y += Block::BLOCK_SIZE;
 			}
 
@@ -78,18 +62,47 @@ Block* Chunk::getBlockAt(vec3 pos)
 //return true si l'algorithme de génération de terrain donnerait un bloc d'air
 bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
 {
-	return blockPos.y > getPerlinHeightOf(blockPos.x, blockPos.z);
+	return getBlockTextureToGenerateAt(blockPos, getPerlinHeightOf(blockPos.x, blockPos.z)) == Texture::Air;
 }
 
 float Chunk::getPerlinHeightOf(float x, float z)
 {
-	const float perlinOut = perlinNoise->noise((double)x/CHUNK_SIZE, 1, (double)z/WORLD_SIZE);
-	//float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
+	const float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
 	const float perlinHeight = std::round(CHUNK_HEIGHT * perlinOut);
 	return perlinHeight;
+}
+
+//arrondit la position au chunk le plus proche (pour spawning)
+vec3 Chunk::getNearestFloorChunkPosOf(vec3 posToRound)
+{
+	return vec3((int)posToRound.x - (int)posToRound.x % CHUNK_SIZE, 0, (int)posToRound.z - (int)posToRound.z % CHUNK_SIZE);
+}
+
+//algorithme de génération de terrain
+Texture* Chunk::getBlockTextureToGenerateAt(vec3 &targetPos, float perlinHeight)
+{
+	if (targetPos.y < perlinHeight) 
+	{
+		if (targetPos.y < 3) return Texture::Bedrock;
+		else if (targetPos.y < 25) return Texture::Stone;
+		else return Texture::Dirt;
+	}
+	else if (targetPos.y == perlinHeight) 
+	{
+		if (targetPos.y < 25) return Texture::Stone;
+		else return Texture::Grass;
+	}
+	else if  (targetPos.y > perlinHeight)
+	{
+		return Texture::Air;
+	}
+
+	cout << "\n\n**ERREUR : getBlockTextureToGenerateAt() n'a rien trouvé!**\n\n";
+	return nullptr;
 }
 
 void Chunk::addBlock(Block* block)
 {
     blockMat[block->pos.x - chunkPos.x][block->pos.y - chunkPos.y][block->pos.z - chunkPos.z] = block;  
 }
+

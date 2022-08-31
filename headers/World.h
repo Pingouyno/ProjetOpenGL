@@ -46,6 +46,7 @@ class World
         int score;
 
         Cube3D* skyBox;
+        vector<Quad*> worldBorders;
 
     public:
         Player* player;

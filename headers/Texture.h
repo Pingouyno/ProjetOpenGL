@@ -23,7 +23,7 @@ class Texture {
 		{
 			FIELD = 0,
 			GRASS = 1,
-			EARTH = 2,
+			AIR = 2,
 			COORDINATES = 3,
 			CITY = 4,
 			DIRT = 5,
@@ -34,8 +34,17 @@ class Texture {
 			STEVE_RIGHT_LEG = 10,
 			STEVE_LEFT_LEG = 11,
 			STEVE_RIGHT_ARM = 12,
-			STEVE_LEFT_ARM = 13
+			STEVE_LEFT_ARM = 13,
+			SKYBOX = 14
 		};
+
+		//BLOCS
+		static Texture* Air;
+	    static Texture* Dirt;
+		static Texture* Grass;
+		static Texture* Stone;
+	    static Texture* Bedrock;
+
 		const static vector<string> tex3DNames;
 		static vector<Texture*> textures3D;
 

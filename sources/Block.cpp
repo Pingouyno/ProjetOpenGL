@@ -1,12 +1,30 @@
 #include"../headers/Block.h"
 
+vector<float> Block::BLOCK_TEXMAP = 
+{
+    0, 0.875f, //0       7--------6
+    0, 0.875f, //1      /|       /|
+    0, 1,      //2     4--------5 |
+    0, 1,      //3     | |      | |
+    0, 0.875f, //4     | 3------|-2
+    0, 0.875f, //5     |/       |/
+    0, 1,      //6     0--------1
+    0, 1       //7
+};
+
 const float Block::BLOCK_SIZE = 1.0f;
 
 Block::Block(glm::vec3 pos, Texture* tex) : Cube3D(nullptr)
 {
+    this->pos = pos;
+    this->width = BLOCK_SIZE;
+    this->height = BLOCK_SIZE;
+    this->depth = BLOCK_SIZE;
+    this->color = DEFAULT_COLOR;
+    this->tex = tex;
+
     this->indexInRendering = -1;
-    Cube::initCube(pos, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, DEFAULT_COLOR, tex);
-    this->active = true;    
+    this->active = tex == Texture::Air ? false : true;    
 }
 
 //retourne true si le cube est compris dans l'array de cubes à render
@@ -36,8 +54,8 @@ void Block::uploadDataIntoVerticesAndIndices()
         vertices[base + 4] = NORMAL_COORDS[v*3 + 1];
         vertices[base + 5] = NORMAL_COORDS[v*3 + 2];
 
-        vertices[base + 6] = texMap[v*2 + 0];
-        vertices[base + 7] = texMap[v*2 + 1];
+        vertices[base + 6] = BLOCK_TEXMAP[v*2 + 0];
+        vertices[base + 7] = BLOCK_TEXMAP[v*2 + 1];
     }
     
     //upload dans indices
