@@ -3,6 +3,7 @@
 
 float Camera::NORMAL_SPEED = 0.10f;
 float Camera::FAST_SPEED = 2 * NORMAL_SPEED;
+float Camera::FLYING_FAST_SPEED = 4 * NORMAL_SPEED;
 float Camera::VERT_PAD_SENSITIVITY = 2.0f;
 float Camera::HORI_PAD_SENSITIVITY = 2.8f;
 //longueur du saut (en frames)

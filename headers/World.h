@@ -27,6 +27,7 @@ class World
     public:
         //portée du joueur
         const static int PLAYER_RANGE;
+
         //précision de déplacement du ray lorsqu'on teste la collision
         const static float COLLISION_PRECISION;
         
@@ -39,6 +40,7 @@ class World
         vector<vector<Block*>> blocksToRenderMat;
         //x, z (le y n'est pas important)
         vector<vector<Chunk*>> chunkMat;
+        vector<Chunk*> chunksToUnload;
 
         //variables reliées au monde dynamique
         int score;
@@ -78,6 +80,7 @@ class World
         void updateScore();
         void deselectTextBox();
         void setHeldItemSlot(int slot);
+        void updateChunks();
 
     //méthodes pour initialiser le monde
     private:
@@ -87,10 +90,12 @@ class World
         void updateBlock(Block* block);
         void addBlockToRendering(Block* block);
         void removeBlockFromRendering(Block* blockToRemove);
-        void setupBlocksToRender();
+        void setupBlocksToRender(Chunk* chunk);
         void setupEntities();
         void setup3DShapes();
         void setupChunks();
+        void loadChunk(Chunk* chunk);
+        void unloadChunk(Chunk* chunk);
 
 };
 #endif

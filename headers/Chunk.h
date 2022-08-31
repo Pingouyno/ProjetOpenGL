@@ -15,7 +15,10 @@ class Chunk
         static PerlinNoise* perlinNoise;
 
     public:
-
+        bool isUnloading;
+        bool isLoaded;
+        int indXInMat;
+        int indZInMat;
         //x, y, z
         vector<vector<vector<Block*>>>blockMat;
         vec3 chunkPos;
@@ -25,10 +28,12 @@ class Chunk
         void setupBlocks();
         Block* getBlockAt(vec3 pos);
     
+        static bool wouldBlockBeAirAt(vec3 &blockPos);
+        static float getPerlinHeightOf(float x, float z);
+    
     private:
         //seulement utilisée pour la GÉNÉRATION de terrain
         void addBlock(Block* block);
-
 };
 
 #endif

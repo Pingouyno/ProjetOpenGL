@@ -5,6 +5,10 @@ PerlinNoise* Chunk::perlinNoise = new PerlinNoise();
 Chunk::Chunk(vec3 chunkPos)
 {
     this->chunkPos = chunkPos;
+	this->isUnloading = false;
+	this->isLoaded = false;
+	this->indXInMat = chunkPos.x / CHUNK_SIZE;
+	this->indZInMat = chunkPos.z / CHUNK_SIZE;
 
     //initialiser la matrice des blocs
 	blockMat.resize(CHUNK_SIZE);
@@ -18,8 +22,6 @@ Chunk::Chunk(vec3 chunkPos)
 	}
 
     setupBlocks();
-
-
 }
 
 void Chunk::setupBlocks()
@@ -30,15 +32,13 @@ void Chunk::setupBlocks()
 	{
 		for (int z = chunkPos.z ; z < chunkPos.z + CHUNK_SIZE ; z++)
 		{
-			float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
-			float perlinHeight = std::round(CHUNK_HEIGHT * perlinOut);
+			float perlinHeight = getPerlinHeightOf(x, z);
 
 			//mettre y jusqu'en bas (0)
 			vec3 currentPos = pos;
 
 			for (int y = chunkPos.y ; y < chunkPos.y + CHUNK_HEIGHT ; y++)
 			{
-
 				if (currentPos.y < perlinHeight) 
 				{
 					if (currentPos.y < 3) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::BEDROCK)));
@@ -47,7 +47,8 @@ void Chunk::setupBlocks()
 				}
 				else if (currentPos.y == perlinHeight) 
 				{
-					addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
+					if (currentPos.y < 25) addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::STONE)));
+					else addBlock(new Block(currentPos, Texture::get3DImgTexture(Texture::TEX3D::GRASS)));
 				}
 				else if  (currentPos.y > perlinHeight)
 				{
@@ -72,6 +73,20 @@ Block* Chunk::getBlockAt(vec3 pos)
 	   || pos.y < chunkPos.y || pos.y >= chunkPos.y + CHUNK_HEIGHT) 
 	    return nullptr;
 	return blockMat[pos.x - chunkPos.x][pos.y - chunkPos.y][pos.z - chunkPos.z];
+}
+
+//return true si l'algorithme de génération de terrain donnerait un bloc d'air
+bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
+{
+	return blockPos.y > getPerlinHeightOf(blockPos.x, blockPos.z);
+}
+
+float Chunk::getPerlinHeightOf(float x, float z)
+{
+	const float perlinOut = perlinNoise->noise((double)x/CHUNK_SIZE, 1, (double)z/WORLD_SIZE);
+	//float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
+	const float perlinHeight = std::round(CHUNK_HEIGHT * perlinOut);
+	return perlinHeight;
 }
 
 void Chunk::addBlock(Block* block)

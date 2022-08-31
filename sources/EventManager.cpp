@@ -248,7 +248,8 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (gameMode == CREATIVE || !camera->isInAir))
 	{
-		camera->speed = Camera::FAST_SPEED;
+		if (gameMode == GameMode::CREATIVE) camera->speed = Camera::FLYING_FAST_SPEED;
+		else camera->speed = Camera::FAST_SPEED;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
 	{

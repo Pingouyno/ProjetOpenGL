@@ -5,7 +5,7 @@ const float World::COLLISION_PRECISION = 50.0f;
 
 World::World()
 {
-	this->player = new Player(glm::vec3(8.0f, 40.0f, 8.0f));
+	this->player = new Player(glm::vec3(200.0f, 64.0f, 200.0f));
 	this->camera = this->player->camera;
     setupEntities();
     setup3DShapes();
@@ -333,6 +333,86 @@ void World::setHeldItemSlot(int slot)
 	player->textureInHand = gameOverlay->getTextureFromSlot(slot);
 }
 
+/* TODO : optimiser cette fonction pour faire un seul appel
+render les chunks proches du joueur (dist <= CHUNK_VIEW_DISTANCE),
+delete les chunks loins du joueur (dist == CHUNK_VIEW_DISTANCE + 1),
+fait une seule opération par appel (pour ne pas réduire le framerate)
+*/
+void World::updateChunks()
+{
+	vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE);
+	currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
+
+	for (int x = -(CHUNK_RENDER_DISTANCE + 1) ; x <= (CHUNK_RENDER_DISTANCE + 1); x++)
+	{
+		for (int z = -(CHUNK_RENDER_DISTANCE + 1) ; z <= (CHUNK_RENDER_DISTANCE + 1); z++)
+		{
+			//vérifier que l'on est pas sur le bord du monde
+			if (currentPos.x >= 0 && currentPos.x < WORLD_SIZE 
+			   && currentPos.z >= 0 && currentPos.z < WORLD_SIZE)
+			{
+				//si x == 0 ou x == DISTANCE+2 ou z == 0 ou z == DISTANCE+2 alors on est sur les bords, donc unload ces chunks
+				if (x == -(CHUNK_RENDER_DISTANCE + 1) || x == (CHUNK_RENDER_DISTANCE + 1) 
+				   || z == -(CHUNK_RENDER_DISTANCE + 1) || z == (CHUNK_RENDER_DISTANCE + 1))
+				{
+					Chunk* chunk = getChunkAt(currentPos);
+					if (chunk != nullptr && !chunk->isUnloading) 
+					{
+						chunksToUnload.push_back(chunk);
+						chunk->isUnloading = true;
+					}
+				}
+			}
+
+			currentPos.z += CHUNK_SIZE;
+		}
+		currentPos.z -= (2*(CHUNK_RENDER_DISTANCE + 1) + 1)* CHUNK_SIZE;
+		currentPos.x += CHUNK_SIZE;
+	}
+
+	//APPEL 2, loader un chunk s'il ne reste rien à unload
+	if (chunksToUnload.size() > 0)
+	{
+		unloadChunk(chunksToUnload.back());
+		chunksToUnload.pop_back();
+	}
+	else
+	{
+		vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE);
+		currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
+
+		for (int x = -(CHUNK_RENDER_DISTANCE + 1) ; x <= (CHUNK_RENDER_DISTANCE + 1); x++)
+		{
+			for (int z = -(CHUNK_RENDER_DISTANCE + 1) ; z <= (CHUNK_RENDER_DISTANCE + 1); z++)
+			{
+				//vérifier que l'on est pas sur le bord du monde
+				if (currentPos.x >= 0 && currentPos.x < WORLD_SIZE 
+				&& currentPos.z >= 0 && currentPos.z < WORLD_SIZE)
+				{
+					if (x == -(CHUNK_RENDER_DISTANCE + 1) || x == (CHUNK_RENDER_DISTANCE + 1) 
+				   	   || z == -(CHUNK_RENDER_DISTANCE + 1) || z == (CHUNK_RENDER_DISTANCE + 1))
+					{
+
+					}
+					else
+					{
+						//seulement loader s'il ne reste rien à unloaded
+						if (getChunkAt(currentPos) == nullptr)
+						{
+							loadChunk(new Chunk(currentPos));
+							return;
+						}
+					}
+				}
+
+				currentPos.z += CHUNK_SIZE;
+			}
+			currentPos.z -= (2*(CHUNK_RENDER_DISTANCE + 1) + 1)* CHUNK_SIZE;
+			currentPos.x += CHUNK_SIZE;
+		}
+	}
+}
+
 //fin fonctions dynamiques______________________________________________________________
 
 //méthodes privées
@@ -348,22 +428,30 @@ void World::addCube3D(Cube3D* cube)
     cubes3D.push_back(cube);  
 }
 
-//un block "air" est un bloc active->false
+/*un block "air" est un bloc active->false
+si le bloc adjacent n'est pas chargé, on regarde s'il serait de l'air, en fonction de l'algorithme de génération de terrain.*/
 bool World::isBlockNearAir(Block* block)
 {
-	Block* nearbyBlocks[] = 
+	vec3 nearbyPositions[] = 
 	{
-		getBlockAt(block->pos + Shape::ROT_Y),
-		getBlockAt(block->pos - Shape::ROT_Y),
-		getBlockAt(block->pos + Shape::ROT_X),
-		getBlockAt(block->pos - Shape::ROT_X),
-		getBlockAt(block->pos + Shape::ROT_Z),
-		getBlockAt(block->pos - Shape::ROT_Z)
+		block->pos + Shape::ROT_Y,
+		block->pos - Shape::ROT_Y,
+		block->pos + Shape::ROT_X,
+		block->pos - Shape::ROT_X,
+		block->pos + Shape::ROT_Z,
+		block->pos - Shape::ROT_Z
 	};
 
-	for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
+	for (int i = 0 ; i < sizeof(nearbyPositions) / sizeof(nearbyPositions[0]) ; i++)
 	{
-		if (nearbyBlocks[i] != nullptr && !nearbyBlocks[i]->active) return true;
+		Block* nearbyBlock = getBlockAt(nearbyPositions[i]);
+		if (nearbyBlock == nullptr)
+		{
+			if (Chunk::wouldBlockBeAirAt(nearbyPositions[i])) return true;
+		}else
+		{
+			if (!nearbyBlock->active) return true;
+		}
 	}
 
 	return false;
@@ -443,23 +531,19 @@ void World::removeBlockFromRendering(Block* blockToRemove)
 	GLBufferManager::freeBlockFromGLBuffer(blockToRemove);
 }
 
-void World::setupBlocksToRender()
+/*ajoute tous les blocs du chunks au rendering s'il correspondent aux critères.
+*EDGE CASE : render les blocs près des bords, car le chunk voisin n,est pas loadé donc un ne sait pas si c'est de l'air*/
+void World::setupBlocksToRender(Chunk* chunk)
 {
-	for (auto &chunkVec : chunkMat)
+	for (auto &vecX : chunk->blockMat)
 	{
-		for (Chunk* chunk : chunkVec)
+		for (auto &vecY : vecX)
 		{
-			for (auto &vecX : chunk->blockMat)
+			for (Block* block : vecY)
 			{
-				for (auto &vecY : vecX)
+				if (block->active && isBlockNearAir(block))
 				{
-					for (Block* block : vecY)
-					{
-						if (block->active && isBlockNearAir(block))
-						{
-							addBlockToRendering(block);
-						}
-					}
+					addBlockToRendering(block);
 				}
 			}
 		}
@@ -487,8 +571,13 @@ void World::setup3DShapes()
 	skyBox->setToBackground();
 }
 
+/*réserve les matrices de blocks et de chunks, puis load tous les chunks
+  load tous les chunks plutôt qu'un seul par seconde ;
+  charge tous les chunks, PUIS calcule quels blocs loader*/
 void World::setupChunks()
 {
+	chunksToUnload = {};
+
 	//initialiser la matrice de rendering selon le nombre de texture qui existent
     blocksToRenderMat = {};
 	for (int i = 0 ; i < Texture::tex3DNames.size(); i++)
@@ -497,26 +586,65 @@ void World::setupChunks()
 	}
 
 	//initialiser la matrice de chunks selon la taille du monde
-	chunkMat = {};
-	for (int i = 0 ; i < WORLD_CHUNK_COUNT; i++)
+	chunkMat = vector<vector<Chunk*>>(WORLD_CHUNK_COUNT);
+	for (int x = 0 ; x < WORLD_CHUNK_COUNT; x++)
 	{
-		chunkMat.push_back({});
-	}
-
-	const vec3 chunkOffsetX = vec3(CHUNK_SIZE, 0, 0);
-	const vec3 chunkOffsetZ = vec3(0, 0, CHUNK_SIZE);
-
-	vec3 chunkPos = vec3(0, 0, 0);
-	for (int x = 0 ; x < WORLD_CHUNK_COUNT ; x++)
-	{
-		for (int z = 0 ; z < WORLD_CHUNK_COUNT ; z++)
+		chunkMat[x] = vector<Chunk*>(WORLD_CHUNK_COUNT);
+		for (int z = 0 ; z < WORLD_CHUNK_COUNT; z++)
 		{
-			chunkMat[x].push_back(new Chunk(chunkPos));
-			chunkPos += chunkOffsetZ;
+			chunkMat[x][z] = nullptr;
 		}
-		chunkPos -= (float)WORLD_CHUNK_COUNT * chunkOffsetZ;
-		chunkPos += chunkOffsetX;
 	}
+	
+	//loader tous les chunks (version modifiée de updateChunks(0)
+	vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE) * CHUNK_SIZE);
+	currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
 
-	setupBlocksToRender();
+	for (int x = -(CHUNK_RENDER_DISTANCE) ; x <= (CHUNK_RENDER_DISTANCE); x++)
+	{
+		for (int z = -(CHUNK_RENDER_DISTANCE) ; z <= (CHUNK_RENDER_DISTANCE); z++)
+		{
+			//vérifier que l'on est pas sur le bord du monde
+			if (currentPos.x >= 0 && currentPos.x < WORLD_SIZE 
+			   && currentPos.z >= 0 && currentPos.z < WORLD_SIZE)
+			{
+				if (getChunkAt(currentPos) == nullptr)
+				{
+					loadChunk(new Chunk(currentPos));
+				}
+			}
+
+			currentPos.z += CHUNK_SIZE;
+		}
+		currentPos.z -= (2*(CHUNK_RENDER_DISTANCE) + 1) * CHUNK_SIZE;
+		currentPos.x += CHUNK_SIZE;
+	}
+}
+
+
+void World::loadChunk(Chunk* chunk)
+{
+	chunk->isLoaded = true;
+	chunkMat[chunk->indXInMat][chunk->indZInMat] = chunk;
+	setupBlocksToRender(chunk);
+}
+
+void World::unloadChunk(Chunk* chunk)
+{
+	chunkMat[chunk->indXInMat][chunk->indZInMat] = nullptr;
+	for (auto &vecX : chunk->blockMat)
+	{
+		for (auto &vecY : vecX)
+		{
+			for (Block* block : vecY)
+			{
+				if (block->isInRenderingVec())
+				{
+					removeBlockFromRendering(block);
+				}
+				delete(block);
+			}
+		}
+	}
+	delete(chunk);
 }

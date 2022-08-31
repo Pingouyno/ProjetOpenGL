@@ -21,6 +21,7 @@ class Camera
     public:
         static float NORMAL_SPEED;
         static float FAST_SPEED;
+        static float FLYING_FAST_SPEED;
         static float VERT_PAD_SENSITIVITY;
         static float HORI_PAD_SENSITIVITY;
         //longueur du saut (en frames)

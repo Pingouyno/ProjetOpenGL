@@ -135,6 +135,8 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 
 		eventManager->Inputs(window);
+
+		world->updateChunks();
 		//important de mettre à jour les positions avant de reload les vertices
 		world->doEntityBehaviors();
 
@@ -207,10 +209,10 @@ void checkNearBufferOverflow()
 	
 	if (vertices.size() > SPACE_TO_RESERVE) cout << "\n**ATTENTION : vertices OVERFLOW!!**\n";
 	else if (vertices.size() > SPACE_TO_RESERVE / 2) cout << "\nATTENTION : vertices rendu à 50% de la capacité du VBO openGL!\n";
-	else if (vertices.size() > SPACE_TO_RESERVE / 8) cout << "\nATTENTION : vertices rendu à 12.5% de la capacité du VBO openGL!\n";
+	else if (vertices.size() > SPACE_TO_RESERVE / 4) cout << "\nATTENTION : vertices rendu à 25% de la capacité du VBO openGL!\n";
 
 
 	if (indices.size() > SPACE_TO_RESERVE) cout << "\n**ATTENTION : indices OVERFLOW!!**\n";
 	if (indices.size() > SPACE_TO_RESERVE / 2) cout << "\nATTENTION : indices rendu à 50% de la capacité du EBO openGL!\n";
-	if (indices.size() > SPACE_TO_RESERVE / 8) cout << "\nATTENTION : indices rendu à 12.5% de la capacité du EBO openGL!\n";
+	if (indices.size() > SPACE_TO_RESERVE / 4) cout << "\nATTENTION : indices rendu à 25% de la capacité du EBO openGL!\n";
 }
