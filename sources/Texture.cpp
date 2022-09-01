@@ -16,7 +16,9 @@ const vector<string> Texture::tex3DNames =
 	"steveleftleg",
 	"steverightarm",
 	"steveleftarm",
-	"skybox"
+	"skybox",
+	"leaves",
+	"wood"
 };
 
 Texture* Texture::Air = nullptr;
@@ -24,6 +26,8 @@ Texture* Texture::Dirt = nullptr;
 Texture* Texture::Grass = nullptr;
 Texture* Texture::Stone = nullptr;
 Texture* Texture::Bedrock = nullptr;
+Texture* Texture::Leaves = nullptr;
+Texture* Texture::Wood = nullptr;
 
 vector<Texture*> Texture::textures3D = {};
 const string Texture::CUBEMAP_PATH = "resources/textures/cubemaps/";
@@ -240,6 +244,8 @@ void Texture::init3DTextures()
 	Grass = Texture::get3DImgTexture(Texture::TEX3D::GRASS);
 	Stone = Texture::get3DImgTexture(Texture::TEX3D::STONE);
 	Bedrock = Texture::get3DImgTexture(Texture::TEX3D::BEDROCK);
+	Leaves = Texture::get3DImgTexture(Texture::TEX3D::LEAVES);
+	Wood = Texture::get3DImgTexture(Texture::TEX3D::WOOD);
 }
 
 //permet de loader une texture 3D sans avoir à la binder à la ligne suivante

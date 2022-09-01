@@ -57,8 +57,8 @@ void World::render()
 
 	//render les overlays
     shaderProgram2D->Activate();
-    glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
 	renderOverlays();
 }
 
@@ -119,7 +119,7 @@ void World::renderBlocks()
 			for (int i = 0 ; i < textureVec.size() ; i++)
 			{
 				blockStarts[i] = (void*)(textureVec[i]->indexInIndices * sizeof(int));
-				blockCounts[i] = textureVec[i]->getIndiceCount();
+				blockCounts[i] = ((Block*)textureVec[i])->getIndiceCount();
 			}
 			textureVec[0]->tex->Bind();
 
@@ -225,11 +225,16 @@ bool World::isAnyColliding(vector<int> &collisionLog)
     return collisionLog[0] != 0 || collisionLog[1] != 0 || collisionLog[2] != 0;
 }
 
+//méthode lente, qui met à jour le terrain autour. utiliser pendant le runtime
 void World::spawnBlockAt(vec3 pos, Texture* tex)
 {	
 	Block* spawnedBlock = getBlockAt(pos);
 	if (spawnedBlock != nullptr)
 	{
+		if(spawnedBlock->isInRenderingVec())
+		{
+			removeBlockFromRendering(spawnedBlock);
+		}
 		spawnedBlock->tex = tex;
 		spawnedBlock->active = true;
 		updateBlock(spawnedBlock);
@@ -346,57 +351,101 @@ fait une seule opération par appel (pour ne pas réduire le framerate)
 */
 void World::updateChunks()
 {
-	//devient not NAN si on a trouvé un chunk à charger
-	vec3 chunkPosToLoad = vec3(NAN);
-	bool foundChunkToLoad = false;
+	vector<vec3> chunkPositionsToLoad = {};
+	vector<Chunk*> chunksToUnload = {};
 
-	vec3 currentPos = player->getPos() - vec3((CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE, 0, (CHUNK_RENDER_DISTANCE + 1) * CHUNK_SIZE);
-	currentPos = vec3((int)currentPos.x - (int)currentPos.x % CHUNK_SIZE, 0, (int)currentPos.z - (int)currentPos.z % CHUNK_SIZE);
+	vec3 currentPos = player->getPos() - vec3(CHUNK_RENDER_DISTANCE * CHUNK_SIZE, 0, CHUNK_RENDER_DISTANCE * CHUNK_SIZE);
+	currentPos = Chunk::getNearestFloorChunkPosOf(currentPos);
 
-	for (int x = -(CHUNK_RENDER_DISTANCE + 1) ; x <= (CHUNK_RENDER_DISTANCE + 1); x++)
+	for (int x = -CHUNK_RENDER_DISTANCE ; x <= CHUNK_RENDER_DISTANCE; x++)
 	{
-		for (int z = -(CHUNK_RENDER_DISTANCE + 1) ; z <= (CHUNK_RENDER_DISTANCE + 1); z++)
+		for (int z = -CHUNK_RENDER_DISTANCE ; z <= CHUNK_RENDER_DISTANCE ; z++)
 		{
 			//vérifier que l'on est pas sur le bord du monde
 			if (currentPos.x >= 0 && currentPos.x < WORLD_SIZE 
 			   && currentPos.z >= 0 && currentPos.z < WORLD_SIZE)
-			{
-				//si x == 0 ou x == DISTANCE+2 ou z == 0 ou z == DISTANCE+2 alors on est sur les bords, donc unload ces chunks
-				if (x == -(CHUNK_RENDER_DISTANCE + 1) || x == (CHUNK_RENDER_DISTANCE + 1) 
-				   || z == -(CHUNK_RENDER_DISTANCE + 1) || z == (CHUNK_RENDER_DISTANCE + 1))
+			{		
+				//seulement loader s'il ne reste rien à unloaded
+				if (getChunkAt(currentPos) == nullptr)
 				{
-					Chunk* chunk = getChunkAt(currentPos);
-					if (chunk != nullptr && !chunk->isUnloading) 
-					{
-						chunksToUnload.push_back(chunk);
-						chunk->isUnloading = true;
-					}
+					chunkPositionsToLoad.push_back(currentPos);
 				}
-				else if (!foundChunkToLoad)
-					{
-						//seulement loader s'il ne reste rien à unloaded
-						if (getChunkAt(currentPos) == nullptr)
-						{
-							foundChunkToLoad = true;
-							chunkPosToLoad = currentPos;
-						}
-					}
+					
 			}
-
 			currentPos.z += CHUNK_SIZE;
 		}
-		currentPos.z -= (2*(CHUNK_RENDER_DISTANCE + 1) + 1)* CHUNK_SIZE;
+		currentPos.z -= (2*(CHUNK_RENDER_DISTANCE) + 1) * CHUNK_SIZE;
 		currentPos.x += CHUNK_SIZE;
 	}
+
+	for (Chunk* chunk : loadedChunks)
+	{
+		const vec3 chunkDistBetweenPlayer = chunk->getDistanceInChunksBetween(player->getPos());
+
+		if (chunkDistBetweenPlayer.x > CHUNK_RENDER_DISTANCE 
+	       || chunkDistBetweenPlayer.z > CHUNK_RENDER_DISTANCE)
+		{
+			chunksToUnload.push_back(chunk);
+		}
+	}
+
+	//pour nombres aléatoires
+	std::random_device dev;
+    std::mt19937 rng(dev());
 
 	//unloader un chunk s'il loader un chunk s'il ne reste rien à unload, sinon loader un chunk si l'on a trouvé
 	if (chunksToUnload.size() > 0)
 	{
-		unloadChunk(chunksToUnload.back());
-		chunksToUnload.pop_back();
-	}else if (foundChunkToLoad)
+		//trouver nombre aléatoire dans le range
+		std::uniform_int_distribution<std::mt19937::result_type> dist(0, chunksToUnload.size() - 1); 
+		int randInt = dist(rng);
+
+
+		unloadChunk(chunksToUnload[randInt]);
+		
+	}else if (chunkPositionsToLoad.size() > 0)
 	{
-		loadChunk(new Chunk(chunkPosToLoad));
+		std::uniform_int_distribution<std::mt19937::result_type> dist(0, chunkPositionsToLoad.size() - 1); 
+		int randInt = dist(rng);
+
+		Chunk* newChunk = new Chunk(chunkPositionsToLoad[randInt]);
+		loadChunk(newChunk);
+		setupTrees(newChunk);
+	}
+
+}
+
+void World::spawnTreeAt(vec3 pos)
+{
+	std::random_device dev;
+   	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> distHeight(5, 7); 
+	int height = distHeight(rng);
+
+	//former une boule autour du bloc le plus haut
+	std::uniform_int_distribution<std::mt19937::result_type> distLeaves(1, 2); 
+	vec3 topPos = pos + vec3(0, height - 1, 0);
+	for (int diffx = -2 ; diffx <= 2 ; diffx++)
+	{
+		for (int diffy = -2 ; diffy <= 2 ; diffy++)
+		{
+			for (int diffz = -2 ; diffz <= 2 ; diffz++)
+			{	
+				if (((abs(diffx) == 2) + (abs(diffy) == 2) + (abs(diffz) == 2)) >= 2) continue;
+
+				if( (diffx == 2 || diffx == -2 || diffy == 2 || diffy == -2 || diffz == 2 || diffz == -2) 
+				   && distLeaves(rng) == 1) continue;
+
+				//ici on ne n'utilise pas spawnBlockAt() car ce n'est pas performant ; on évite d'utiliser 
+				spawnBlockAt(topPos + vec3(diffx, diffy, diffz), Texture::Leaves);
+			}
+		}
+	}
+
+	for (int i = 0 ; i < height ; i++)
+	{
+		spawnBlockAt(pos, Texture::Wood);
+		pos.y += 1;
 	}
 }
 
@@ -481,7 +530,6 @@ void World::updateBlock(Block* block)
 		//retirer le cube courant   //TODO : remplacer par quelque-chose qui ne va pas laisser de nullptr dans le tableau
 		if (block->isInRenderingVec()) removeBlockFromRendering(block);
 		Block* nearbyBlock;
-		//ajouter les adjacents actifs dans le tableau à render    //TODO : remplacer par quelque-chose qui ne va pas dupliquer 
 		for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
 		{
 			nearbyBlock = nearbyBlocks[i];
@@ -495,6 +543,11 @@ void World::updateBlock(Block* block)
 
 void World::addBlockToRendering(Block* block)
 {
+	if(block->isInRenderingVec())
+	{
+		removeBlockFromRendering(block);
+	}
+
 	vector<Block*> &textureVec = blocksToRenderMat[block->tex->tex3Did];
 	block->indexInRendering = textureVec.size();
 	textureVec.push_back(block);
@@ -572,7 +625,7 @@ void World::setup3DShapes()
   charge tous les chunks, PUIS calcule quels blocs loader*/
 void World::setupChunks()
 {
-	chunksToUnload = {};
+	loadedChunks = {};
 
 	//initialiser la matrice de rendering selon le nombre de texture qui existent
     blocksToRenderMat = {};
@@ -615,19 +668,33 @@ void World::setupChunks()
 		currentPos.z -= (2*(CHUNK_RENDER_DISTANCE) + 1) * CHUNK_SIZE;
 		currentPos.x += CHUNK_SIZE;
 	}
+
+	for (Chunk* chunk : loadedChunks)
+	{
+		setupTrees(chunk);
+	}
 }
 
 
 void World::loadChunk(Chunk* chunk)
 {
-	chunk->isLoaded = true;
 	chunkMat[chunk->indXInMat][chunk->indZInMat] = chunk;
+	loadedChunks.push_back(chunk);
 	setupBlocksToRender(chunk);
 }
 
 void World::unloadChunk(Chunk* chunk)
 {
 	chunkMat[chunk->indXInMat][chunk->indZInMat] = nullptr;
+	for (int i = 0 ; i < loadedChunks.size() ; i++)
+	{
+		if (loadedChunks[i] == chunk)
+		{
+			loadedChunks[i] = loadedChunks.back();
+			loadedChunks.pop_back();
+			break;
+		}
+	}
 	for (auto &vecX : chunk->blockMat)
 	{
 		for (auto &vecY : vecX)
@@ -643,4 +710,26 @@ void World::unloadChunk(Chunk* chunk)
 		}
 	}
 	delete(chunk);
+}
+
+//Génère aléatoirement un/des arbre(s) sur un chunk
+void World::setupTrees(Chunk* chunk)
+{
+	//probabiilité de 1/x par chunk
+	const int TREE_SPAWN_PROBABILITY = 3;
+
+	std::random_device dev;
+   	std::mt19937 rng(dev());
+
+	std::uniform_int_distribution<std::mt19937::result_type> distSpawnTree(1, TREE_SPAWN_PROBABILITY); 
+	std::uniform_int_distribution<std::mt19937::result_type> distCoord(1, CHUNK_SIZE); 
+
+	if (distSpawnTree(rng) == 1)
+	{
+		int x = chunk->chunkPos.x + distCoord(rng);
+		int z = chunk->chunkPos.z + distCoord(rng);
+		int y = Chunk::getPerlinHeightOf(x, z) + 1;
+
+		spawnTreeAt(vec3(x, y, z));
+	}
 }

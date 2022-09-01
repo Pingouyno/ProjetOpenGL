@@ -9,6 +9,7 @@
   -> pour se rendre dans le répertoire TEXTURES : **goTexture** (alias) */
 
 class Cube3D : public Cube {
+
     protected:
         const static vector<float> NORMAL_COORDS;  
 

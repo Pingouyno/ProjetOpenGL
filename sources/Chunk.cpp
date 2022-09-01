@@ -5,8 +5,6 @@ PerlinNoise* Chunk::perlinNoise = new PerlinNoise();
 Chunk::Chunk(vec3 chunkPos)
 {
     this->chunkPos = chunkPos;
-	this->isUnloading = false;
-	this->isLoaded = false;
 	this->indXInMat = chunkPos.x / CHUNK_SIZE;
 	this->indZInMat = chunkPos.z / CHUNK_SIZE;
 
@@ -59,6 +57,11 @@ Block* Chunk::getBlockAt(vec3 pos)
 	return blockMat[pos.x - chunkPos.x][pos.y - chunkPos.y][pos.z - chunkPos.z];
 }
 
+vec3 Chunk::getDistanceInChunksBetween(vec3 otherPos)
+{
+	return Chunk::getNearestFloorChunkPosOf(abs(this->chunkPos - otherPos)) / (float)CHUNK_SIZE;
+}
+
 //return true si l'algorithme de génération de terrain donnerait un bloc d'air
 bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
 {
@@ -67,7 +70,7 @@ bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
 
 float Chunk::getPerlinHeightOf(float x, float z)
 {
-	const float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
+	const float perlinOut = perlinNoise->noise((double)x/CHUNK_SIZE, 1, (double)z/WORLD_SIZE);
 	const float perlinHeight = std::round(CHUNK_HEIGHT * perlinOut);
 	return perlinHeight;
 }

@@ -42,7 +42,6 @@ void checkNearBufferOverflow();
 
 int main()
 {	
-
 	PlaySound::startEngine();
 
 	// Initialize GLFW

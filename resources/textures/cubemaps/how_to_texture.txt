@@ -14,3 +14,6 @@ https://thegimptutorials.com/how-to-resize-image/
 Notes :
     ->inverser pz et nz (à cause de openGL)
     ->flip px 
+
+
+Convertir webp à png : dwebp <fichier> -o <sortie>.png

@@ -35,7 +35,9 @@ class Texture {
 			STEVE_LEFT_LEG = 11,
 			STEVE_RIGHT_ARM = 12,
 			STEVE_LEFT_ARM = 13,
-			SKYBOX = 14
+			SKYBOX = 14,
+			LEAVES = 15,
+			WOOD = 16,
 		};
 
 		//BLOCS
@@ -44,6 +46,8 @@ class Texture {
 		static Texture* Grass;
 		static Texture* Stone;
 	    static Texture* Bedrock;
+		static Texture* Leaves;
+		static Texture* Wood;
 
 		const static vector<string> tex3DNames;
 		static vector<Texture*> textures3D;

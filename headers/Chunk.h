@@ -15,8 +15,6 @@ class Chunk
         static PerlinNoise* perlinNoise;
 
     public:
-        bool isUnloading;
-        bool isLoaded;
         int indXInMat;
         int indZInMat;
         //x, y, z
@@ -27,6 +25,7 @@ class Chunk
 
         void setupBlocks();
         Block* getBlockAt(vec3 pos);
+        vec3 getDistanceInChunksBetween(vec3 otherPos);
     
         static bool wouldBlockBeAirAt(vec3 &blockPos);
         static float getPerlinHeightOf(float x, float z);

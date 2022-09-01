@@ -4,6 +4,7 @@
 #include<string>
 #include<vector>
 using namespace std;
+#include <random>
 
 #include"Globals.h"
 #include"Shape.h"
@@ -40,7 +41,7 @@ class World
         vector<vector<Block*>> blocksToRenderMat;
         //x, z (le y n'est pas important)
         vector<vector<Chunk*>> chunkMat;
-        vector<Chunk*> chunksToUnload;
+        vector<Chunk*> loadedChunks;
 
         //variables reliées au monde dynamique
         int score;
@@ -82,6 +83,7 @@ class World
         void deselectTextBox();
         void setHeldItemSlot(int slot);
         void updateChunks();
+        void spawnTreeAt(vec3 pos);
 
     //méthodes pour initialiser le monde
     private:
@@ -97,6 +99,6 @@ class World
         void setupChunks();
         void loadChunk(Chunk* chunk);
         void unloadChunk(Chunk* chunk);
-
+        void setupTrees(Chunk* chunk);
 };
 #endif

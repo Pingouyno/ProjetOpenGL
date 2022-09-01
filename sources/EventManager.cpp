@@ -200,7 +200,9 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 				vec3 adjacentPos = world->getPosAdjacentToLookedFace(lookedBlock, world->player->getPos(), mousePicker->currentRay);
 				Cube3D* adjacentBlock = world->getBlockAt(adjacentPos);
 				
-				if (adjacentBlock != nullptr && !adjacentBlock->isCollidingHuman(world->player->getPos())) world->spawnBlockAt(adjacentPos, world->player->textureInHand);
+				if (adjacentBlock != nullptr && !adjacentBlock->isCollidingHuman(world->player->getPos())) 
+					world->spawnBlockAt(adjacentPos, world->player->textureInHand);
+					//world->spawnTreeAt(adjacentPos);
 			}
 		}
 	}

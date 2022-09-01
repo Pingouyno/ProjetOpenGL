@@ -3,11 +3,11 @@
 
 #include"Cube3D.h"
 
-
-
 class Block : public Cube3D
 {
     private:
+        const static float BLOCK_BRIGHTNESS;
+        const static float FACE_BRIGHTNESS;
         //texmap où pour chaque vertice, 
         static vector<float> BLOCK_TEXMAP;
 

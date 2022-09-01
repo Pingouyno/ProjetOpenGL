@@ -1,15 +1,18 @@
 #include"../headers/Block.h"
 
+const float Block::BLOCK_BRIGHTNESS = 1.0f;
+const float Block::FACE_BRIGHTNESS = 0.9375f;
+
 vector<float> Block::BLOCK_TEXMAP = 
 {
-    0, 0.875f, //0       7--------6
-    0, 0.875f, //1      /|       /|
-    0, 1,      //2     4--------5 |
-    0, 1,      //3     | |      | |
-    0, 0.875f, //4     | 3------|-2
-    0, 0.875f, //5     |/       |/
-    0, 1,      //6     0--------1
-    0, 1       //7
+    0, FACE_BRIGHTNESS, //0       7--------6
+    0, FACE_BRIGHTNESS, //1      /|       /|
+    0, BLOCK_BRIGHTNESS,//2     4--------5 |
+    0, BLOCK_BRIGHTNESS,//3     | |      | |
+    0, FACE_BRIGHTNESS, //4     | 3------|-2
+    0, FACE_BRIGHTNESS, //5     |/       |/
+    0, BLOCK_BRIGHTNESS,//6     0--------1
+    0, BLOCK_BRIGHTNESS //7
 };
 
 const float Block::BLOCK_SIZE = 1.0f;
