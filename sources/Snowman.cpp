@@ -16,36 +16,6 @@ Snowman::Snowman(glm::vec3 pos, Entity* targetEntity) : Entity(pos)
     initSnowman();
 }
 
-/*
-//On rappelle que Z sud est négatif (sud)
-void Snowman::setDirFacing(Direction dirFacing)
-{
-    this->dirFacing = dirFacing;
-    switch(dirFacing)
-    {
-        case NORTH:
-            faceQuad->setAxis(Quad::Axis::Z);
-            faceQuad->moveTo(getPos() + glm::vec3(0, 0, faceQuad->width + 0.02f));
-            break;
-        
-        case WEST:
-            faceQuad->setAxis(Quad::Axis::X);
-            faceQuad->moveTo(getPos() + glm::vec3(faceQuad->width + 0.02f, 0, 0.0f));
-            break;
-        
-        case EAST:
-            faceQuad->setAxis(Quad::Axis::X);
-            faceQuad->moveTo(faceQuad->pos + glm::vec3(-0.02f, 0, 0));
-            break;
-
-        case SOUTH:
-            faceQuad->setAxis(Quad::Axis::Z);
-            faceQuad->moveTo(faceQuad->pos + glm::vec3(0, 0, -0.02f));
-            break;
-    };
-}
-*/
-
 void Snowman::setAnimation(AnimationType animationType)
 {
     this->animationType = animationType;
@@ -80,31 +50,18 @@ function <void(void)> Snowman::getDefaultClassBehavior()
     {
         //trouver les distances
         float distX = this->getPos(0) - targetEntity->getPos(0);
-        float distY = this->getPos(1) - targetEntity->getPos(1);
         float distZ = this->getPos(2) - targetEntity->getPos(2);
-
-        /*trouver le sens de l'orientation du visage
-        if (abs(distX) > abs(distZ))
-        {
-            distX > 0 ? setDirFacing(EAST) : setDirFacing(WEST);
-        }else
-        {
-            distZ > 0 ? setDirFacing(SOUTH) : setDirFacing(NORTH);
-        }
-        */
 
         //trouver le sens du mouvement
         float factX = distX < 0 ? 1 : -1;
-        float factY = distY < 0 ? 1 : -1;
         float factZ = distZ < 0 ? 1 : -1;
 
         //arrêter de trembler si l'axe est proche
         if (abs(distX) < minDistX) factX = 0;
-        if (abs(distY) < minDistY) factY = 0;
         if (abs(distZ) < minDistX) factZ = 0;
 
         //mouvements de l'entité
-        moveTo(getPos() + glm::vec3(speed * factX, speed * factY, speed * factZ));
+        setVelocity(vec3(speed * factX, velocity.y - JUMP_FALL_ACCELERATION, speed * factZ));
         this->lookAtHorizontal(targetEntity->getPos());
         head->lookAt(targetEntity->getPos());
         doAnimation();
@@ -142,7 +99,7 @@ void Snowman::initSnowman()
     rightArm = new Cube3D(getPos() + vec3(-(bodyFormat.x + armFormat.x)/2, (bodyFormat.y - armFormat.y)/2, 0), armFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_ARM));
     leftLeg = new Cube3D(getPos() + vec3((bodyFormat.x - legFormat.x)/2, -(bodyFormat.y + legFormat.y)/2 + legFormat.y/12, 0), legFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_LEG));
     rightLeg = new Cube3D(getPos() + vec3(-(bodyFormat.x - legFormat.x)/2, -(bodyFormat.y + legFormat.y)/2 + legFormat.y/12, 0), legFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_RIGHT_LEG));
-    head = new Cube3D(getPos() + vec3(0, (bodyFormat.y + headFormat.y)/2 + headFormat.y/16, 0), headFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD));
+    head = new Cube3D(getPos() + vec3(0, (bodyFormat.y + headFormat.y)/2, 0), headFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_HEAD));
 
     entityCubes3D = 
     {
@@ -153,4 +110,11 @@ void Snowman::initSnowman()
         rightLeg,
         head
     };
+
+    //hitbox
+    const float width = body->width + 2*leftLeg->width;
+    const float height = body->height + head->height + leftLeg->height;
+    const float depth = body->depth;
+    vec3 hitBoxCenter = getPos() + vec3(0, body->height/2 + head->height - height/2, 0);
+    hitBox = new Cube3D(hitBoxCenter, vec3((width + depth)/2, height, (width + depth)/2), Texture::Air);
 }

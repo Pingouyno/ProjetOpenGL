@@ -8,6 +8,30 @@ EventManager::EventManager(World* world)
 	this->mousePicker = new MousePicker(camera);
 }
 
+void EventManager::doEntityPhysics()
+{
+	vec3 collisionLog;
+
+	for (Entity* ptrEntity : world->entities)
+	{
+		collisionLog = world->checkEntityCollidingAnyCube(ptrEntity);
+		float velY = ptrEntity->velocity.y;
+		if (world->isAnyColliding(collisionLog))
+		{
+			if (collisionLog.x != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(ptrEntity->velocity.x, 0, 0));
+			if (collisionLog.y != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, ptrEntity->velocity.y, 0));
+			if (collisionLog.z != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, 0, ptrEntity->velocity.z));
+		}
+		ptrEntity->moveToVelocity();
+
+		/*si velocity Y était négative alors on était en train de tomber, donc sauter
+		 on le fait après car on ne sait pas si le saut causera une collision*/
+		if (collisionLog.y != 0 && velY < 0 && (collisionLog.x != 0 || collisionLog.z != 0))
+		{
+			ptrEntity->jump();
+		}
+	}
+}
 
 void EventManager::Inputs(GLFWwindow* window)
 {
@@ -265,19 +289,23 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 		{
 			camera->timeInAir += 1.0f;
 		}
-		camera->Position.y -= camera->timeInAir * Camera::JUMP_FALL_ACCELERATION;
+		camera->Position.y -= camera->timeInAir * JUMP_FALL_ACCELERATION;
 	}
 
 	//calculer les collisions et permettre d'atterir, tomber et de glisser sur les murs
 	glm::vec3 newPosition = camera->Position;
-	vector<int> collisionLog = world->checkCameraCollidingAnyShape(previousPosition, newPosition);
+	vec3 collisionLog = world->checkCameraCollidingAnyShape(previousPosition, newPosition);
 
 	if (world->isAnyColliding(collisionLog))
 	{
 		if (collisionLog[0] != 0) camera->Position.x -= newPosition.x - previousPosition.x;
 
 		if (collisionLog[1] != 0) {
-			if (gameMode != CREATIVE && camera->isInAir) camera->land();
+			if (gameMode != CREATIVE) 
+			{
+				if (camera->isInAir) camera->land();
+				if (newPosition.y > previousPosition.y) camera->fall();
+			}
 			camera->Position.y = previousPosition.y;
 		}else if (!camera->isInAir) camera->fall();
 

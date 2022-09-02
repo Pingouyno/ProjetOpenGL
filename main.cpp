@@ -42,6 +42,7 @@ void checkNearBufferOverflow();
 
 int main()
 {	
+
 	PlaySound::startEngine();
 
 	// Initialize GLFW
@@ -138,6 +139,7 @@ int main()
 		world->updateChunks();
 		//important de mettre à jour les positions avant de reload les vertices
 		world->doEntityBehaviors();
+		eventManager->doEntityPhysics();
 
 		world->camera->Matrix(45.0f, 0.01f, (float)VIEW_DISTANCE);
 	

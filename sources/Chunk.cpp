@@ -62,6 +62,14 @@ vec3 Chunk::getDistanceInChunksBetween(vec3 otherPos)
 	return Chunk::getNearestFloorChunkPosOf(abs(this->chunkPos - otherPos)) / (float)CHUNK_SIZE;
 }
 
+bool Chunk::isBlockPosWithinThisChunk(vec3 blockPos)
+{
+	const vec3 diffVec = blockPos - chunkPos;
+	return diffVec.x >= 0 && diffVec.x < CHUNK_SIZE
+	   && diffVec.y >= 0 && diffVec.y < CHUNK_HEIGHT
+	   && diffVec.z >= 0 && diffVec.z < CHUNK_SIZE;
+}
+
 //return true si l'algorithme de génération de terrain donnerait un bloc d'air
 bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
 {

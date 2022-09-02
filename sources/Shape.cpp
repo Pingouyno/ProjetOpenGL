@@ -265,7 +265,7 @@ bool Shape::hasTexture()
     return this->tex != nullptr;
 }
 
-void Shape::reportCollisionWithHuman(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
+void Shape::reportCollisionWithHuman(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
 {
     glm::vec3 tryPosX = glm::vec3(newPos[0], oldPos.y, oldPos.z);
     glm::vec3 tryPosY = glm::vec3(oldPos.x, newPos[1], oldPos.z);

@@ -26,6 +26,7 @@ class EventManager
 
     public:
         EventManager(World* world);
+        void doEntityPhysics();
         void Inputs(GLFWwindow* window);
     
     private:

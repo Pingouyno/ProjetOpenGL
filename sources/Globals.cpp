@@ -116,3 +116,5 @@ const int CHUNK_HEIGHT = 64;
 const int WORLD_CHUNK_COUNT = 200;
 const int WORLD_SIZE = WORLD_CHUNK_COUNT * CHUNK_SIZE; 
 const int CHUNK_RENDER_DISTANCE = 8;
+//force G qui nous donne x * 1u/s d'accélération
+const float JUMP_FALL_ACCELERATION = 9.8 * 1.0f / 1830.0f; 

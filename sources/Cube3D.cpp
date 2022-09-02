@@ -3,17 +3,30 @@
 /*map que l'on insère dans la place de color dans vertices[], qui est utilisée par le shader pour savoir 
  quelle face est couremment dessinée. les vertices respectent le même schéma que ce cube.*/
 const vector<float> Cube3D::NORMAL_COORDS = 
-    {
-        //   coordonnées
-        -1.0f, -1.0f,  1.0f, //       7--------6
-        1.0f, -1.0f,  1.0f,  //      /|       /|
-        1.0f, -1.0f, -1.0f,  //     4--------5 |
-        -1.0f, -1.0f, -1.0f, //     | |      | |
-        -1.0f,  1.0f,  1.0f, //     | 3------|-2
-        1.0f,  1.0f,  1.0f,  //     |/       |/
-        1.0f,  1.0f, -1.0f,  //     0--------1
-        -1.0f,  1.0f, -1.0f
-    };
+{
+    //   coordonnées
+    -1.0f, -1.0f,  1.0f, //       7--------6
+    1.0f, -1.0f,  1.0f,  //      /|       /|
+    1.0f, -1.0f, -1.0f,  //     4--------5 |
+    -1.0f, -1.0f, -1.0f, //     | |      | |
+    -1.0f,  1.0f,  1.0f, //     | 3------|-2
+    1.0f,  1.0f,  1.0f,  //     |/       |/
+    1.0f,  1.0f, -1.0f,  //     0--------1
+    -1.0f,  1.0f, -1.0f
+};
+
+//car on se fie à texMap[1] pour brightness
+const vector<float> Cube3D::BRIGHTNESS_TEXMAP = 
+{
+    0, 1, //0       7--------6
+    0, 1, //1      /|       /|
+    0, 1, //2     4--------5 |
+    0, 1, //3     | |      | |
+    0, 1, //4     | 3------|-2
+    0, 1, //5     |/       |/
+    0, 1, //6     0--------1
+    0, 1  //7
+};
 
 int Cube3D::VERTICE_COUNT = 8;   //Taille du tableau 3 fois plus grosse que 8 car un vertex a (x, y, z)
 int Cube3D::INDICE_COUNT = 36;    //2 triangles par côté, 6 côtés par cube = 3 * 2 * 6 = 36  
@@ -22,7 +35,16 @@ int Cube3D::INDICE_COUNT = 36;    //2 triangles par côté, 6 côtés par cube =
  on appeller Cube(void* dummy) car la fonction generate() doît être appelée dans la même classe qui a initVertices() et initIndice()*/
 Cube3D::Cube3D(glm::vec3 pos, glm::vec3 dimensions, Texture* tex) : Cube(nullptr)
 {   
-    Cube::initCube(pos, dimensions.x, dimensions.y, dimensions.z, DEFAULT_COLOR, tex);
+    this->pos = pos;
+    this->width = dimensions.x;
+    this->height = dimensions.y;
+    this->depth = dimensions.z;
+    this->color = DEFAULT_COLOR;
+    this->tex = tex;
+
+    //important à cause du shader, qui se fie à texMap[1] pour la luminosité
+    this->texMap = BRIGHTNESS_TEXMAP;
+
     Shape::generate(); 
     replaceColorWithTexCoords();
 }
@@ -56,6 +78,19 @@ void Cube3D::setToBackground()
         //6 =offset de texMap[0] dans layout de vertex
         vertices[indexInVertices + 8*i + 6] = 2.0f;
     }  
+}
+
+bool Cube3D::isCollidingOtherCubeVelocity(vec3 &velocity, Cube3D* otherCube)
+{
+    const vec3 otherPos = otherCube->pos + velocity;
+
+    float distX = abs(pos[0] - otherPos[0]);
+    float distY = abs(pos[1] - otherPos[1]);
+    float distZ = abs(pos[2] - otherPos[2]);
+
+    return (distX <= (this->width + otherCube->width) / 2.0f
+        && distY <= (this->height + otherCube->height) / 2.0f
+        && distZ <= (this->depth + otherCube->depth) / 2.0f);
 }
 
 /*remplace l'espace réservé à vec3 color par les coordonnées normalisées du cube, afin que le shader qui render la cubemap

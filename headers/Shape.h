@@ -105,7 +105,7 @@ class Shape {
         void lookAtVertical(glm::vec3 targetPos);
         void resetRotation();
         bool hasTexture();
-        void reportCollisionWithHuman(vector<int> &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
+        void reportCollisionWithHuman(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
         vec3 getXAxis();
         vec3 getYAxis();
         vec3 getZAxis();

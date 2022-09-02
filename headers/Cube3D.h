@@ -14,6 +14,7 @@ class Cube3D : public Cube {
         const static vector<float> NORMAL_COORDS;  
 
     public:
+        const static vector<float> BRIGHTNESS_TEXMAP;
         static int VERTICE_COUNT;
         static int INDICE_COUNT;
 
@@ -23,6 +24,7 @@ class Cube3D : public Cube {
         int getVerticeCount();
         int getIndiceCount();
         void setToBackground();
+        bool isCollidingOtherCubeVelocity(vec3 &velocity, Cube3D* otherCube);
 
     protected:
         void replaceColorWithTexCoords();

@@ -21,6 +21,7 @@ using namespace std;
 #include"MenuOverlay.h"
 #include"GLBufferManager.h"
 #include"Chunk.h"
+#include"BlockToSpawn.h"
 
 class World
 {
@@ -34,7 +35,6 @@ class World
         
     //variables statiques
     private:
-        vector<Entity*> entities; 
         vector<Shape*> shapes;
         vector<Cube3D*> cubes3D;
 
@@ -43,6 +43,9 @@ class World
         vector<vector<Chunk*>> chunkMat;
         vector<Chunk*> loadedChunks;
 
+        //pour les blocs qu'on veut générer mais qui sont dans un chunk non loadé
+        vector<BlockToSpawn> blocksToSpawn;
+
         //variables reliées au monde dynamique
         int score;
 
@@ -50,6 +53,7 @@ class World
         vector<Quad*> worldBorders;
 
     public:
+        vector<Entity*> entities; 
         Player* player;
         Camera* camera;
         GameOverlay* gameOverlay;
@@ -68,8 +72,9 @@ class World
 
         Block* getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray);
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
-        vector<int> checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
-        bool isAnyColliding(vector<int> &collisionLog);
+        vec3 checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
+        vec3 checkEntityCollidingAnyCube(Entity* entity);
+        bool isAnyColliding(vec3 &collisionLog);
         void spawnBlockAt(vec3 pos, Texture* tex);
         void despawnBlockAt(vec3 pos);
         Chunk* getChunkAt(vec3 pos);
@@ -100,5 +105,6 @@ class World
         void loadChunk(Chunk* chunk);
         void unloadChunk(Chunk* chunk);
         void setupTrees(Chunk* chunk);
+        void spawnBlocksAvailableInNewChunk(Chunk* chunk);
 };
 #endif

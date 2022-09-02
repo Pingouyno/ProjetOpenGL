@@ -8,6 +8,7 @@ World::World()
 	this->player = new Player(glm::vec3(200.0f, 64.0f, 200.0f));
 	this->camera = this->player->camera;
     setupEntities();
+
     setup3DShapes();
 
 	setupChunks();
@@ -183,10 +184,9 @@ void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 	}
 }
 
-
-vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
+vec3 World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
 {
-    vector<int> collisionLog({0, 0, 0});
+    vec3 collisionLog(0);
     for (Shape* ptrShape : shapes)
     {
         if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
@@ -220,9 +220,34 @@ vector<int> World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &ne
     return collisionLog;
 }
 
-bool World::isAnyColliding(vector<int> &collisionLog)
+//retourne un collisionLog
+vec3 World::checkEntityCollidingAnyCube(Entity* entity)
 {
-    return collisionLog[0] != 0 || collisionLog[1] != 0 || collisionLog[2] != 0;
+    vec3 collisionLog(0);
+
+	//trouver les blocs près du joueur
+	vec3 entityPos = glm::round(entity->getPos());
+
+	vector<Block*> nearbyBlocks({});
+	for (float x = -1 ; x <= 1 ; x++)
+		for (float y = -1 ; y <= 1 ; y++)
+			for (float z = -1 ; z <= 1 ; z++)
+				nearbyBlocks.push_back(getBlockAt(entity->getPotentialNewPos() + vec3(x*Shape::ROT_X + y*Shape::ROT_Y + z*Shape::ROT_Z)));
+			
+	for (int i = 0 ; i < nearbyBlocks.size() ; i++)
+	{
+		Block* nearbyBlock = nearbyBlocks[i];
+		if (nearbyBlock != nullptr && nearbyBlock->active && entity->wouldThenBeCollidingCube(entity->velocity, nearbyBlock))
+		{
+			entity->reportCollisionWithCubeThen(collisionLog, nearbyBlock);
+		}
+	}
+    return collisionLog;
+}
+
+bool World::isAnyColliding(vec3 &collisionLog)
+{
+    return collisionLog.x != 0 || collisionLog.y != 0 || collisionLog.z != 0;
 }
 
 //méthode lente, qui met à jour le terrain autour. utiliser pendant le runtime
@@ -238,6 +263,18 @@ void World::spawnBlockAt(vec3 pos, Texture* tex)
 		spawnedBlock->tex = tex;
 		spawnedBlock->active = true;
 		updateBlock(spawnedBlock);
+	}else
+	{	
+		//vérifier si le bloc serait compris dans le monde, et si oui, mette ce bloc dans la file d'attente
+		if (pos.x >= 0 && pos.x < WORLD_SIZE 
+		   && pos.y >= 0 && pos.y < CHUNK_HEIGHT
+		   && pos.z >= 0 && pos.z < WORLD_SIZE)
+		{
+			BlockToSpawn blockToSpawn;
+			blockToSpawn.positionToSpawnAt = pos;
+			blockToSpawn.textureToSpawn = tex;
+			blocksToSpawn.push_back(blockToSpawn);
+		}
 	}
 }
 
@@ -248,6 +285,7 @@ void World::despawnBlockAt(vec3 pos)
 	{
 		despawnedBlock->active = false;
 		updateBlock(despawnedBlock);
+		despawnedBlock->tex = Texture::Air;
 	}
 }
 
@@ -412,7 +450,6 @@ void World::updateChunks()
 		loadChunk(newChunk);
 		setupTrees(newChunk);
 	}
-
 }
 
 void World::spawnTreeAt(vec3 pos)
@@ -592,16 +629,14 @@ void World::setupBlocksToRender(Chunk* chunk)
 
 void World::setupEntities()
 {
-	Snowman* firstSnowman = new Snowman(glm::vec3(10, 10, 10), player);
+	Snowman* firstSnowman = new Snowman(glm::vec3(player->getPos().x, 60, player->getPos().z), player);
 
 	entities = 
 	{
 		firstSnowman,
 	};
 
-	//ajouter un train de snowmans	
-
-	firstSnowman->targetEntity = firstSnowman;
+	//firstSnowman->targetEntity = firstSnowman;
 }
 
 void World::setup3DShapes()
@@ -681,6 +716,7 @@ void World::loadChunk(Chunk* chunk)
 	chunkMat[chunk->indXInMat][chunk->indZInMat] = chunk;
 	loadedChunks.push_back(chunk);
 	setupBlocksToRender(chunk);
+	spawnBlocksAvailableInNewChunk(chunk);
 }
 
 void World::unloadChunk(Chunk* chunk)
@@ -722,7 +758,7 @@ void World::setupTrees(Chunk* chunk)
    	std::mt19937 rng(dev());
 
 	std::uniform_int_distribution<std::mt19937::result_type> distSpawnTree(1, TREE_SPAWN_PROBABILITY); 
-	std::uniform_int_distribution<std::mt19937::result_type> distCoord(1, CHUNK_SIZE); 
+	std::uniform_int_distribution<std::mt19937::result_type> distCoord(0, CHUNK_SIZE - 1); 
 
 	if (distSpawnTree(rng) == 1)
 	{
@@ -731,5 +767,20 @@ void World::setupTrees(Chunk* chunk)
 		int y = Chunk::getPerlinHeightOf(x, z) + 1;
 
 		spawnTreeAt(vec3(x, y, z));
+	}
+}
+
+void World::spawnBlocksAvailableInNewChunk(Chunk* chunk)
+{
+	//spawner les blocs qui peuvent désormais être chargés. 
+	for (int i = 0 ; i < blocksToSpawn.size() ; i++)
+	{
+		BlockToSpawn &blockInfo = blocksToSpawn[i];
+		if (chunk->isBlockPosWithinThisChunk(blockInfo.positionToSpawnAt))
+		{
+			spawnBlockAt(blockInfo.positionToSpawnAt, blockInfo.textureToSpawn);
+			blocksToSpawn[i] = blocksToSpawn.back();
+			blocksToSpawn.pop_back();
+		}
 	}
 }

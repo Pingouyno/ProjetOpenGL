@@ -12,6 +12,8 @@ Entity::Entity(glm::vec3 pos)
     this->dirFacing = DEFAULT_DIRECTION;
     this->active = true;
     this->originTransposition = mat4(1.0f);
+    this->velocity = vec3(0);
+    this->hitBox = nullptr;
 }
 
 void Entity::render()
@@ -37,6 +39,7 @@ void Entity::render()
             ptrEntity->render();
         }
     }
+    //hitBox->render();
 }
 
 void Entity::render3DCubes()
@@ -79,8 +82,8 @@ void Entity::addCube3D(Cube3D* ptrCube)
 }
 
 void Entity::addEntity(Entity* entity)
-
-{this->subEntities.push_back(entity);
+{
+    this->subEntities.push_back(entity);
 }
 
 void Entity::moveTo(glm::vec3 newPos)
@@ -98,7 +101,50 @@ void Entity::moveTo(glm::vec3 newPos)
     {
         ptrEntity->moveTo(ptrEntity->getPos() + (newPos - getPos()));
     }
+    hitBox->moveTo(hitBox->pos + (newPos - getPos()));
     setPos(newPos);
+}
+
+void Entity::setVelocity(vec3 velocity)
+{
+    this->velocity = velocity;
+    for (Entity* ptrEntity : subEntities)
+    {
+        ptrEntity->setVelocity(velocity);
+    }
+}
+
+void Entity::addVelocity(vec3 velocityToAdd)
+{
+    this->velocity += velocityToAdd;
+    for (Entity* ptrEntity : subEntities)
+    {
+        ptrEntity->addVelocity(velocityToAdd);
+    }
+}
+
+void Entity::resetVelocity()
+{
+    velocity = vec3(0, 0, 0);
+    for (Entity* ptrEntity : subEntities)
+    {
+        ptrEntity->resetVelocity();
+    }
+}
+
+void Entity::moveToVelocity()
+{
+    moveTo(getPos() + velocity);
+}
+
+vec3 Entity::getPotentialNewPos()
+{
+    return getPos() + velocity;
+}
+
+void Entity::jump()
+{
+    velocity.y = 0.12f;
 }
 
 //tourne toutes les formes autour du centre de l'entité selon un axe entre normalisé entre (0, 0, 0) et (1, 1, 1)
@@ -122,6 +168,7 @@ void Entity::rotate(vec3 axis, float radians)
     }
 }
 
+//NE PAS UTILISER POUR LES ENTITÉS À HITBOX
 void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
 {
       //obtention de la formule de rotation d'un vecteur autour d'un axe
@@ -139,6 +186,7 @@ void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
     {
         e->rotateAround(pos, axis, radians);
     }
+    hitBox->rotateAround(pos, axis, radians);
 }
 
 //oriente l'axe Z de l'entité sur le joueur (horizontalement)
@@ -170,12 +218,32 @@ void Entity::lookAtHorizontal(vec3 targetPos)
     }
 }
 
+//pour les affaires qui n'ont pas de profondeur
 bool Entity::isColliding(vec3 pos)
 {
     for (Shape* ptrShape : this->entityShapes) if (ptrShape->isColliding(pos)) return true;
     for (Cube3D* ptrCube : this->entityCubes3D) if (ptrCube->isColliding(pos)) return true;
     for (Entity* ptrEntity : this->subEntities) if (ptrEntity->isColliding(pos)) return true;
     return false;
+}
+
+//détecte les collisions entre cubes de l'entité et de la cible
+bool Entity::wouldThenBeCollidingCube(vec3 &testedVelocity, Cube3D* worldCube)
+{
+    //for (Cube3D* eCube : this->entityCubes3D) if (worldCube->isCollidingOtherCubeVelocity(testedVelocity, eCube)) return true;
+    //for (Entity* subEntity : this->subEntities) if (subEntity->wouldThenBeCollidingCube(testedVelocity, worldCube)) return true;
+    return worldCube->isCollidingOtherCubeVelocity(testedVelocity, hitBox);
+}
+
+void Entity::reportCollisionWithCubeThen(vec3 &collisionLog, Cube3D* worldCube)
+{
+    glm::vec3 tryVelocityX = glm::vec3(velocity.x, 0, 0);
+    glm::vec3 tryVelocityY = glm::vec3(0, velocity.y, 0);
+    glm::vec3 tryVelocityZ = glm::vec3(0, 0, velocity.z);
+
+    if (wouldThenBeCollidingCube(tryVelocityX, worldCube)) collisionLog[0]++;
+    if (wouldThenBeCollidingCube(tryVelocityY, worldCube)) collisionLog[1]++;
+    if (wouldThenBeCollidingCube(tryVelocityZ, worldCube)) collisionLog[2]++;
 }
 
 //permet d'obtenir l'équivalent d'un axe du monde NON NORMALISÉ, selon les coordonnées locales de la forme

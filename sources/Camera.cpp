@@ -8,8 +8,6 @@ float Camera::VERT_PAD_SENSITIVITY = 2.0f;
 float Camera::HORI_PAD_SENSITIVITY = 2.8f;
 //longueur du saut (en frames)
 float Camera::JUMP_LENGTH = 45.0f;
-//force G qui nous donne x * 1u/s d'accélération
-float Camera::JUMP_FALL_ACCELERATION = 9.8 * 1.0f / 1830.0f; 
 
 Camera::Camera(int width, int height, glm::vec3 position)
 {
