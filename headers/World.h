@@ -55,6 +55,7 @@ class World
         vector<Entity*> unloadedEntities; 
 
     public:
+        vector<EntityItem*> entityItems;
         vector<Entity*> loadedEntities;
         Player* player;
         Camera* camera;
@@ -73,13 +74,18 @@ class World
         void renderOverlays();
 
         void addEntity(Entity* entity);
+        void addEntityItem(EntityItem* entityItem);
+        void removeEntity(Entity* entity);
+        void removeEntityItem(EntityItem* entityItem);
+
         Block* getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray);
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
-        vec3 checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
+        vec3 checkEntityCollidingAnyShape(Entity* entity);
         vec3 checkEntityCollidingAnyCube(Entity* entity);
         bool isAnyColliding(vec3 &collisionLog);
         void spawnBlockAt(vec3 pos, Texture* tex);
         void despawnBlockAt(vec3 pos);
+        void checkEntityTimerDespawns();
         Chunk* getChunkAt(vec3 pos);
         Block* getBlockAt(vec3 pos);
         vec3 getPosAdjacentToLookedFace(Block* block, vec3 raySource, vec3 ray);

@@ -15,5 +15,6 @@ Player::Player(glm::vec3 pos) : Entity(pos)
 
     this->hitBox = new Cube3D(getPos(), vec3(Shape::camBoxWidth, Shape::camBoxHeight, Shape::camBoxWidth), Texture::Air);
     this->hitBox->active = false;
+    this->hitBoxDimensions = vec3(Shape::camBoxWidth, Shape::camBoxHeight, Shape::camBoxWidth);
     addCube3D(hitBox);
 }

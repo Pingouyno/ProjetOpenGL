@@ -231,5 +231,6 @@ void Snowman::initSnowman()
     vec3 hitBoxCenter = getPos() + vec3(0, body->height/2 + head->height - height/2, 0);
     hitBox = new Cube3D(hitBoxCenter, vec3((width + depth)/2, height, (width + depth)/2), Texture::Air);
     hitBox->active = false;
+    this->hitBoxDimensions = vec3(hitBox->width, hitBox->height, hitBox->depth);
     addCube3D(hitBox);
 }

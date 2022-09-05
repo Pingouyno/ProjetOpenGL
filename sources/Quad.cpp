@@ -114,7 +114,7 @@ void Quad::setAxis(Axis axis)
     initVertices();
 }
 
-bool Quad::isColliding(glm::vec3 &camPos)
+bool Quad::isColliding(vec3 &camPos)
 {
     const float MIN_DISTANCE = 0.01f;
 
@@ -144,29 +144,29 @@ bool Quad::isColliding(glm::vec3 &camPos)
     return false;
 }
 
-bool Quad::isCollidingHuman(glm::vec3 &camPos)
+bool Quad::isCollidingEntity(vec3 &entityPos, vec3 &entityDimensions)
 {
-    float distX = abs(pos[0] - camPos[0]);
-    float distY = abs(pos[1] - camPos[1]);
-    float distZ = abs(pos[2] - camPos[2]);
+    float distX = abs(pos[0] - entityPos[0]);
+    float distY = abs(pos[1] - entityPos[1]);
+    float distZ = abs(pos[2] - entityPos[2]);
 
     switch(axis){
         case X:
-            return (distX <= camBoxWidth / 2.0f
-                && distY <= (width + camBoxHeight) / 2.0f
-                && distZ <= (height + camBoxWidth) / 2.0f);
+            return (distX <= entityDimensions.x / 2.0f
+                && distY <= (width + entityDimensions.y) / 2.0f
+                && distZ <= (height + entityDimensions.z) / 2.0f);
             break;
 
         case Y:
-            return (distX <= (height + camBoxWidth) / 2.0f
-                && distY <= camBoxHeight / 2.0f
-                && distZ <= (width + camBoxWidth) / 2.0f);
+            return (distX <= (height + entityDimensions.x) / 2.0f
+                && distY <= entityDimensions.y / 2.0f
+                && distZ <= (width + entityDimensions.z) / 2.0f);
             break;
 
         case Z:
-            return (distX <= (height + camBoxWidth) / 2.0f
-                && distY <= (width + camBoxHeight) / 2.0f
-                && distZ <= camBoxWidth / 2.0f);
+            return (distX <= (height + entityDimensions.x) / 2.0f
+                && distY <= (width + entityDimensions.y) / 2.0f
+                && distZ <= entityDimensions.z / 2.0f);
             break;
     }
     return false;

@@ -25,12 +25,13 @@ World::World()
 void World::doEntityBehaviors()
 {	
 	skyBox->moveTo(player->getPos());
+	checkEntityTimerDespawns();
 	player->checkEndOfAttackImmuneTimer();
+	
 	for (Entity* ptrEntity : loadedEntities)
 	{
 		if (ptrEntity->active)
 		{
-			ptrEntity->checkEndOfAttackImmuneTimer();
 			ptrEntity->doBehavior();
 		}
 	}
@@ -156,6 +157,54 @@ void World::addEntity(Entity* entity)
 	}
 }
 
+//stocke l'entité dans un vecteur à part, pour calcul du timer de despawn
+void World::addEntityItem(EntityItem* entityItem)
+{
+	this->entityItems.push_back(entityItem);
+	addEntity(entityItem);
+}
+
+//remove et delete une entité
+void World::removeEntity(Entity* entity)
+{
+	bool found = false;
+	for (int i = 0 ; i < loadedEntities.size() ; i++)
+	{
+		if (loadedEntities[i] == entity)
+		{
+			loadedEntities[i] = loadedEntities.back();
+			loadedEntities.pop_back();
+			found = true;
+			break;
+		}
+	}
+	if (!found) for (int i = 0 ; i < unloadedEntities.size() ; i++)
+	{
+		if (unloadedEntities[i] == entity)
+		{
+			unloadedEntities[i] = unloadedEntities.back();
+			unloadedEntities.pop_back();
+			break;
+		}
+	}
+
+	entity->Delete();
+}
+
+void World::removeEntityItem(EntityItem* entityItem)
+{
+	for (int i = 0 ; i < entityItems.size() ; i++)
+	{
+		if (entityItems[i] == entityItem)
+		{
+			entityItems[i] = entityItems.back();
+			entityItems.pop_back();
+			break;
+		}
+	}
+	removeEntity(entityItem);
+}
+
 //trouve la première forme qui entre en collisions avec le rayon* 
 Block* World::getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray)
 {
@@ -200,40 +249,28 @@ void World::checkCameraCollidingAnyOverlay(glm::vec3 &mousePos)
 	}
 }
 
-vec3 World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
+//vérifie les formes ainsi que les cubes
+vec3 World::checkEntityCollidingAnyShape(Entity* entity)
 {
-    vec3 collisionLog(0);
+	vec3 &oldPos = entity->getPos();
+	vec3 newPos = entity->getPotentialNewPos();
+	vec3 &entityDimensions = entity->hitBoxDimensions;
+
     for (Shape* ptrShape : shapes)
     {
-        if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
-            ptrShape->reportCollisionWithHuman(collisionLog, oldPos, newPos);
+        if (ptrShape->active && ptrShape->isCollidingEntity(newPos, entityDimensions))
+            ptrShape->reportCollisionWithEntity(player->collisionLog, oldPos, newPos, entityDimensions);
     }
 
 	for (Quad* ptrShape : worldBorders)
     {
-        if (ptrShape->active && ptrShape->isCollidingHuman(newPos))
-            ptrShape->reportCollisionWithHuman(collisionLog, oldPos, newPos);
+        if (ptrShape->active && ptrShape->isCollidingEntity(newPos, entityDimensions))
+            ptrShape->reportCollisionWithEntity(player->collisionLog, oldPos, newPos, entityDimensions);
     }
 
-	//trouver les blocs près du joueur
-	vec3 playerPos = glm::round(player->getPos());
-	playerPos.y -= 1;
+	checkEntityCollidingAnyCube(player);
 
-	vector<Block*> nearbyBlocks({});
-	for (float x = -1 ; x <= 1 ; x++)
-		for (float y = -1 ; y <= 1 ; y++)
-			for (float z = -1 ; z <= 1 ; z++)
-				nearbyBlocks.push_back(getBlockAt(playerPos + vec3(x*Shape::ROT_X + y*Shape::ROT_Y + z*Shape::ROT_Z)));
-			
-	for (int i = 0 ; i < nearbyBlocks.size() ; i++)
-	{
-		if (nearbyBlocks[i] != nullptr && nearbyBlocks[i]->active && nearbyBlocks[i]->isCollidingHuman(newPos))
-		{
-			nearbyBlocks[i]->reportCollisionWithHuman(collisionLog, oldPos, newPos);
-		}
-	}
-	
-    return collisionLog;
+    return vec3(player->collisionLog);
 }
 
 //retourne un collisionLog
@@ -241,7 +278,6 @@ vec3 World::checkEntityCollidingAnyCube(Entity* entity)
 {
 	//reset le collisionLog de l'entité
     vec3 &collisionLog = entity->collisionLog;
-	collisionLog = vec3(0);
 
 	//trouver les blocs près du joueur
 	vec3 entityPos = glm::round(entity->getPos());
@@ -304,6 +340,19 @@ void World::despawnBlockAt(vec3 pos)
 		despawnedBlock->active = false;
 		updateBlock(despawnedBlock);
 		despawnedBlock->tex = Texture::Air;
+	}
+}
+
+void World::checkEntityTimerDespawns()
+{
+	for (int i = 0 ; i < entityItems.size() ; i++)
+	{
+		if (entityItems[i]->framesUntilDespawn == 0)
+		{
+			removeEntityItem(entityItems[i]);
+			//car removeEntityItems va diminuer la taille du tableau
+			i--;
+		}
 	}
 }
 
@@ -637,6 +686,7 @@ void World::setupBlocksToRender(Chunk* chunk)
 
 void World::setupEntities()
 {
+	entityItems = {};
 	unloadedEntities = {};
 	unloadedEntities = {};
 

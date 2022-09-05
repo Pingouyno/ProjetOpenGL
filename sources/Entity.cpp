@@ -8,7 +8,7 @@ const vec3 Entity::FALLING_VELOCITY = vec3(0, -JUMP_FALL_ACCELERATION, 0);
 //utilisée dans le mode survie
 const float Entity::DEFAULT_MAX_SPEED = 2.0f/60.0f; //2 blocs par seconde
 
-const int Entity::ATTACK_COOLDOWN_MILLI = 1000.0f/3.0f; //un tiers de seconde
+const int Entity::ATTACK_COOLDOWN_MILLI = 1000.0f/2.0f; //une demie de seconde
 
 Entity::Entity(glm::vec3 pos)
 {
@@ -22,10 +22,10 @@ Entity::Entity(glm::vec3 pos)
     this->velocity = vec3(0);
     this->previousRawVelocity = vec3(0);
     this->hitBox = nullptr;
+    this->hitBoxDimensions = vec3(NAN);
     this->referencedEntities = {};
     this->maxSpeed = DEFAULT_MAX_SPEED;
     this->collisionLog = vec3(NAN);
-    this->isAttackImmune = false;
 }
 
 void Entity::render()
@@ -83,6 +83,7 @@ void Entity::checkEndOfAttackImmuneTimer()
 
 void Entity::doBehavior()
 {
+	checkEndOfAttackImmuneTimer();
     this->behavior();
 }
 
@@ -205,7 +206,7 @@ void Entity::attackEntity(Entity* attackedEntity)
         attackingVelocity.y = JUMPING_VELOCITY.y / 1.5f;
         attackedEntity->addVelocity(attackingVelocity);
         attackedEntity->getAttackedBy(this);
-        attackedEntity->giveAttackImmuneTimer();
+        attackedEntity->resetAttackImmuneTimer();
     }
 }
 
@@ -322,6 +323,11 @@ bool Entity::isColliding(vec3 pos)
     return false;
 }
 
+bool Entity::isColliding(Entity* otherEntity)
+{
+    return this->hitBox->isCollidingEntity(otherEntity->getPos(), otherEntity->hitBoxDimensions);
+}
+
 //détecte les collisions entre cubes de l'entité et de la cible
 bool Entity::wouldThenBeCollidingCube(vec3 &testedVelocity, Cube3D* worldCube)
 {
@@ -375,10 +381,16 @@ float Entity::getPos(int i)
     return pos[i];
 }
 
-void Entity::giveAttackImmuneTimer()
+void Entity::resetAttackImmuneTimer()
 {
     this->isAttackImmune = true;
-    this->attackImmuneTimeEnd = high_resolution_clock::now() + milliseconds(ATTACK_COOLDOWN_MILLI);
+    this->attackImmuneTimeEnd = high_resolution_clock::now() + milliseconds(getAttackImmuneTimeConst());
+}
+
+//À REFÉDINIR OPTIONNELLEMENT
+int Entity::getAttackImmuneTimeConst()
+{
+    return ATTACK_COOLDOWN_MILLI;
 }
 
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
@@ -391,6 +403,11 @@ void Entity::doAnimation()
 void Entity::getAttackedBy(Entity* attacker)
 {
     cout << "\n\nERREUR : fonction Entity::getAttackedBy() non redéfinie dans la classe enfant!\n\n";
+}
+
+void Entity::Delete()
+{
+    cout << "\n\nERREUR : fonction Entity::Dlete() non redéfinie dans la classe enfant!\n\n";
 }
 
 function<void(void)> Entity::getDefaultClassBehavior()

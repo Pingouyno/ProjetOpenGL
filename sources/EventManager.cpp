@@ -11,19 +11,19 @@ EventManager::EventManager(World* world)
 
 void EventManager::doEntityPhysics()
 {
-	vec3 collisionLog;
 	for (Entity* ptrEntity : world->loadedEntities)
 	{
 		//vérifier que la destination ne mène pas dans un chunk non chargé (sinon on tombe hors du monde lorsque chunk unload)
 		if (world->getChunkAt(ptrEntity->getPotentialNewPos()) != nullptr)
 		{
 			ptrEntity->previousRawVelocity = ptrEntity->velocity;
-			collisionLog = world->checkEntityCollidingAnyCube(ptrEntity);
+			ptrEntity->collisionLog = vec3(0);
+			world->checkEntityCollidingAnyCube(ptrEntity);
 			if (world->isAnyColliding(ptrEntity->collisionLog))
 			{
-				if (collisionLog.x != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(ptrEntity->velocity.x, 0, 0));
-				if (collisionLog.y != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, ptrEntity->velocity.y, 0));
-				if (collisionLog.z != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, 0, ptrEntity->velocity.z));
+				if (ptrEntity->collisionLog.x != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(ptrEntity->velocity.x, 0, 0));
+				if (ptrEntity->collisionLog.y != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, ptrEntity->velocity.y, 0));
+				if (ptrEntity->collisionLog.z != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, 0, ptrEntity->velocity.z));
 			}
 			ptrEntity->moveToVelocity();
 		}
@@ -199,7 +199,10 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 			if (lookedBlock != nullptr)
 			{
 				//important de mettre avant car la texture de lookedBlock change
-				world->addEntity(new EntityItem(lookedBlock->pos, lookedBlock->tex));
+				if (gameMode != GameMode::CREATIVE)
+				{
+					world->addEntityItem(new EntityItem(lookedBlock->pos, lookedBlock->tex));
+				}
 				world->despawnBlockAt(lookedBlock->pos);
 			}
 			
@@ -223,7 +226,14 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 				vec3 adjacentPos = world->getPosAdjacentToLookedFace(lookedBlock, world->player->getPos(), mousePicker->currentRay);
 				Cube3D* adjacentBlock = world->getBlockAt(adjacentPos);
 				
-				if (adjacentBlock != nullptr && !adjacentBlock->isCollidingHuman(world->player->getPos())) 
+				if (adjacentBlock != nullptr) 
+					
+					//s'assurer que le bloc n'entre en collision avec aucune autre entité
+					if (adjacentBlock->isCollidingEntity(world->player->getPos(), world->player->hitBoxDimensions)) 
+						return;
+					for (Entity* e : world->loadedEntities)
+						if (adjacentBlock->isCollidingEntity(e->getPos(), e->hitBoxDimensions))
+							return;
 					world->spawnBlockAt(adjacentPos, world->player->textureInHand);
 					//world->spawnTreeAt(adjacentPos);
 			}
@@ -304,15 +314,27 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 		player->addVelocity(Entity::FALLING_VELOCITY);
 	}
 
+	//vérifier évènement avec entités items
+	for (EntityItem* item : world->entityItems)
+	{
+		if (player->isColliding(item) && !item->isAttackImmune)
+		{
+			world->player->textureInHand = item->itemCube->tex;
+			world->removeEntityItem(item);
+			break;
+		}
+	}
+
 	//mettre à jour avant de modifier la vélocité
 	player->previousRawVelocity = player->velocity;
 	
-	vec3 collisionLog = world->checkEntityCollidingAnyCube(player);
-	if (world->isAnyColliding(collisionLog))
+	player->collisionLog = vec3(0);
+    world->checkEntityCollidingAnyShape(player);
+	if (world->isAnyColliding(player->collisionLog))
 	{
-		if (collisionLog.x != 0) player->setVelocity(player->velocity - vec3(player->velocity.x, 0, 0));
-		if (collisionLog.y != 0) player->setVelocity(player->velocity - vec3(0, player->velocity.y, 0));
-		if (collisionLog.z != 0) player->setVelocity(player->velocity - vec3(0, 0, player->velocity.z));
+		if (player->collisionLog.x != 0) player->setVelocity(player->velocity - vec3(player->velocity.x, 0, 0));
+		if (player->collisionLog.y != 0) player->setVelocity(player->velocity - vec3(0, player->velocity.y, 0));
+		if (player->collisionLog.z != 0) player->setVelocity(player->velocity - vec3(0, 0, player->velocity.z));
 	}
 	player->moveToVelocity();
 } 

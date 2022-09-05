@@ -146,15 +146,15 @@ bool Cube::isColliding(glm::vec3 &camPos)
         && distZ <= depth / 2.0f);
 }
 
-bool Cube::isCollidingHuman(glm::vec3 &camPos)
+bool Cube::isCollidingEntity(vec3 &entityPos, vec3 &entityDimensions)
 {
-    float distX = abs(pos[0] - camPos[0]);
-    float distY = abs(pos[1] - camPos[1]);
-    float distZ = abs(pos[2] - camPos[2]);
+    float distX = abs(pos[0] - entityPos[0]);
+    float distY = abs(pos[1] - entityPos[1]);
+    float distZ = abs(pos[2] - entityPos[2]);
 
-    return (distX <= (width + camBoxWidth) / 2.0f
-        && distY <= (height + camBoxHeight) / 2.0f
-        && distZ <= (depth + camBoxWidth) / 2.0f);
+    return (distX <= (width + entityDimensions.x) / 2.0f
+        && distY <= (height + entityDimensions.y) / 2.0f
+        && distZ <= (depth + entityDimensions.z) / 2.0f);
 }
 
 void Cube::initIndices()

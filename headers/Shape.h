@@ -18,6 +18,7 @@ using namespace glm;
 #include"Globals.h"
 #include"Texture.h"
 
+class Entity;
 //Le formes vont du SUD-OUEST (-x, -y) au NORD-OUEST (+x, +y) et du BAS vers le HAUT
 class Shape {
     private:
@@ -68,7 +69,7 @@ class Shape {
         virtual void render();
         virtual void resize(float width, float height);
         virtual bool isColliding(glm::vec3 &targetPos);
-        virtual bool isCollidingHuman(glm::vec3 &camPos);
+        virtual bool isCollidingEntity(vec3 &entityPos, vec3 &entityDimensions);
         virtual int getVerticeCount();
         virtual int getIndiceCount();
         virtual vector<float> getShapeTexMap();
@@ -105,7 +106,7 @@ class Shape {
         void lookAtVertical(glm::vec3 targetPos);
         void resetRotation();
         bool hasTexture();
-        void reportCollisionWithHuman(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos);
+        void reportCollisionWithEntity(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos, vec3 &entityDimensions);
         vec3 getXAxis();
         vec3 getYAxis();
         vec3 getZAxis();

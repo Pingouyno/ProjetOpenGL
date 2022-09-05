@@ -33,7 +33,7 @@ Shape::Shape(){
 void Shape::render(){printUndefinedErr("RENDER");}
 void Shape::resize(float width, float height){printUndefinedErr("RESIZE");}
 bool Shape::isColliding(glm::vec3 &targetPos){printUndefinedErr("COLLIDING"); return false;}
-bool Shape::isCollidingHuman(glm::vec3 &camPos){printUndefinedErr("COLLIDINGHUMAN"); return false;}
+bool Shape::isCollidingEntity(vec3 &entityPos, vec3 &entityDimensions){printUndefinedErr("COLLIDINGENTITY"); return false;}
 int Shape::getVerticeCount(){printUndefinedErr("VERTICECOUNT"); return 0;}
 int Shape::getIndiceCount(){printUndefinedErr("INDICECOUNT"); return 0;}
 vector<float> Shape::getShapeTexMap(){printUndefinedErr("TEXMAP"); return DEFAULT_TEXMAP;}
@@ -265,15 +265,15 @@ bool Shape::hasTexture()
     return this->tex != nullptr;
 }
 
-void Shape::reportCollisionWithHuman(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos)
+void Shape::reportCollisionWithEntity(vec3 &collisionLog, glm::vec3 &oldPos, glm::vec3 &newPos, vec3 &entityDimensions)
 {
     glm::vec3 tryPosX = glm::vec3(newPos[0], oldPos.y, oldPos.z);
     glm::vec3 tryPosY = glm::vec3(oldPos.x, newPos[1], oldPos.z);
     glm::vec3 tryPosZ = glm::vec3(oldPos.x, oldPos.y, newPos[2]);
 
-    if (isCollidingHuman(tryPosX)) collisionLog[0]++;
-    if (isCollidingHuman(tryPosY)) collisionLog[1]++;
-    if (isCollidingHuman(tryPosZ)) collisionLog[2]++;
+    if (isCollidingEntity(tryPosX, entityDimensions)) collisionLog[0]++;
+    if (isCollidingEntity(tryPosY, entityDimensions)) collisionLog[1]++;
+    if (isCollidingEntity(tryPosZ, entityDimensions)) collisionLog[2]++;
 }
 
 vec3 Shape::getXAxis()

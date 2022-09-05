@@ -44,6 +44,7 @@ class Entity
         float maxSpeed;
         //important de faire addCube3D(hitbox) pour qu'elle suive l'entité dans les rotations
         Cube3D* hitBox;
+        vec3 hitBoxDimensions;
         vec3 velocity;
         //utile pour connaître le contexte (si y==0 est-ce qu'on touche une plateforme ou un toit?). n'a pas été manipulée
         vec3 previousRawVelocity;
@@ -76,6 +77,7 @@ class Entity
         void lookAtHorizontal(vec3 targetPos);
         bool isTouchingGround();
         bool isColliding(vec3 pos);
+        bool isColliding(Entity* otherEntity);
         bool wouldThenBeCollidingCube(vec3 &testedVelocity, Cube3D* worldCube);
         void reportCollisionWithCubeThen(Cube3D* worldCube);
         vec3 getLocalEquivalent(vec3 axis);
@@ -84,13 +86,15 @@ class Entity
         vec3 getZAxis();
         glm::vec3& getPos();
         float getPos(int i);
-        void giveAttackImmuneTimer();
+        void resetAttackImmuneTimer();
 
         //fonctions à redéfinir (facultatif)
+        virtual int getAttackImmuneTimeConst();
+
+        //fonctions à redéfinir OBLIGATOIREMENT si on veut utiliser
         virtual void doAnimation();
         virtual void getAttackedBy(Entity* attacker);
-        
-        //fonctions à redéfinir OBLIGATOIREMENT
+        virtual void Delete();
         virtual function<void(void)> getDefaultClassBehavior();
 };
 #endif
