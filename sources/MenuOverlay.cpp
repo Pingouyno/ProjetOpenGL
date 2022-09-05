@@ -21,7 +21,7 @@ void MenuOverlay::setupOverlay()
 	Quad2D* survivalButton = new Quad2D(pos, pixelSize, pixelSize, obama_png);
 	survivalButton->despawn();
 	creativeButton->clickLogic = [this, creativeButton, survivalButton](){creativeButton->despawn(); survivalButton->spawn(); gameMode = GameMode::CREATIVE;};
-	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); gameMode = GameMode::SURVIVAL; camera->fall();};
+	survivalButton->clickLogic = [this, creativeButton, survivalButton](){survivalButton->despawn(); creativeButton->spawn(); gameMode = GameMode::SURVIVAL;};
 	addClickShape(creativeButton);
 	addClickShape(survivalButton);
 

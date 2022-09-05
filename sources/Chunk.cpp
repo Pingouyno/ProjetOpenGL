@@ -62,9 +62,9 @@ vec3 Chunk::getDistanceInChunksBetween(vec3 otherPos)
 	return Chunk::getNearestFloorChunkPosOf(abs(this->chunkPos - otherPos)) / (float)CHUNK_SIZE;
 }
 
-bool Chunk::isBlockPosWithinThisChunk(vec3 blockPos)
+bool Chunk::isPosWithinThisChunk(vec3 testedPos)
 {
-	const vec3 diffVec = blockPos - chunkPos;
+	const vec3 diffVec = testedPos - chunkPos;
 	return diffVec.x >= 0 && diffVec.x < CHUNK_SIZE
 	   && diffVec.y >= 0 && diffVec.y < CHUNK_HEIGHT
 	   && diffVec.z >= 0 && diffVec.z < CHUNK_SIZE;

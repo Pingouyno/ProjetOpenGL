@@ -8,12 +8,14 @@
 class Player : public Entity
 {    
     public:
+        static float NORMAL_SPEED;
+        static float FAST_SPEED;
+        static float FLYING_FAST_SPEED;
+        static float FLYING_SURVIVAL_SPEED;
+
         Camera* camera;
         Player(glm::vec3 pos);
         
-        glm::vec3& getPos();
-        float getPos(int i);
-        void setPos(glm::vec3 &newPos);
         Texture* textureInHand;
 };
 #endif

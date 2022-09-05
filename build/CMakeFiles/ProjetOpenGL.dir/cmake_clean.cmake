@@ -15,6 +15,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ProjetOpenGL.dir/sources/EBO.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.o.d"
+  "CMakeFiles/ProjetOpenGL.dir/sources/EntityItem.cpp.o"
+  "CMakeFiles/ProjetOpenGL.dir/sources/EntityItem.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o"
   "CMakeFiles/ProjetOpenGL.dir/sources/EventManager.cpp.o.d"
   "CMakeFiles/ProjetOpenGL.dir/sources/GLBufferManager.cpp.o"

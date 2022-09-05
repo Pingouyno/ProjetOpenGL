@@ -5,7 +5,8 @@ const float World::COLLISION_PRECISION = 50.0f;
 
 World::World()
 {
-	this->player = new Player(glm::vec3(200.0f, 64.0f, 200.0f));
+	const float spawnPos = 100;
+	this->player = new Player(glm::vec3(spawnPos, Chunk::getPerlinHeightOf(spawnPos, spawnPos) + Shape::camBoxHeight, spawnPos));
 	this->camera = this->player->camera;
     setupEntities();
 
@@ -24,10 +25,12 @@ World::World()
 void World::doEntityBehaviors()
 {	
 	skyBox->moveTo(player->getPos());
-	for (Entity* ptrEntity : entities)
+	player->checkEndOfAttackImmuneTimer();
+	for (Entity* ptrEntity : loadedEntities)
 	{
 		if (ptrEntity->active)
 		{
+			ptrEntity->checkEndOfAttackImmuneTimer();
 			ptrEntity->doBehavior();
 		}
 	}
@@ -77,7 +80,7 @@ void World::renderActiveShapes()
 
 void World::renderActiveEntities()
 {
-	for (Entity* ptrEntity : entities)
+	for (Entity* ptrEntity : loadedEntities)
     {
         if (ptrEntity->active)
         {
@@ -102,7 +105,7 @@ void World::renderActive3DCubes()
 //TODO : remplir cette fonction
 void World::renderActive3DCubesEntities()
 {
-	for (Entity* ptrEntity : entities)
+	for (Entity* ptrEntity : loadedEntities)
     {
         ptrEntity->render3DCubes();
     }
@@ -137,6 +140,19 @@ void World::renderOverlays()
     if (worldState == WorldState::MENU)
 	{
 		menuOverlay->render();
+	}
+}
+
+//vérifie s'il faut ajouter l'entité dans loaded ou unloaded
+void World::addEntity(Entity* entity)
+{
+	if (getChunkAt(entity->getPos()) != nullptr)
+	{
+		loadedEntities.push_back(entity);
+	}
+	else
+	{
+		unloadedEntities.push_back(entity);
 	}
 }
 
@@ -223,7 +239,9 @@ vec3 World::checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos)
 //retourne un collisionLog
 vec3 World::checkEntityCollidingAnyCube(Entity* entity)
 {
-    vec3 collisionLog(0);
+	//reset le collisionLog de l'entité
+    vec3 &collisionLog = entity->collisionLog;
+	collisionLog = vec3(0);
 
 	//trouver les blocs près du joueur
 	vec3 entityPos = glm::round(entity->getPos());
@@ -239,10 +257,10 @@ vec3 World::checkEntityCollidingAnyCube(Entity* entity)
 		Block* nearbyBlock = nearbyBlocks[i];
 		if (nearbyBlock != nullptr && nearbyBlock->active && entity->wouldThenBeCollidingCube(entity->velocity, nearbyBlock))
 		{
-			entity->reportCollisionWithCubeThen(collisionLog, nearbyBlock);
+			entity->reportCollisionWithCubeThen(nearbyBlock);
 		}
 	}
-    return collisionLog;
+    return vec3(collisionLog);
 }
 
 bool World::isAnyColliding(vec3 &collisionLog)
@@ -290,7 +308,8 @@ void World::despawnBlockAt(vec3 pos)
 }
 
 /*retourne le chunk avec un calcul de la position sur la taille d'un chunk
- fonctionne SEULEMENT pour les positions positives*/
+ fonctionne SEULEMENT pour les positions positives
+ ACCEPTE les y < 0 et y >= 64*/
 Chunk* World::getChunkAt(vec3 pos)
 {
 	if (pos.x < 0 || pos.x >= WORLD_SIZE 
@@ -360,17 +379,6 @@ void World::deleteAllShapes()
 
 
 //fonctions reliées à la logique de monde dynamique_____________________________________
-
-void World::incrementScore(int amount)
-{
-	this->score += amount;
-	updateScore();
-}
-
-void World::updateScore()
-{
-	gameOverlay->updateScoreDisplay(score);
-}
 
 void World::deselectTextBox()
 {    
@@ -629,14 +637,33 @@ void World::setupBlocksToRender(Chunk* chunk)
 
 void World::setupEntities()
 {
-	Snowman* firstSnowman = new Snowman(glm::vec3(player->getPos().x, 60, player->getPos().z), player);
+	unloadedEntities = {};
+	unloadedEntities = {};
 
-	entities = 
+	vec3 pos(player->getPos().x, NAN, player->getPos().z);
+	pos.y = Chunk::getPerlinHeightOf(pos.x, pos.z) + 2;
+	Snowman* firstSnowman = new Snowman(pos, &player->getPos());
+	unloadedEntities.push_back(firstSnowman);
+
+	Snowman* lastSnowman = firstSnowman;
+	Snowman* newSnowman;
+	for (int i = 0 ; i < 25 ; i++)
 	{
-		firstSnowman,
-	};
+		vec3 pos = lastSnowman->getPos() + vec3(2, 0, 0);
+		pos.y = Chunk::getPerlinHeightOf(pos.x, pos.z) + 2;
+		newSnowman = new Snowman(pos);
+		unloadedEntities.push_back(newSnowman);
+		lastSnowman = newSnowman;
+	}
 
-	//firstSnowman->targetEntity = firstSnowman;
+	for (int i = 0 ; i < 25 ; i++)
+	{
+		vec3 pos = lastSnowman->getPos() + vec3(2, 0, 0);
+		pos.y = Chunk::getPerlinHeightOf(pos.x, pos.z) + 2;
+		newSnowman = new Snowman(pos, unloadedEntities[i + 1]);
+		unloadedEntities.push_back(newSnowman);
+		lastSnowman = newSnowman;
+	}
 }
 
 void World::setup3DShapes()
@@ -710,13 +737,27 @@ void World::setupChunks()
 	}
 }
 
-
 void World::loadChunk(Chunk* chunk)
 {
 	chunkMat[chunk->indXInMat][chunk->indZInMat] = chunk;
 	loadedChunks.push_back(chunk);
 	setupBlocksToRender(chunk);
 	spawnBlocksAvailableInNewChunk(chunk);
+
+	//vérifier le chargement de nouvelles entités
+	Entity* unloadedEntity;
+	for (int i = 0 ; i < unloadedEntities.size() ; i++)
+	{
+		unloadedEntity = unloadedEntities[i];
+		if (chunk->isPosWithinThisChunk(unloadedEntity->getPos()))
+		{				
+			unloadedEntities[i] = unloadedEntities.back();
+			unloadedEntities.pop_back();
+			i--;
+
+			loadedEntities.push_back(unloadedEntity);
+		}
+	}
 }
 
 void World::unloadChunk(Chunk* chunk)
@@ -728,6 +769,7 @@ void World::unloadChunk(Chunk* chunk)
 		{
 			loadedChunks[i] = loadedChunks.back();
 			loadedChunks.pop_back();
+			i--;
 			break;
 		}
 	}
@@ -745,6 +787,22 @@ void World::unloadChunk(Chunk* chunk)
 			}
 		}
 	}
+
+	//vérifier si on doit dé-charger des entités
+	Entity* loadedEntity;
+	for (int i = 0 ; i < loadedEntities.size() ; i++)
+	{
+		loadedEntity = loadedEntities[i];
+		if (chunk->isPosWithinThisChunk(loadedEntity->getPos()))
+		{				
+			loadedEntities[i] = loadedEntities.back();
+			loadedEntities.pop_back();
+			i--;
+
+			unloadedEntities.push_back(loadedEntity);
+		}
+	}
+
 	delete(chunk);
 }
 
@@ -776,11 +834,12 @@ void World::spawnBlocksAvailableInNewChunk(Chunk* chunk)
 	for (int i = 0 ; i < blocksToSpawn.size() ; i++)
 	{
 		BlockToSpawn &blockInfo = blocksToSpawn[i];
-		if (chunk->isBlockPosWithinThisChunk(blockInfo.positionToSpawnAt))
+		if (chunk->isPosWithinThisChunk(blockInfo.positionToSpawnAt))
 		{
 			spawnBlockAt(blockInfo.positionToSpawnAt, blockInfo.textureToSpawn);
 			blocksToSpawn[i] = blocksToSpawn.back();
 			blocksToSpawn.pop_back();
+			i--;
 		}
 	}
 }

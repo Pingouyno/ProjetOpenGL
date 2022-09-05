@@ -26,7 +26,7 @@ class Chunk
         void setupBlocks();
         Block* getBlockAt(vec3 pos);
         vec3 getDistanceInChunksBetween(vec3 otherPos);
-        bool isBlockPosWithinThisChunk(vec3 blockPos);
+        bool isPosWithinThisChunk(vec3 testedPos);
     
         static bool wouldBlockBeAirAt(vec3 &blockPos);
         static float getPerlinHeightOf(float x, float z);

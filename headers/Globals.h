@@ -36,6 +36,5 @@ extern const int CHUNK_HEIGHT;
 extern const int WORLD_CHUNK_COUNT;
 extern const int WORLD_SIZE;
 extern const int CHUNK_RENDER_DISTANCE;
-extern const float JUMP_FALL_ACCELERATION;
 
 #endif

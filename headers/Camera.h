@@ -18,48 +18,31 @@ using namespace glm;
 
 class Camera
 {
+    private:
+        //référence vers pos du joueur
+        glm::vec3* Position;
+
     public:
-        static float NORMAL_SPEED;
-        static float FAST_SPEED;
-        static float FLYING_FAST_SPEED;
         static float VERT_PAD_SENSITIVITY;
         static float HORI_PAD_SENSITIVITY;
-        //longueur du saut (en frames)
-        static float JUMP_LENGTH;
-        //force G qui nous donne x * 1u/s d'accélération
-        static float JUMP_FALL_ACCELERATION;
     
-        // Stores the main vectors of the camera
-        glm::vec3 Position;
         glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
         glm::vec2 mousePos;
 
-        mat4 projectionMatrix;
-        mat4 viewMatrix;
-
-        // Prevents the camera from jumping around when first clicking left click
-        bool isInAir = true;
-
         float width;
         float height;
 
-        // Adjust the speed of the camera and it's sensitivity when looking around
-        float speed = NORMAL_SPEED;
+        mat4 projectionMatrix;
+        mat4 viewMatrix;
+
         float sensitivity = 100.0f;
-        //on ne met pas à 0 car cela ferait de mini-bonds au sol
-        float DEFAULT_TIME_AIR = 5.0f;
-        float timeInAir = DEFAULT_TIME_AIR;
 
         // Camera constructor to set up initial values
-        Camera(int width, int height, glm::vec3 position);
+        Camera(int width, int height, vec3* position);
 
         // Updates and exports the camera matrix to the Vertex Shader
         void Matrix(float FOVdeg, float nearPlane, float farPlane);
-
-        void jump();
-        void land();
-        void fall();
 
         void updateMousePos(GLFWwindow* window);
         void centerMouseOnWindow(GLFWwindow* window);

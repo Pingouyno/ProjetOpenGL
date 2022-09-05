@@ -17,6 +17,7 @@ class EventManager
 	    MousePicker* mousePicker;
         World* world;
         Camera* camera;
+        Player* player;
 
         bool waitingForTPress = true;
         bool waitingForLClick = true;

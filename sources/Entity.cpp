@@ -1,6 +1,14 @@
 #include"../headers/Entity.h"
 
 const float Entity::RADIAN_CIRCLE = 2*M_PI;
+//force G qui nous donne x * 1u/s d'accélération
+const float Entity::JUMP_FALL_ACCELERATION = 9.8 * 1.0f / 1830.0f;
+const vec3 Entity::JUMPING_VELOCITY = vec3(0, 0.12f, 0);
+const vec3 Entity::FALLING_VELOCITY = vec3(0, -JUMP_FALL_ACCELERATION, 0);
+//utilisée dans le mode survie
+const float Entity::DEFAULT_MAX_SPEED = 2.0f/60.0f; //2 blocs par seconde
+
+const int Entity::ATTACK_COOLDOWN_MILLI = 1000.0f/3.0f; //un tiers de seconde
 
 Entity::Entity(glm::vec3 pos)
 {
@@ -9,11 +17,15 @@ Entity::Entity(glm::vec3 pos)
     this->entityShapes = {};
     this->entityCubes3D = {};
     this->subEntities = {};
-    this->dirFacing = DEFAULT_DIRECTION;
     this->active = true;
     this->originTransposition = mat4(1.0f);
     this->velocity = vec3(0);
+    this->previousRawVelocity = vec3(0);
     this->hitBox = nullptr;
+    this->referencedEntities = {};
+    this->maxSpeed = DEFAULT_MAX_SPEED;
+    this->collisionLog = vec3(NAN);
+    this->isAttackImmune = false;
 }
 
 void Entity::render()
@@ -60,6 +72,15 @@ void Entity::render3DCubes()
     }
 }
 
+void Entity::checkEndOfAttackImmuneTimer()
+{
+    //reset le timer si on a franchi la date
+    if (this->isAttackImmune && this->attackImmuneTimeEnd <= high_resolution_clock::now())
+    {
+        this->isAttackImmune = false;
+    }
+}
+
 void Entity::doBehavior()
 {
     this->behavior();
@@ -101,27 +122,47 @@ void Entity::moveTo(glm::vec3 newPos)
     {
         ptrEntity->moveTo(ptrEntity->getPos() + (newPos - getPos()));
     }
-    hitBox->moveTo(hitBox->pos + (newPos - getPos()));
-    setPos(newPos);
+    this->pos = newPos;
 }
 
 void Entity::setVelocity(vec3 velocity)
 {
     this->velocity = velocity;
-    for (Entity* ptrEntity : subEntities)
-    {
-        ptrEntity->setVelocity(velocity);
-    }
 }
 
 void Entity::addVelocity(vec3 velocityToAdd)
 {
     this->velocity += velocityToAdd;
-    for (Entity* ptrEntity : subEntities)
+}
+
+//ajoute avec une limite, selon la maxSpeed actuelle. NOTE : aucune limmite pour le y
+void Entity::addVelocityCapped(vec3 velocityToAdd)
+{
+    this->velocity.y += velocityToAdd.y;
+
+    float potentialVelX = this->velocity.x + velocityToAdd.x;
+    if (abs(this->velocity.x) < maxSpeed || abs(potentialVelX) < abs(this->velocity.x))
     {
-        ptrEntity->addVelocity(velocityToAdd);
+        if (abs(potentialVelX > maxSpeed))
+        {
+            const float signX = potentialVelX < 0 ? -1 : 1;
+            potentialVelX = signX * maxSpeed;
+        }
+        this->velocity.x = potentialVelX;
+    }
+
+    float potentialVelZ = this->velocity.z + velocityToAdd.z;
+    if (abs(this->velocity.z) < maxSpeed || abs(potentialVelZ) < abs(this->velocity.z))
+    {
+        if (abs(potentialVelZ > maxSpeed))
+        {
+            const float signZ = potentialVelZ < 0 ? -1 : 1;
+            potentialVelZ = signZ * maxSpeed;
+        }
+        this->velocity.z = potentialVelZ;
     }
 }
+
 
 void Entity::resetVelocity()
 {
@@ -134,7 +175,7 @@ void Entity::resetVelocity()
 
 void Entity::moveToVelocity()
 {
-    moveTo(getPos() + velocity);
+    moveTo(getPotentialNewPos());
 }
 
 vec3 Entity::getPotentialNewPos()
@@ -144,7 +185,56 @@ vec3 Entity::getPotentialNewPos()
 
 void Entity::jump()
 {
-    velocity.y = 0.12f;
+    addVelocity(JUMPING_VELOCITY);
+}
+
+//teste la collision en se fiant sur la vélocité de soi-même
+bool Entity::wouldBeCollidingEntityVelocity(Entity* otherEntity)
+{
+    const vec3 diff = glm::abs(this->getPotentialNewPos() - otherEntity->getPos());
+    return diff.x <= this->hitBox->width + otherEntity->hitBox->width
+        && diff.y <= this->hitBox->height + otherEntity->hitBox->height
+        && diff.z <= this->hitBox->depth + otherEntity->hitBox->depth;
+}
+
+void Entity::attackEntity(Entity* attackedEntity)
+{
+    if (!attackedEntity->isAttackImmune)
+    {
+        vec3 attackingVelocity = glm::normalize(attackedEntity->getPos() - this->getPos()) / 4.0f;
+        attackingVelocity.y = JUMPING_VELOCITY.y / 1.5f;
+        attackedEntity->addVelocity(attackingVelocity);
+        attackedEntity->getAttackedBy(this);
+        attackedEntity->giveAttackImmuneTimer();
+    }
+}
+
+void Entity::addReference(Entity* entityToReference)
+{
+    this->referencedEntities.push_back(entityToReference);
+    entityToReference->referencedEntities.push_back(this);
+}
+
+void Entity::removeReference(Entity* entityToDereference)
+{
+    for (int i = 0 ; i < this->referencedEntities.size() ; i++)
+    {
+        if (this->referencedEntities[i] == entityToDereference)
+        {
+            this->referencedEntities[i] = this->referencedEntities.back();
+            this->referencedEntities.pop_back();
+            i--;
+        }
+    }
+    for (int i = 0 ; i < entityToDereference->referencedEntities.size() ; i++)
+    {
+        if (entityToDereference->referencedEntities[i] == this)
+        {
+            entityToDereference->referencedEntities[i] = entityToDereference->referencedEntities.back();
+            entityToDereference->referencedEntities.pop_back();
+            i--;
+        }
+    }
 }
 
 //tourne toutes les formes autour du centre de l'entité selon un axe entre normalisé entre (0, 0, 0) et (1, 1, 1)
@@ -171,7 +261,7 @@ void Entity::rotate(vec3 axis, float radians)
 //NE PAS UTILISER POUR LES ENTITÉS À HITBOX
 void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
 {
-      //obtention de la formule de rotation d'un vecteur autour d'un axe
+    //obtention de la formule de rotation d'un vecteur autour d'un axe
     glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
     originTransposition = rotationMat * originTransposition;
     for (Shape* shape : entityShapes)
@@ -186,7 +276,6 @@ void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
     {
         e->rotateAround(pos, axis, radians);
     }
-    hitBox->rotateAround(pos, axis, radians);
 }
 
 //oriente l'axe Z de l'entité sur le joueur (horizontalement)
@@ -218,6 +307,12 @@ void Entity::lookAtHorizontal(vec3 targetPos)
     }
 }
 
+//true si velocity.y == 0
+bool Entity::isTouchingGround()
+{
+    return this->velocity.y == 0;
+}
+
 //pour les affaires qui n'ont pas de profondeur
 bool Entity::isColliding(vec3 pos)
 {
@@ -235,15 +330,15 @@ bool Entity::wouldThenBeCollidingCube(vec3 &testedVelocity, Cube3D* worldCube)
     return worldCube->isCollidingOtherCubeVelocity(testedVelocity, hitBox);
 }
 
-void Entity::reportCollisionWithCubeThen(vec3 &collisionLog, Cube3D* worldCube)
+void Entity::reportCollisionWithCubeThen(Cube3D* worldCube)
 {
     glm::vec3 tryVelocityX = glm::vec3(velocity.x, 0, 0);
     glm::vec3 tryVelocityY = glm::vec3(0, velocity.y, 0);
     glm::vec3 tryVelocityZ = glm::vec3(0, 0, velocity.z);
 
-    if (wouldThenBeCollidingCube(tryVelocityX, worldCube)) collisionLog[0]++;
-    if (wouldThenBeCollidingCube(tryVelocityY, worldCube)) collisionLog[1]++;
-    if (wouldThenBeCollidingCube(tryVelocityZ, worldCube)) collisionLog[2]++;
+    if (wouldThenBeCollidingCube(tryVelocityX, worldCube)) collisionLog.x++;
+    if (wouldThenBeCollidingCube(tryVelocityY, worldCube)) collisionLog.y++;
+    if (wouldThenBeCollidingCube(tryVelocityZ, worldCube)) collisionLog.z++;
 }
 
 //permet d'obtenir l'équivalent d'un axe du monde NON NORMALISÉ, selon les coordonnées locales de la forme
@@ -280,6 +375,12 @@ float Entity::getPos(int i)
     return pos[i];
 }
 
+void Entity::giveAttackImmuneTimer()
+{
+    this->isAttackImmune = true;
+    this->attackImmuneTimeEnd = high_resolution_clock::now() + milliseconds(ATTACK_COOLDOWN_MILLI);
+}
+
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
 
 void Entity::doAnimation()
@@ -287,13 +388,13 @@ void Entity::doAnimation()
     cout << "\n\nERREUR : fonction Entity::doAnimation() non redéfinie dans la classe enfant!\n\n";
 }
 
+void Entity::getAttackedBy(Entity* attacker)
+{
+    cout << "\n\nERREUR : fonction Entity::getAttackedBy() non redéfinie dans la classe enfant!\n\n";
+}
+
 function<void(void)> Entity::getDefaultClassBehavior()
 {
     cout << "\n\nERREUR : fonction Entity::getDefaultEntityBehavior() non redéfinie dans la classe enfant!\n\n";
     return [](){};
-}
-
-void Entity::setPos(glm::vec3 newPos)
-{
-    this->pos = newPos;
 }

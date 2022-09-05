@@ -5,7 +5,13 @@
 
 class Snowman : public Entity
 {
-    enum AnimationType : int;
+    /* CHASING lorsqu'il marche vers une position, 
+       ROAMING lorsqu'il se balade, 
+       AGGRO   lorsqu'il pourchasse une entité et veut l'attaquer */
+    enum Phase : int {CHASING = 0, ROAMING = 1, AGGRO = 2};
+    enum AnimationType : int {WALKING = 0};
+
+    const float FLYING_MAX_SPEED = DEFAULT_MAX_SPEED / 4;
 
     private:
         const static float size;
@@ -19,6 +25,11 @@ class Snowman : public Entity
         int articulationTimer;
         int articulationDirection;
         AnimationType animationType;
+        Phase phase;
+        
+        //ATTENTION : est parfois nullptr
+        Entity* targetEntity;
+        vec3* targetPos;
 
         //formes du cube
         Cube3D* body;
@@ -26,19 +37,25 @@ class Snowman : public Entity
         Cube3D* rightArm;
         Cube3D* leftLeg;
         Cube3D* rightLeg;
-        Cube3D* head;
 
     public:
-        //l'entité à suivre
-        Entity* targetEntity;
+        Cube3D* head;
 
+        //utilisé lorsqu'on met l'entité en mode roaming
+        vec3 selfContainedTargetPos;
+
+        Snowman(glm::vec3 pos, vec3* targetPos);
         Snowman(glm::vec3 pos, Entity* targetEntity);
+        Snowman(glm::vec3 pos);
 
         void setAnimation(AnimationType animationType);
-        void doAnimation();
-        
+        //OBLIGATOIREMENT UTILISER, ne pas modifier directement
+        void setTargetEntity(Entity* targetEntity);
+        void findNewRandomTargetPos();
+
         //fonctions redéfinies
-        //void setDirFacing(Direction dirFacing);
+        void doAnimation();
+        void getAttackedBy(Entity* attacker);
         function <void(void)> getDefaultClassBehavior();
 
     private:

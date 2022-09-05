@@ -321,6 +321,30 @@ sources/Entity.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/Entity.cpp.s
 .PHONY : sources/Entity.cpp.s
 
+sources/EntityItem.o: sources/EntityItem.cpp.o
+.PHONY : sources/EntityItem.o
+
+# target to build an object file
+sources/EntityItem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EntityItem.cpp.o
+.PHONY : sources/EntityItem.cpp.o
+
+sources/EntityItem.i: sources/EntityItem.cpp.i
+.PHONY : sources/EntityItem.i
+
+# target to preprocess a source file
+sources/EntityItem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EntityItem.cpp.i
+.PHONY : sources/EntityItem.cpp.i
+
+sources/EntityItem.s: sources/EntityItem.cpp.s
+.PHONY : sources/EntityItem.s
+
+# target to generate assembly for a file
+sources/EntityItem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ProjetOpenGL.dir/build.make CMakeFiles/ProjetOpenGL.dir/sources/EntityItem.cpp.s
+.PHONY : sources/EntityItem.cpp.s
+
 sources/EventManager.o: sources/EventManager.cpp.o
 .PHONY : sources/EventManager.o
 
@@ -930,6 +954,9 @@ help:
 	@echo "... sources/Entity.o"
 	@echo "... sources/Entity.i"
 	@echo "... sources/Entity.s"
+	@echo "... sources/EntityItem.o"
+	@echo "... sources/EntityItem.i"
+	@echo "... sources/EntityItem.s"
 	@echo "... sources/EventManager.o"
 	@echo "... sources/EventManager.i"
 	@echo "... sources/EventManager.s"

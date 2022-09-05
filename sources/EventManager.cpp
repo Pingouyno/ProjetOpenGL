@@ -4,32 +4,30 @@
 EventManager::EventManager(World* world)
 {
     this->world = world;
-    this->camera = world->camera;
+    this->camera = world->player->camera;
+	this->player = world->player;
 	this->mousePicker = new MousePicker(camera);
 }
 
 void EventManager::doEntityPhysics()
 {
 	vec3 collisionLog;
-
-	for (Entity* ptrEntity : world->entities)
+	for (Entity* ptrEntity : world->loadedEntities)
 	{
-		collisionLog = world->checkEntityCollidingAnyCube(ptrEntity);
-		float velY = ptrEntity->velocity.y;
-		if (world->isAnyColliding(collisionLog))
+		//vérifier que la destination ne mène pas dans un chunk non chargé (sinon on tombe hors du monde lorsque chunk unload)
+		if (world->getChunkAt(ptrEntity->getPotentialNewPos()) != nullptr)
 		{
-			if (collisionLog.x != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(ptrEntity->velocity.x, 0, 0));
-			if (collisionLog.y != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, ptrEntity->velocity.y, 0));
-			if (collisionLog.z != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, 0, ptrEntity->velocity.z));
+			ptrEntity->previousRawVelocity = ptrEntity->velocity;
+			collisionLog = world->checkEntityCollidingAnyCube(ptrEntity);
+			if (world->isAnyColliding(ptrEntity->collisionLog))
+			{
+				if (collisionLog.x != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(ptrEntity->velocity.x, 0, 0));
+				if (collisionLog.y != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, ptrEntity->velocity.y, 0));
+				if (collisionLog.z != 0) ptrEntity->setVelocity(ptrEntity->velocity - vec3(0, 0, ptrEntity->velocity.z));
+			}
+			ptrEntity->moveToVelocity();
 		}
-		ptrEntity->moveToVelocity();
-
-		/*si velocity Y était négative alors on était en train de tomber, donc sauter
-		 on le fait après car on ne sait pas si le saut causera une collision*/
-		if (collisionLog.y != 0 && velY < 0 && (collisionLog.x != 0 || collisionLog.z != 0))
-		{
-			ptrEntity->jump();
-		}
+		else ptrEntity->resetVelocity();
 	}
 }
 
@@ -200,8 +198,9 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 			Block* lookedBlock = world->getFirstBlockCollidingWithRay(world->player->getPos(), mousePicker->currentRay);
 			if (lookedBlock != nullptr)
 			{
+				//important de mettre avant car la texture de lookedBlock change
+				world->addEntity(new EntityItem(lookedBlock->pos, lookedBlock->tex));
 				world->despawnBlockAt(lookedBlock->pos);
-				world->incrementScore(1);
 			}
 			
 		}
@@ -232,10 +231,31 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 	}
 }
 
-
 void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 {
-	glm::vec3 previousPosition = camera->Position;
+	const bool wasTouchingGround = player->isTouchingGround();
+	vec3 newVelocity(0);
+
+	//VITESSE
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	{
+		newVelocity += player->maxSpeed * -camera->Up;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (gameMode == CREATIVE || wasTouchingGround))
+	{
+		if (gameMode == GameMode::CREATIVE) player->maxSpeed = Player::FLYING_FAST_SPEED;
+		else player->maxSpeed = Player::FAST_SPEED;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+	{
+		player->maxSpeed = Player::NORMAL_SPEED;
+	}
+
+	//si on n'est pas en créatif alors bouger lentement si on est dans le ciel
+	if (gameMode != GameMode::CREATIVE && !wasTouchingGround)
+	{
+		player->maxSpeed = Player::FLYING_SURVIVAL_SPEED;
+	}
 
 	// inputs de mouvement physique
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -243,74 +263,57 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 		//On prend les coordonnées x, y, z de l'orientation et on retire le y (pour ne pas monter/descendre). 
 		//On trouve le vecteur normal au vecteur normal, soit on retourne à la direction pointéer
 
-		if (gameMode == GameMode::CREATIVE) camera->Position += camera->speed * camera->Orientation;
-		else camera->Position += camera->speed * -glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
+		if (gameMode == GameMode::CREATIVE) newVelocity += player->maxSpeed * camera->Orientation;
+		else newVelocity += player->maxSpeed * -glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera->Position += camera->speed * -glm::normalize(glm::cross(camera->Orientation, camera->Up));
+		newVelocity += player->maxSpeed * -glm::normalize(glm::cross(camera->Orientation, camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		if (gameMode == GameMode::CREATIVE) camera->Position += camera->speed * -camera->Orientation;
-		else camera->Position += camera->speed * glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
+		if (gameMode == GameMode::CREATIVE) newVelocity += player->maxSpeed * -camera->Orientation;
+		else newVelocity += player->maxSpeed * glm::normalize(glm::cross(glm::vec3(-camera->Orientation.z, camera->Orientation.y, camera->Orientation.x), camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera->Position += camera->speed * glm::normalize(glm::cross(camera->Orientation, camera->Up));
+		newVelocity += player->maxSpeed * glm::normalize(glm::cross(camera->Orientation, camera->Up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		if (gameMode == CREATIVE) camera->Position += camera->speed * camera->Up;
-		else if (!camera->isInAir)
+		if (gameMode == CREATIVE) newVelocity += player->maxSpeed * camera->Up;
+		else if (player->collisionLog.y != 0 && player->previousRawVelocity.y < 0)
 		{
-			camera->jump();
+			//équivalent de jump()
+			newVelocity += Entity::JUMPING_VELOCITY;
 			PlaySound::playJumpSound();
 		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+
+	if (gameMode != GameMode::CREATIVE && !wasTouchingGround)
 	{
-		camera->Position += camera->speed * -camera->Up;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (gameMode == CREATIVE || !camera->isInAir))
+		player->addVelocityCapped(newVelocity);
+	}else
 	{
-		if (gameMode == GameMode::CREATIVE) camera->speed = Camera::FLYING_FAST_SPEED;
-		else camera->speed = Camera::FAST_SPEED;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-	{
-		camera->speed = Camera::NORMAL_SPEED;
+		player->setVelocity(newVelocity);
 	}
 
-	//appliquer la gravité
-	if (gameMode == GameMode::SURVIVAL) 
+	//appliquer la gravité, important de mettre avant le test de saut, pour savoir si on tombe ou non
+	if (gameMode != GameMode::CREATIVE) 
 	{
-		if (camera->isInAir)
-		{
-			camera->timeInAir += 1.0f;
-		}
-		camera->Position.y -= camera->timeInAir * JUMP_FALL_ACCELERATION;
+		player->addVelocity(Entity::FALLING_VELOCITY);
 	}
 
-	//calculer les collisions et permettre d'atterir, tomber et de glisser sur les murs
-	glm::vec3 newPosition = camera->Position;
-	vec3 collisionLog = world->checkCameraCollidingAnyShape(previousPosition, newPosition);
-
+	//mettre à jour avant de modifier la vélocité
+	player->previousRawVelocity = player->velocity;
+	
+	vec3 collisionLog = world->checkEntityCollidingAnyCube(player);
 	if (world->isAnyColliding(collisionLog))
 	{
-		if (collisionLog[0] != 0) camera->Position.x -= newPosition.x - previousPosition.x;
-
-		if (collisionLog[1] != 0) {
-			if (gameMode != CREATIVE) 
-			{
-				if (camera->isInAir) camera->land();
-				if (newPosition.y > previousPosition.y) camera->fall();
-			}
-			camera->Position.y = previousPosition.y;
-		}else if (!camera->isInAir) camera->fall();
-
-		if (collisionLog[2] != 0) camera->Position.z -= newPosition.z - previousPosition.z;
-
-	}else if (!camera->isInAir) camera->fall();
+		if (collisionLog.x != 0) player->setVelocity(player->velocity - vec3(player->velocity.x, 0, 0));
+		if (collisionLog.y != 0) player->setVelocity(player->velocity - vec3(0, player->velocity.y, 0));
+		if (collisionLog.z != 0) player->setVelocity(player->velocity - vec3(0, 0, player->velocity.z));
+	}
+	player->moveToVelocity();
 } 
 

@@ -6,9 +6,6 @@
 class GameOverlay : public Overlay
 {
     private:
-        //score va de gauche à droite (0 à n)
-        vector<Quad2D*> scoreQuads;
-
         vector<Quad2D*> hotBar;
         Quad2D* slotHighLighter;
         

@@ -15,6 +15,7 @@ using namespace std;
 #include"shaderClass.h"
 #include"Entity.h"
 #include"Snowman.h"
+#include"EntityItem.h"
 #include"Camera.h"
 #include"Player.h"
 #include"GameOverlay.h"
@@ -51,9 +52,10 @@ class World
 
         Cube3D* skyBox;
         vector<Quad*> worldBorders;
+        vector<Entity*> unloadedEntities; 
 
     public:
-        vector<Entity*> entities; 
+        vector<Entity*> loadedEntities;
         Player* player;
         Camera* camera;
         GameOverlay* gameOverlay;
@@ -70,6 +72,7 @@ class World
         void renderBlocks();
         void renderOverlays();
 
+        void addEntity(Entity* entity);
         Block* getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray);
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
         vec3 checkCameraCollidingAnyShape(glm::vec3 &oldPos, glm::vec3 &newPos);
@@ -83,8 +86,6 @@ class World
         void deleteAllShapes();
 
         //fonctions reliées à la logique dynamique
-        void incrementScore(int amount);
-        void updateScore();
         void deselectTextBox();
         void setHeldItemSlot(int slot);
         void updateChunks();
