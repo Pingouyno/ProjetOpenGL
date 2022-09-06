@@ -10,7 +10,7 @@ Player::Player(glm::vec3 pos) : Entity(pos)
     this->camera = new Camera(screenWidth, screenHeight, &(this->pos));
     //car un joueur ne devrait pas avoir de formes
     this->active = false;
-    this->textureInHand = Texture::get3DImgTexture(Texture::TEX3D::DIRT);
+    this->textureInHand = nullptr;
     this->maxSpeed = NORMAL_SPEED;
 
     this->hitBox = new Cube3D(getPos(), vec3(Shape::camBoxWidth, Shape::camBoxHeight, Shape::camBoxWidth), Texture::Air);

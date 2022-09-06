@@ -26,8 +26,13 @@ Block::Block(glm::vec3 pos, Texture* tex) : Cube3D(nullptr)
     this->color = DEFAULT_COLOR;
     this->tex = tex;
 
-    this->indexInRendering = -1;
-    this->active = tex == Texture::Air ? false : true;    
+    this->indexInRendering = -1; 
+}
+
+//vérifie la texture, et non le ACTIVE
+bool Block::isAir()
+{
+    return this->tex == Texture::Air;
 }
 
 //retourne true si le cube est compris dans l'array de cubes à render

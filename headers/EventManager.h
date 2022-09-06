@@ -22,8 +22,8 @@ class EventManager
         bool waitingForTPress = true;
         bool waitingForLClick = true;
         bool waitingForRClick = true;
-        bool waitingFor1Press = true;
-        bool waitingFor2Press = true;
+        bool waitingForKeyPress1Through9[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0}; //va de 1 à 9
+
 
     public:
         EventManager(World* world);

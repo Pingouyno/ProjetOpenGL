@@ -26,6 +26,9 @@ Entity::Entity(glm::vec3 pos)
     this->referencedEntities = {};
     this->maxSpeed = DEFAULT_MAX_SPEED;
     this->collisionLog = vec3(NAN);
+    this->canGetPlacedBlockOn = false;
+    //utilisé pour les classes anonymes
+    initEntity();
 }
 
 void Entity::render()
@@ -385,6 +388,11 @@ void Entity::resetAttackImmuneTimer()
 {
     this->isAttackImmune = true;
     this->attackImmuneTimeEnd = high_resolution_clock::now() + milliseconds(getAttackImmuneTimeConst());
+}
+
+void Entity::initEntity()
+{
+
 }
 
 //À REFÉDINIR OPTIONNELLEMENT

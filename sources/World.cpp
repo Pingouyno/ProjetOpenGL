@@ -20,6 +20,9 @@ World::World()
 
     this->gameOverlay = new GameOverlay(camera);
     this->menuOverlay = new MenuOverlay(camera);
+
+	//important car sinon c'est NULL dans Player
+	setHeldItemSlot(0);
 }
 
 void World::doEntityBehaviors()
@@ -224,7 +227,7 @@ Block* World::getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray)
 		if (newRoundedPos != lastRoundedPos)
 		{
 			currentBlock = getBlockAt(newRoundedPos);
-			if (currentBlock != nullptr && currentBlock->active && currentBlock->isColliding(currentRayPos)) 
+			if (currentBlock != nullptr && !currentBlock->isAir() && currentBlock->isColliding(currentRayPos)) 
 			{
 				return currentBlock;
 			}
@@ -291,7 +294,7 @@ vec3 World::checkEntityCollidingAnyCube(Entity* entity)
 	for (int i = 0 ; i < nearbyBlocks.size() ; i++)
 	{
 		Block* nearbyBlock = nearbyBlocks[i];
-		if (nearbyBlock != nullptr && nearbyBlock->active && entity->wouldThenBeCollidingCube(entity->velocity, nearbyBlock))
+		if (nearbyBlock != nullptr && !nearbyBlock->isAir() && entity->wouldThenBeCollidingCube(entity->velocity, nearbyBlock))
 		{
 			entity->reportCollisionWithCubeThen(nearbyBlock);
 		}
@@ -315,7 +318,6 @@ void World::spawnBlockAt(vec3 pos, Texture* tex)
 			removeBlockFromRendering(spawnedBlock);
 		}
 		spawnedBlock->tex = tex;
-		spawnedBlock->active = true;
 		updateBlock(spawnedBlock);
 	}else
 	{	
@@ -337,9 +339,10 @@ void World::despawnBlockAt(vec3 pos)
 	Block* despawnedBlock = getBlockAt(pos);
 	if (despawnedBlock != nullptr)
 	{
-		despawnedBlock->active = false;
-		updateBlock(despawnedBlock);
+		//important de le faire avant de changer la texture, sinon renderingVec bugge
+		if (despawnedBlock->isInRenderingVec()) removeBlockFromRendering(despawnedBlock);
 		despawnedBlock->tex = Texture::Air;
+		updateBlock(despawnedBlock);
 	}
 }
 
@@ -439,7 +442,7 @@ void World::setHeldItemSlot(int slot)
 	player->textureInHand = gameOverlay->getTextureFromSlot(slot);
 }
 
-/* TODO : optimiser cette fonction pour faire un seul appel
+/*
 render les chunks proches du joueur (dist <= CHUNK_VIEW_DISTANCE),
 delete les chunks loins du joueur (dist == CHUNK_VIEW_DISTANCE + 1),
 fait une seule opération par appel (pour ne pas réduire le framerate)
@@ -558,7 +561,7 @@ void World::addCube3D(Cube3D* cube)
     cubes3D.push_back(cube);  
 }
 
-/*un block "air" est un bloc active->false
+/*un block "air" est un bloc tex == Texture::Air
 si le bloc adjacent n'est pas chargé, on regarde s'il serait de l'air, en fonction de l'algorithme de génération de terrain.*/
 bool World::isBlockNearAir(Block* block)
 {
@@ -580,7 +583,7 @@ bool World::isBlockNearAir(Block* block)
 			if (Chunk::wouldBlockBeAirAt(nearbyPositions[i])) return true;
 		}else
 		{
-			if (!nearbyBlock->active) return true;
+			if (nearbyBlock->isAir()) return true;
 		}
 	}
 
@@ -600,8 +603,7 @@ void World::updateBlock(Block* block)
 		getBlockAt(block->pos - Shape::ROT_Z)
 	};
 
-	//si block courant actif (donc pas de l'air)
-	if (block->active)
+	if (!block->isAir())
 	{
 		//vérifier qu'il est près d'air pour savoir s'il faut render
 		if (!block->isInRenderingVec() && isBlockNearAir(block))
@@ -612,22 +614,20 @@ void World::updateBlock(Block* block)
 		//puisqu'on a ajouté un bloc, vérifier s'il faut retirer les blocs proches du rendering
 		for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
 		{
-			if (nearbyBlocks[i] != nullptr && nearbyBlocks[i]->active && nearbyBlocks[i]->isInRenderingVec() && !isBlockNearAir(nearbyBlocks[i]))
+			if (nearbyBlocks[i] != nullptr && !nearbyBlocks[i]->isAir() && nearbyBlocks[i]->isInRenderingVec() && !isBlockNearAir(nearbyBlocks[i]))
 			{
 				removeBlockFromRendering(nearbyBlocks[i]);
 			}
 		}
 	}
-	//sinon le cube n'est pas actif donc updater tous les cubes autour
+	//sinon updater tous les cubes autour
 	else
 	{	
-		//retirer le cube courant   //TODO : remplacer par quelque-chose qui ne va pas laisser de nullptr dans le tableau
-		if (block->isInRenderingVec()) removeBlockFromRendering(block);
 		Block* nearbyBlock;
 		for (int i = 0 ; i < sizeof(nearbyBlocks) / sizeof(block) ; i++)
 		{
 			nearbyBlock = nearbyBlocks[i];
-			if (nearbyBlock != nullptr && nearbyBlock->active)
+			if (nearbyBlock != nullptr && !nearbyBlock->isAir())
 			{
 				if (!nearbyBlock->isInRenderingVec()) addBlockToRendering(nearbyBlock);
 			}
@@ -675,7 +675,7 @@ void World::setupBlocksToRender(Chunk* chunk)
 		{
 			for (Block* block : vecY)
 			{
-				if (block->active && isBlockNearAir(block))
+				if (!block->isAir() && isBlockNearAir(block))
 				{
 					addBlockToRendering(block);
 				}

@@ -114,9 +114,6 @@ function <void(void)> Snowman::getDefaultClassBehavior()
             jump();
         }
 
-        //appliquer la gravité, important de mettre ça APRÈS le jump
-		addVelocity(Entity::FALLING_VELOCITY);
-
         /*mouvements de l'entité, si velocité.y != 0 alors on est dans les airs et en train de tomber.
          par conséquent on perd notre grippe sur le sol (add plutot que set velocity)
          NOTE : ne pas faire de addVelocityCapped() dans le vide, sinon les steves s,attaquent plusieurs 
@@ -202,10 +199,7 @@ void Snowman::doWalkingAnimation()
 }
 
 void Snowman::initSnowman()
-{
-    Texture* wood_png = Texture::get2DImgTexture("wood.png");
-    Texture* obama_png = Texture::get2DImgTexture("obama.png");
-    
+{   
     //corps
     body = new Cube3D(getPos(), bodyFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_BODY));
     leftArm = new Cube3D(getPos() + vec3((bodyFormat.x + armFormat.x)/2, (bodyFormat.y - armFormat.y)/2, 0), armFormat, Texture::get3DImgTexture(Texture::TEX3D::STEVE_LEFT_ARM));

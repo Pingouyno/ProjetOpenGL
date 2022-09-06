@@ -50,6 +50,7 @@ class Entity
         vec3 previousRawVelocity;
         bool active;
         bool isAttackImmune;
+        bool canGetPlacedBlockOn;
         Entity(glm::vec3 pos);
 
         void render();
@@ -90,6 +91,7 @@ class Entity
 
         //fonctions à redéfinir (facultatif)
         virtual int getAttackImmuneTimeConst();
+        virtual void initEntity();
 
         //fonctions à redéfinir OBLIGATOIREMENT si on veut utiliser
         virtual void doAnimation();

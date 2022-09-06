@@ -16,6 +16,8 @@ void EventManager::doEntityPhysics()
 		//vérifier que la destination ne mène pas dans un chunk non chargé (sinon on tombe hors du monde lorsque chunk unload)
 		if (world->getChunkAt(ptrEntity->getPotentialNewPos()) != nullptr)
 		{
+			//appliquer la gravité
+			ptrEntity->addVelocity(Entity::FALLING_VELOCITY);
 			ptrEntity->previousRawVelocity = ptrEntity->velocity;
 			ptrEntity->collisionLog = vec3(0);
 			world->checkEntityCollidingAnyCube(ptrEntity);
@@ -141,31 +143,22 @@ void EventManager::checkKeyboardEvents(GLFWwindow* window)
 		}
 	}
 
-	//**TOUCHE 1**______________________
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE && !waitingFor1Press)
+	//détecter les boutons de 1 à 9 (pour hotbar)
+	if (worldState == WorldState::GAME)
 	{
-		waitingFor1Press = true;
-	//passer du mode menu au mode jeu
-	}else if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && waitingFor1Press)
-	{
-		waitingFor1Press = false;
-		if (worldState == WorldState::GAME) 
-		{
-			world->setHeldItemSlot(0);
-		}
-	}
+		int i = 0;
+		for (auto keyNumber = GLFW_KEY_1 ; keyNumber <= GLFW_KEY_9 ; keyNumber++)
+		{	
+			if (glfwGetKey(window, keyNumber) == GLFW_RELEASE && !waitingForKeyPress1Through9[i])
+			{
+				waitingForKeyPress1Through9[i] = true;
 
-	//**TOUCHE 2**______________________
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE && !waitingFor1Press)
-	{
-		waitingFor2Press = true;
-	//passer du mode menu au mode jeu
-	}else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && waitingFor2Press)
-	{
-		waitingFor2Press = false;
-		if (worldState == WorldState::GAME) 
-		{
-			world->setHeldItemSlot(1);
+			}else if (glfwGetKey(window, keyNumber) == GLFW_PRESS && waitingForKeyPress1Through9[i])
+			{
+				waitingForKeyPress1Through9[i] = false;
+				world->setHeldItemSlot(i);
+			}
+			i++;
 		}
 	}
 }
@@ -201,9 +194,16 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 				//important de mettre avant car la texture de lookedBlock change
 				if (gameMode != GameMode::CREATIVE)
 				{
-					world->addEntityItem(new EntityItem(lookedBlock->pos, lookedBlock->tex));
+					//pour variation de position entre -0.399 et 0.399
+					std::random_device dev;
+   				    std::mt19937 rng(dev());
+					std::uniform_int_distribution<std::mt19937::result_type> dist(201, 799); 
+					float offsetX = dist(rng) /	1000.0f - 0.5;
+					float offsetZ = dist(rng) /	1000.0f - 0.5f;
+					world->addEntityItem(new EntityItem(lookedBlock->pos + vec3(offsetX, 0, offsetZ), lookedBlock->tex));
 				}
 				world->despawnBlockAt(lookedBlock->pos);
+				
 			}
 			
 		}
@@ -232,7 +232,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 					if (adjacentBlock->isCollidingEntity(world->player->getPos(), world->player->hitBoxDimensions)) 
 						return;
 					for (Entity* e : world->loadedEntities)
-						if (adjacentBlock->isCollidingEntity(e->getPos(), e->hitBoxDimensions))
+						if (!e->canGetPlacedBlockOn && adjacentBlock->isCollidingEntity(e->getPos(), e->hitBoxDimensions))
 							return;
 					world->spawnBlockAt(adjacentPos, world->player->textureInHand);
 					//world->spawnTreeAt(adjacentPos);
@@ -319,8 +319,12 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 	{
 		if (player->isColliding(item) && !item->isAttackImmune)
 		{
-			world->player->textureInHand = item->itemCube->tex;
-			world->removeEntityItem(item);
+			if (world->gameOverlay->tryStoringItemInHotbar(item))
+			{	
+				//mettre à jour la texture
+				world->setHeldItemSlot(world->gameOverlay->getActiveHotBarSlot());
+				world->removeEntityItem(item);
+			}
 			break;
 		}
 	}

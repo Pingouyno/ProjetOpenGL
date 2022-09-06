@@ -1,9 +1,11 @@
 #include"../headers/GameOverlay.h"
 
+const int GameOverlay::HOTBAR_SIZE = 9;
 
 //la classe parent contient déjà toutes les instructions nécessaires
 GameOverlay::GameOverlay(Camera* camera) : Overlay(camera){
     setupOverlay();
+	this->activeHotBarSlot = 0;
 }
 
 void GameOverlay::setupOverlay()
@@ -16,16 +18,16 @@ void GameOverlay::setupOverlay()
 	addStaticShape(new Quad2D(pos, pixelSize, pixelSize, Texture::get2DImgTexture("crosshair.png")));
 
 	//HOTBAR
-	int hotbarSize = 2;
 	vec2 hotbarPos = vec2(0, -0.8);
+	const vec2 offset = vec2(Shape::toXRatio(pixelSize), 0);
+	const vec2 initialPos = hotbarPos - vec2(Shape::toXRatio(pixelSize * HOTBAR_SIZE / 2.0f), 0) - offset;
 
-	Quad2D* slot0 = new Quad2D(hotbarPos - vec2(Shape::toXRatio(pixelSize * hotbarSize / 2), 0), pixelSize, pixelSize, Texture::get2DImgTexture("dirt.png"));
-	Quad2D* slot1 = new Quad2D(vec2(slot0->pos) + vec2(Shape::toXRatio(pixelSize), 0), pixelSize, pixelSize, Texture::get2DImgTexture("stone.png"));
-	hotBar = 
+	vec2 lastSlotPos = initialPos;
+	for (int i = 0 ; i < HOTBAR_SIZE ; i++)
 	{
-		slot0,
-		slot1
-	};
+		hotBar.push_back(new Quad2D(lastSlotPos + offset, pixelSize, pixelSize, Texture::Air->getItemStackTex()));
+		lastSlotPos = hotBar.back()->pos;
+	}
 	for (Quad2D* ptrShape : hotBar) 
 	{
 		addStaticShape(ptrShape);
@@ -36,24 +38,49 @@ void GameOverlay::setupOverlay()
 	addStaticShape(slotHighLighter);
 }
 
+//retourne true si on a trouvé une place dans l'inventaire. cherche d'abord le même type de texture, PUIS les places vides
+bool GameOverlay::tryStoringItemInHotbar(EntityItem* item)
+{
+	Texture* itemTexture = item->itemCube->tex;
+
+	//chercher à regrouper les textures
+	for (int i = 0 ; i < HOTBAR_SIZE ; i++)
+	{
+		if (hotBar[i]->tex->tex3Did == itemTexture->tex3Did)
+		{
+			return true;
+		}
+	}
+
+	//chercher dans les emplacements vides
+	for (int i = 0 ; i < HOTBAR_SIZE ; i++)
+	{
+		if (hotBar[i]->tex->tex3Did == Texture::TEX3D::AIR)
+		{
+			hotBar[i]->tex = itemTexture->getItemStackTex();
+			return true;
+		}
+	}
+	return false;
+}
+
+int GameOverlay::getActiveHotBarSlot()
+{
+	return activeHotBarSlot;
+}
+
 void GameOverlay::setActiveHotBarSlot(int slot)
 {
+	this->activeHotBarSlot = slot;
 	slotHighLighter->moveTo(hotBar[slot]->pos);
 }
 
 Texture* GameOverlay::getTextureFromSlot(int slot)
 {
-	switch (slot)
-	{
-		case 0:
-			return Texture::get3DImgTexture(Texture::DIRT);
-			break;
-		
-		case 1:
-			return Texture::get3DImgTexture(Texture::STONE);;
-			break;
-	}
-	cout << "\n\n**ERREUR** : slot out of bounds!\n\n";
-	throw 1;
-	return nullptr;
+	return Texture::get3DImgTexture(hotBar[slot]->tex->tex3Did);
+}
+
+Texture* GameOverlay::getActiveSlotTexture()
+{
+	return getTextureFromSlot(activeHotBarSlot);
 }

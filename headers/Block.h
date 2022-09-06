@@ -18,6 +18,7 @@ class Block : public Cube3D
 
         Block(glm::vec3 pos, Texture* tex);
 
+        bool isAir();
         bool isInRenderingVec();
         void uploadDataIntoVerticesAndIndices();
         void generate();

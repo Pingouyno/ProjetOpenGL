@@ -51,6 +51,7 @@ class Texture {
 
 		const static vector<string> tex3DNames;
 		static vector<Texture*> textures3D;
+		static vector<Texture*> itemStackTextures;
 
 		const static string TEXTURE_PATH;
 		const static string CUBEMAP_PATH;
@@ -74,6 +75,8 @@ class Texture {
 		// Deletes a texture
 		void Delete();
 
+		Texture* getItemStackTex();
+
 		static Texture* get2DImgTexture(string textureFileName);
 		static Texture* get3DImgTexture(TEX3D textureName);
 
@@ -81,6 +84,7 @@ class Texture {
 
 	private:
 		static Texture* load3DImgTexture(TEX3D tex3Did);
+		static Texture* loadItemStackTexture(TEX3D tex3Did);
 		static vector<string> getTexPathsFromFileName(string cubeMapHeadName);	
 };
 #endif

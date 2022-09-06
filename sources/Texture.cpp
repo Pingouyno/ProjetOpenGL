@@ -4,7 +4,7 @@ const vector<string> Texture::tex3DNames =
 {
 	"field",
 	"grass",
-	"earth",
+	"air",
 	"coordinates",
 	"city",
 	"dirt",
@@ -30,6 +30,7 @@ Texture* Texture::Leaves = nullptr;
 Texture* Texture::Wood = nullptr;
 
 vector<Texture*> Texture::textures3D = {};
+vector<Texture*> Texture::itemStackTextures = {};
 const string Texture::CUBEMAP_PATH = "resources/textures/cubemaps/";
 const string Texture::TEXTURE_PATH = "resources/textures/";
 
@@ -218,6 +219,15 @@ void Texture::Delete()
 	glDeleteTextures(1, &ID);
 }
 
+Texture* Texture::getItemStackTex()
+{
+	if (itemStackTextures[tex3Did] == nullptr)
+	{
+		cout << "\n\nERREUR : aucune texture chargée pour cet itemStack!\n\n";
+	}
+	return itemStackTextures[tex3Did];
+}
+
 //permet de loader une texture 2D sans avoir à la binder à la ligne suivante
 Texture* Texture::get2DImgTexture(string textureFileName)
 {
@@ -246,6 +256,21 @@ void Texture::init3DTextures()
 	Bedrock = Texture::get3DImgTexture(Texture::TEX3D::BEDROCK);
 	Leaves = Texture::get3DImgTexture(Texture::TEX3D::LEAVES);
 	Wood = Texture::get3DImgTexture(Texture::TEX3D::WOOD);
+
+
+	//itemstacks
+	itemStackTextures.resize(textures3D.size());
+	for (int i = 0 ; i < itemStackTextures.size() ; i++)
+	{
+		itemStackTextures[i] = nullptr;
+	}
+	itemStackTextures[AIR] = Texture::loadItemStackTexture(Texture::TEX3D::AIR);
+	itemStackTextures[DIRT] = Texture::loadItemStackTexture(Texture::TEX3D::DIRT);
+	itemStackTextures[GRASS] = Texture::loadItemStackTexture(Texture::TEX3D::GRASS);
+	itemStackTextures[STONE] = Texture::loadItemStackTexture(Texture::TEX3D::STONE);
+	itemStackTextures[BEDROCK] = Texture::loadItemStackTexture(Texture::TEX3D::BEDROCK);
+	itemStackTextures[LEAVES] = Texture::loadItemStackTexture(Texture::TEX3D::LEAVES);
+	itemStackTextures[WOOD] = Texture::loadItemStackTexture(Texture::TEX3D::WOOD);
 }
 
 //permet de loader une texture 3D sans avoir à la binder à la ligne suivante
@@ -255,6 +280,14 @@ Texture* Texture::load3DImgTexture(TEX3D tex3Did)
     //mettre les données de texture dans SampleCube
 	texture->texUnit(*shaderProgramCube, "cube", GL_TEXTURE0);
 	return texture;
+}
+
+//accepte seulement les png
+Texture* Texture::loadItemStackTexture(TEX3D tex3Did)
+{
+	Texture* itemStack = get2DImgTexture("itemstacks/" + tex3DNames[tex3Did] + ".png");
+	itemStack->tex3Did = tex3Did;
+	return itemStack;
 }
 
 vector<string> Texture::getTexPathsFromFileName(string cubeMapHeadName)
