@@ -32,11 +32,6 @@ void EntityItem::doAnimation()
     this->rotate(Shape::ROT_Y, Entity::RADIAN_CIRCLE / 90.0f);
 }
 
-void EntityItem::getAttackedBy(Entity* attacker)
-{
-    cout << "j'ai été attrappé!\n";
-}
-
 void EntityItem::Delete()
 {
     delete(this->itemCube);

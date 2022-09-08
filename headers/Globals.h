@@ -15,10 +15,7 @@ enum GameMode : int {SURVIVAL = 0, CREATIVE = 1};
 // Vertices coordinates
 extern std::vector<float> vertices;
 extern std::vector<int> indices;
-
 extern const int VIEW_DISTANCE;
-extern const int LAB_SIZE;
-extern vector<int> labyrinth;
 extern Shader* shaderProgram2D;
 extern Shader* shaderProgram3D;
 extern Shader* shaderProgramCube;

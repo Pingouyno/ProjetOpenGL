@@ -16,7 +16,6 @@ class EntityItem : public Entity
 
         int getAttackImmuneTimeConst();
         void doAnimation();
-        void getAttackedBy(Entity* attacker);
         void Delete();
 
         function<void(void)> getDefaultClassBehavior();
