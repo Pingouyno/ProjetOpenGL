@@ -2,7 +2,7 @@
 
 const float EntityItem::ITEM_CUBE_SIZE = Block::BLOCK_SIZE / 4.0f;
 const int EntityItem::DESPAWN_TIMER_FRAMES = 60 * 60 * 1; //1 minute
-const int EntityItem::PICKUP_TIMER_MILLI = 1000 * 2; //2 secondes
+const int EntityItem::PICKUP_TIMER_FRAME = 60 * 1.5f; //1.5 secondes
 
 EntityItem::EntityItem(vec3 pos, Texture* tex) : Entity(pos)
 {
@@ -22,9 +22,9 @@ EntityItem::EntityItem(vec3 pos, Texture* tex) : Entity(pos)
     resetAttackImmuneTimer();
 }
 
-int EntityItem::getAttackImmuneTimeConst()
+int EntityItem::getAttackImmuneFrameConst()
 {
-    return PICKUP_TIMER_MILLI;
+    return PICKUP_TIMER_FRAME;
 }
 
 void EntityItem::doAnimation()

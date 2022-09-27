@@ -8,7 +8,7 @@ const vec3 Entity::FALLING_VELOCITY = vec3(0, -JUMP_FALL_ACCELERATION, 0);
 //utilisée dans le mode survie
 const float Entity::DEFAULT_MAX_SPEED = 2.0f/60.0f; //2 blocs par seconde
 
-const int Entity::ATTACK_COOLDOWN_MILLI = 1000.0f/2.0f; //une demie de seconde
+const int Entity::ATTACK_COOLDOWN_FRAME = 60.0f/2.0f; //une demie de seconde, car en frames
 
 Entity::Entity(glm::vec3 pos)
 {
@@ -77,8 +77,9 @@ void Entity::render3DCubes()
 
 void Entity::checkEndOfAttackImmuneTimer()
 {
+    this->framesUntilattackImmuneEnd--;
     //reset le timer si on a franchi la date
-    if (this->isAttackImmune && this->attackImmuneTimeEnd <= high_resolution_clock::now())
+    if (this->isAttackImmune && this->framesUntilattackImmuneEnd == 0)
     {
         this->isAttackImmune = false;
     }
@@ -387,7 +388,7 @@ float Entity::getPos(int i)
 void Entity::resetAttackImmuneTimer()
 {
     this->isAttackImmune = true;
-    this->attackImmuneTimeEnd = high_resolution_clock::now() + milliseconds(getAttackImmuneTimeConst());
+    this->framesUntilattackImmuneEnd = getAttackImmuneFrameConst();
 }
 
 void Entity::initEntity()
@@ -396,9 +397,9 @@ void Entity::initEntity()
 }
 
 //À REFÉDINIR OPTIONNELLEMENT
-int Entity::getAttackImmuneTimeConst()
+int Entity::getAttackImmuneFrameConst()
 {
-    return ATTACK_COOLDOWN_MILLI;
+    return ATTACK_COOLDOWN_FRAME;
 }
 
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________

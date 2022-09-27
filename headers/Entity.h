@@ -6,9 +6,6 @@
 using namespace std;
 #include <random>
 
-#include<chrono>
-using namespace std::chrono;
-
 #include"Shape.h"
 #include"Quad.h"
 #include"Cube.h"
@@ -23,11 +20,10 @@ class Entity
         const static vec3 JUMPING_VELOCITY;
         const static vec3 FALLING_VELOCITY;
         const static float DEFAULT_MAX_SPEED;
-        const static int ATTACK_COOLDOWN_MILLI;
+        const static int ATTACK_COOLDOWN_FRAME;
 
     private:
         mat4 originTransposition;
-        //pour se rappeler si un jour on doit delete une entité
         vector<Entity*> subEntities;
 
     protected:
@@ -35,8 +31,9 @@ class Entity
         function<void(void)> behavior;
         vector<Shape*> entityShapes;
         vector<Cube3D*> entityCubes3D;
+        //pour se rappeler si un jour on doit delete une entité
         vector<Entity*> referencedEntities;
-        std::chrono::_V2::system_clock::time_point attackImmuneTimeEnd;
+        int framesUntilattackImmuneEnd;
         
     public:
         //stocke les collisions sur le dernier frame
@@ -90,7 +87,7 @@ class Entity
         void resetAttackImmuneTimer();
 
         //fonctions à redéfinir (facultatif)
-        virtual int getAttackImmuneTimeConst();
+        virtual int getAttackImmuneFrameConst();
         virtual void initEntity();
 
         //fonctions à redéfinir OBLIGATOIREMENT si on veut utiliser

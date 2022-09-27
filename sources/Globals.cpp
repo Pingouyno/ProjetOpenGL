@@ -9,8 +9,8 @@ Shader* shaderProgram2D = nullptr;
 Shader* shaderProgram3D = nullptr;
 Shader* shaderProgramCube = nullptr;
 
-float screenWidth = 1420.0f;
-float screenHeight = 900.0f;
+float screenWidth = 1920.0f;
+float screenHeight = 1080.0f;
 
 WorldState worldState = GAME;
 GameMode gameMode = SURVIVAL;

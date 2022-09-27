@@ -234,7 +234,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 					for (Entity* e : world->loadedEntities)
 						if (!e->canGetPlacedBlockOn && adjacentBlock->isCollidingEntity(e->getPos(), e->hitBoxDimensions))
 							return;
-					world->spawnBlockAt(adjacentPos, world->player->textureInHand);
+					world->spawnBlockAt(adjacentPos, world->gameOverlay->tryGettingCurrentTextureFromHotbar());
 					//world->spawnTreeAt(adjacentPos);
 			}
 		}
