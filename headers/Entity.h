@@ -89,10 +89,10 @@ class Entity
         //fonctions à redéfinir (facultatif)
         virtual int getAttackImmuneFrameConst();
         virtual void initEntity();
+        virtual void getAttackedBy(Entity* attacker);
 
         //fonctions à redéfinir OBLIGATOIREMENT si on veut utiliser
         virtual void doAnimation();
-        virtual void getAttackedBy(Entity* attacker);
         virtual void Delete();
         virtual function<void(void)> getDefaultClassBehavior();
 };

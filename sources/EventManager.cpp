@@ -187,25 +187,35 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 		}
 		else if (worldState == WorldState::GAME)
 		{
-			
-			Block* lookedBlock = world->getFirstBlockCollidingWithRay(world->player->getPos(), mousePicker->currentRay);
-			if (lookedBlock != nullptr)
+			const vec3 playerPos = world->player->getPos();
+
+			Entity* lookedEntity = world->getFirstEntityCollidingWithRay(playerPos, mousePicker->currentRay);
+			Block* lookedBlock = world->getFirstBlockCollidingWithRay(playerPos, mousePicker->currentRay);
+
+			//attacker entité si not null et distance vers entité < distance vers block
+			if (lookedEntity != nullptr && (lookedBlock == nullptr 
+					|| glm::distance(playerPos, lookedEntity->getPos()) < 
+					   glm::distance(playerPos, lookedBlock->pos)))
+			{
+				player->attackEntity(lookedEntity);
+			}
+
+			//sinon on déduit que le block doit être touché car si not null alors plus proche
+			else if (lookedBlock != nullptr)
 			{
 				//important de mettre avant car la texture de lookedBlock change
 				if (gameMode != GameMode::CREATIVE)
 				{
 					//pour variation de position entre -0.399 et 0.399
 					std::random_device dev;
-   				    std::mt19937 rng(dev());
+					std::mt19937 rng(dev());
 					std::uniform_int_distribution<std::mt19937::result_type> dist(201, 799); 
 					float offsetX = dist(rng) /	1000.0f - 0.5;
 					float offsetZ = dist(rng) /	1000.0f - 0.5f;
 					world->addEntityItem(new EntityItem(lookedBlock->pos + vec3(offsetX, 0, offsetZ), lookedBlock->tex));
 				}
 				world->despawnBlockAt(lookedBlock->pos);
-				
 			}
-			
 		}
 	}
 
@@ -227,7 +237,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 				Cube3D* adjacentBlock = world->getBlockAt(adjacentPos);
 				
 				if (adjacentBlock != nullptr) 
-					
+				{
 					//s'assurer que le bloc n'entre en collision avec aucune autre entité
 					if (adjacentBlock->isCollidingEntity(world->player->getPos(), world->player->hitBoxDimensions)) 
 						return;
@@ -236,6 +246,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 							return;
 					world->spawnBlockAt(adjacentPos, world->gameOverlay->tryGettingCurrentTextureFromHotbar());
 					//world->spawnTreeAt(adjacentPos);
+				}
 			}
 		}
 	}

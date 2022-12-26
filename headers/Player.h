@@ -14,8 +14,8 @@ class Player : public Entity
         static float FLYING_SURVIVAL_SPEED;
 
         Camera* camera;
-        Player(glm::vec3 pos);
-        
         Texture* textureInHand;
+
+        Player(glm::vec3 pos);
 };
 #endif

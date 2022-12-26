@@ -1,6 +1,6 @@
 #include"../headers/Snowman.h"
 
-const float Snowman::size = 0.2f;
+const float Snowman::size = .2f;
 const vec3 Snowman::headFormat = vec3(size*1.6, size*1.6, size*1.6);
 const vec3 Snowman::bodyFormat = vec3(size*2.5, size*3.25, size*1.5);
 const vec3 Snowman::armFormat = vec3(size*0.9f, size*3, size*0.9f);
@@ -65,6 +65,12 @@ void Snowman::findNewRandomTargetPos()
     selfContainedTargetPos = vec3(newX, newY, newZ);
 }
 
+void Snowman::getAttackedBy(Entity* attacker)
+{
+    this->phase = AGGRO;
+    setTargetEntity(attacker);
+}
+
 void Snowman::doAnimation()
 {
     switch(animationType)
@@ -73,12 +79,6 @@ void Snowman::doAnimation()
             doWalkingAnimation();
             break;
     };
-}
-
-void Snowman::getAttackedBy(Entity* attacker)
-{
-    this->phase = AGGRO;
-    setTargetEntity(attacker);
 }
 
 //traquer la cible
@@ -132,7 +132,8 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         vec3 posLookedByBody = getPos() + getZAxis() + ((glm::normalize(velocity) - getZAxis()) / 2.0f);
         vec3 posLookedByHead = *targetPos;
         //faire que la tête regarde la tête de l"autre entité
-        if ((phase == CHASING || phase == AGGRO) && targetEntity != nullptr) posLookedByHead += vec3(0, targetEntity->hitBox->height / 16.0f, 0);
+        if ((phase == CHASING || phase == AGGRO) && targetEntity != nullptr) 
+            posLookedByHead += vec3(0, targetEntity->hitBox->height / 16.0f, 0);
 
         if (wasTouchingGround) lookAtHorizontal(posLookedByBody);
         head->lookAt(posLookedByHead);

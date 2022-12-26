@@ -402,16 +402,16 @@ int Entity::getAttackImmuneFrameConst()
     return ATTACK_COOLDOWN_FRAME;
 }
 
+void Entity::getAttackedBy(Entity* attacker)
+{
+    
+}
+
 //FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
 
 void Entity::doAnimation()
 {
     cout << "\n\nERREUR : fonction Entity::doAnimation() non redéfinie dans la classe enfant!\n\n";
-}
-
-void Entity::getAttackedBy(Entity* attacker)
-{
-    cout << "\n\nERREUR : fonction Entity::getAttackedBy() non redéfinie dans la classe enfant!\n\n";
 }
 
 void Entity::Delete()

@@ -52,10 +52,10 @@ class Snowman : public Entity
         //OBLIGATOIREMENT UTILISER, ne pas modifier directement
         void setTargetEntity(Entity* targetEntity);
         void findNewRandomTargetPos();
+        void getAttackedBy(Entity* attacker);
 
         //fonctions redéfinies
         void doAnimation();
-        void getAttackedBy(Entity* attacker);
         function <void(void)> getDefaultClassBehavior();
 
     private:

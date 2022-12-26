@@ -78,6 +78,7 @@ class World
         void removeEntity(Entity* entity);
         void removeEntityItem(EntityItem* entityItem);
 
+        Entity* getFirstEntityCollidingWithRay(vec3 startingPos, vec3 ray);
         Block* getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray);
         void checkCameraCollidingAnyOverlay(glm::vec3 &mousePos);
         vec3 checkEntityCollidingAnyShape(Entity* entity);

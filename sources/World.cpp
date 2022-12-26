@@ -208,6 +208,29 @@ void World::removeEntityItem(EntityItem* entityItem)
 	removeEntity(entityItem);
 }
 
+//Trouve la première entité qui entre en collision avec le rayon du joueur, max range = PLAYER_RANGE
+Entity* World::getFirstEntityCollidingWithRay(vec3 startingPos, vec3 ray)
+{
+	//normalisé
+	const vec3 oneRayStep = ray / COLLISION_PRECISION;
+
+	vec3 currentRayPos = startingPos;
+	int i = 0;
+	while (i < PLAYER_RANGE * COLLISION_PRECISION)
+	{
+		currentRayPos += oneRayStep;
+		for (Entity* e : loadedEntities)
+		{
+			if (e->isColliding(currentRayPos))
+			{
+				return e;
+			}
+		}
+		i++;
+	}
+	return nullptr;
+}
+
 //trouve la première forme qui entre en collisions avec le rayon* 
 Block* World::getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray)
 {
@@ -666,7 +689,7 @@ void World::removeBlockFromRendering(Block* blockToRemove)
 }
 
 /*ajoute tous les blocs du chunks au rendering s'il correspondent aux critères.
-*EDGE CASE : render les blocs près des bords, car le chunk voisin n,est pas loadé donc un ne sait pas si c'est de l'air*/
+*EDGE CASE : render les blocs près des bords, car le chunk voisin n'est pas loadé donc un ne sait pas si c'est de l'air*/
 void World::setupBlocksToRender(Chunk* chunk)
 {
 	for (auto &vecX : chunk->blockMat)
@@ -688,11 +711,10 @@ void World::setupEntities()
 {
 	entityItems = {};
 	unloadedEntities = {};
-	unloadedEntities = {};
 
 	vec3 pos(player->getPos().x, NAN, player->getPos().z);
 	pos.y = Chunk::getPerlinHeightOf(pos.x, pos.z) + 2;
-	Snowman* firstSnowman = new Snowman(pos, &player->getPos());
+	Snowman* firstSnowman = new Snowman(pos, player);
 	unloadedEntities.push_back(firstSnowman);
 
 	Snowman* lastSnowman = firstSnowman;
