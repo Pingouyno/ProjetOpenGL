@@ -69,6 +69,8 @@ void Snowman::getAttackedBy(Entity* attacker)
 {
     this->phase = AGGRO;
     setTargetEntity(attacker);
+    
+    PlaySound::playSnowManHitSound(this->getPos());
 }
 
 void Snowman::doAnimation()

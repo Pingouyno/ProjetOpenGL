@@ -115,6 +115,8 @@ int main()
 	World* world = new World();
 	EventManager* eventManager = new EventManager(world);
 
+	externPlayerPos = &world->player->getPos();
+
 	//cacher le curseur
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 

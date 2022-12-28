@@ -4,6 +4,7 @@
 #include<vector>
 using namespace std;
 
+#include"../libraries/include/glm/gtx/vector_angle.hpp"
 #include"shaderClass.h"
 #include"VAO.h"
 #include"VBO.h"
@@ -34,4 +35,7 @@ extern const int WORLD_CHUNK_COUNT;
 extern const int WORLD_SIZE;
 extern const int CHUNK_RENDER_DISTANCE;
 
+//utile pour PlaySound
+extern const float HEARING_RANGE;
+extern glm::vec3* externPlayerPos;
 #endif

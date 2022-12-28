@@ -17,5 +17,7 @@ class Player : public Entity
         Texture* textureInHand;
 
         Player(glm::vec3 pos);
+
+        void getAttackedBy(Entity* attacker);
 };
 #endif

@@ -5,6 +5,7 @@
 using namespace std;
 #include"../libraries/include/IrrKlang/include/irrKlang.h"
 using namespace irrklang;
+#include"Globals.h"
 
 class PlaySound {
 
@@ -16,6 +17,9 @@ class PlaySound {
         static void stopEngine();
 
         //jouer des sons
-        static void playJumpSound();
+        static void playLandSound();
+        static void playSnowManHitSound(glm::vec3 &snowmanPos);
+        static void playPlayerHitSound();
+        static void playBlockBreakSound();
 };
 #endif

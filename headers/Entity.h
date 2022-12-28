@@ -11,6 +11,7 @@ using namespace std;
 #include"Cube.h"
 #include"Cube3D.h"
 #include"Chunk.h"
+#include"PlaySound.h"
 
 class Entity
 {

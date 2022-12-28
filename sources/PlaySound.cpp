@@ -23,8 +23,30 @@ void PlaySound::stopEngine()
 	soundEngine->drop();
 }
 
-void PlaySound::playJumpSound()
+void PlaySound::playLandSound()
 {
-    string fileName = "jump_01.wav";
+	string fileName = "mob_horse_land.ogg";
+    soundEngine->play2D((SOUND_PATH + fileName).c_str());
+}
+
+void PlaySound::playSnowManHitSound(glm::vec3 &snowmanPos)
+{
+	string fileName = "mob_villager_hit1.ogg";
+
+	if (glm::distance(snowmanPos, *externPlayerPos) <= HEARING_RANGE)
+	{
+    	soundEngine->play2D((SOUND_PATH + fileName).c_str());
+	}
+}
+
+void PlaySound::playPlayerHitSound()
+{
+	string fileName = "damage_hit1.ogg";
+    soundEngine->play2D((SOUND_PATH + fileName).c_str());
+}
+
+void PlaySound::playBlockBreakSound()
+{
+	string fileName = "dig_stone4.ogg";
     soundEngine->play2D((SOUND_PATH + fileName).c_str());
 }

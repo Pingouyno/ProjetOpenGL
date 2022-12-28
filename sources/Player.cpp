@@ -18,3 +18,8 @@ Player::Player(glm::vec3 pos) : Entity(pos)
     this->hitBoxDimensions = vec3(Shape::camBoxWidth, Shape::camBoxHeight, Shape::camBoxWidth);
     addCube3D(hitBox);
 }
+
+void Player::getAttackedBy(Entity* attacker)
+{
+    PlaySound::playPlayerHitSound();
+}

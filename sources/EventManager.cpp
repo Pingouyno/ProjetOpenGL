@@ -215,6 +215,7 @@ void EventManager::checkMouseEvents(GLFWwindow* window)
 					world->addEntityItem(new EntityItem(lookedBlock->pos + vec3(offsetX, 0, offsetZ), lookedBlock->tex));
 				}
 				world->despawnBlockAt(lookedBlock->pos);
+				PlaySound::playBlockBreakSound();
 			}
 		}
 	}
@@ -258,7 +259,7 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 	vec3 newVelocity(0);
 
 	//VITESSE
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && gameMode == CREATIVE)
 	{
 		newVelocity += player->maxSpeed * -camera->Up;
 	}
@@ -307,7 +308,6 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 		{
 			//équivalent de jump()
 			newVelocity += Entity::JUMPING_VELOCITY;
-			PlaySound::playJumpSound();
 		}
 	}
 
@@ -352,5 +352,9 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 		if (player->collisionLog.z != 0) player->setVelocity(player->velocity - vec3(0, 0, player->velocity.z));
 	}
 	player->moveToVelocity();
+
+	//si vel.y était importante et négative et devient 0 alors on a atteri et donc faire le son
+	if ((player->collisionLog.y != 0) && player->previousRawVelocity.y < -0.1f)
+		PlaySound::playLandSound();
 } 
 

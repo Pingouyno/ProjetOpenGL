@@ -208,7 +208,7 @@ void Entity::attackEntity(Entity* attackedEntity)
     {
         vec3 attackingVelocity = glm::normalize(attackedEntity->getPos() - this->getPos()) / 4.0f;
         attackingVelocity.y = JUMPING_VELOCITY.y / 1.5f;
-        attackedEntity->addVelocity(attackingVelocity);
+        attackedEntity->setVelocity(attackingVelocity);
         attackedEntity->getAttackedBy(this);
         attackedEntity->resetAttackImmuneTimer();
     }

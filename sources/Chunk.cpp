@@ -78,7 +78,7 @@ bool Chunk::wouldBlockBeAirAt(vec3 &blockPos)
 
 float Chunk::getPerlinHeightOf(float x, float z)
 {
-	const float perlinOut = perlinNoise->noise((double)x/WORLD_SIZE, 1, (double)z/WORLD_SIZE);
+	const float perlinOut = perlinNoise->noise((double)x/200, 1, (double)z/277);
 	const float perlinHeight = std::round(CHUNK_HEIGHT * perlinOut);
 	return perlinHeight;
 }
