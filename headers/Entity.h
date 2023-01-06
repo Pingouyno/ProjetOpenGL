@@ -22,6 +22,8 @@ class Entity
         const static vec3 FALLING_VELOCITY;
         const static float DEFAULT_MAX_SPEED;
         const static int ATTACK_COOLDOWN_FRAME;
+        const static int DEFAULT_HEALTH;
+        const static int DEATH_TIMER_FRAME;
 
     private:
         mat4 originTransposition;
@@ -34,12 +36,14 @@ class Entity
         vector<Cube3D*> entityCubes3D;
         //pour se rappeler si un jour on doit delete une entité
         vector<Entity*> referencedEntities;
-        int framesUntilattackImmuneEnd;
         
     public:
+        int framesUntilattackImmuneEnd;
         //stocke les collisions sur le dernier frame
         vec3 collisionLog;
         float maxSpeed;
+        int health;
+        bool isDead;
         //important de faire addCube3D(hitbox) pour qu'elle suive l'entité dans les rotations
         Cube3D* hitBox;
         vec3 hitBoxDimensions;
@@ -55,6 +59,7 @@ class Entity
         void render3DCubes();
         void checkEndOfAttackImmuneTimer();
         void doBehavior();
+        void setRed(bool isRed);
         void setBehavior(function<void(void)> behavior);
         void addShape(Shape* ptrShape);
         void addCube3D(Cube3D* ptrCube);
@@ -70,7 +75,6 @@ class Entity
         bool wouldBeCollidingEntityVelocity(Entity* otherEntity);
         void attackEntity(Entity* attackedEntity);
         void addReference(Entity* entityToReference);
-        void removeReference(Entity* entityToDereference);
         void rotate(vec3 axis, float radians);
         void rotateAround(vec3 pos, vec3 axis, float radians);
         void lookAtHorizontal(vec3 targetPos);
@@ -88,13 +92,20 @@ class Entity
         void resetAttackImmuneTimer();
 
         //fonctions à redéfinir (facultatif)
+        virtual void die();
+        virtual void removeReference(Entity* entityToDereference);
+        virtual void removeReferenceSingle(Entity* entityToDereference);
         virtual int getAttackImmuneFrameConst();
+        virtual int getDefaultHealth();
         virtual void initEntity();
         virtual void getAttackedBy(Entity* attacker);
+        virtual void Delete();
+        virtual function<void(void)> getDeathBehavior();
+        virtual void doDeathAnimation();
 
         //fonctions à redéfinir OBLIGATOIREMENT si on veut utiliser
         virtual void doAnimation();
-        virtual void Delete();
+        virtual void playDeathSound();
         virtual function<void(void)> getDefaultClassBehavior();
 };
 #endif

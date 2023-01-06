@@ -29,6 +29,8 @@ void World::doEntityBehaviors()
 {	
 	skyBox->moveTo(player->getPos());
 	checkEntityTimerDespawns();
+	checkEntityDeaths();
+	checkEntityDeathDespawns();
 	player->checkEndOfAttackImmuneTimer();
 	
 	for (Entity* ptrEntity : loadedEntities)
@@ -168,7 +170,7 @@ void World::addEntityItem(EntityItem* entityItem)
 }
 
 //remove et delete une entité
-void World::removeEntity(Entity* entity)
+void World::killEntity(Entity* entity)
 {
 	bool found = false;
 	for (int i = 0 ; i < loadedEntities.size() ; i++)
@@ -194,7 +196,7 @@ void World::removeEntity(Entity* entity)
 	entity->Delete();
 }
 
-void World::removeEntityItem(EntityItem* entityItem)
+void World::killEntityItem(EntityItem* entityItem)
 {
 	for (int i = 0 ; i < entityItems.size() ; i++)
 	{
@@ -205,7 +207,7 @@ void World::removeEntityItem(EntityItem* entityItem)
 			break;
 		}
 	}
-	removeEntity(entityItem);
+	killEntity(entityItem);
 }
 
 //Trouve la première entité qui entre en collision avec le rayon du joueur, max range = PLAYER_RANGE
@@ -375,9 +377,33 @@ void World::checkEntityTimerDespawns()
 	{
 		if (entityItems[i]->framesUntilDespawn == 0)
 		{
-			removeEntityItem(entityItems[i]);
-			//car removeEntityItems va diminuer la taille du tableau
+			killEntityItem(entityItems[i]);
+			//car killEntityItems va diminuer la taille du tableau
 			i--;
+		}
+	}
+}
+
+//débute l'animation et rend death->true pour toutes les entités qui n'ont plus de vies.
+void World::checkEntityDeaths()
+{
+	for (Entity* e : loadedEntities)
+	{
+		if (!e->isDead && e->health <= 0)
+		{
+			e->die();
+		}
+	}
+}
+
+//despawn toutes les entités mortes lorsque leur timer d'invincibilité est écoulé
+void World::checkEntityDeathDespawns()
+{
+	for (Entity* e : loadedEntities)
+	{
+		if (e->isDead && !e->isAttackImmune)
+		{
+			killEntity(e);
 		}
 	}
 }

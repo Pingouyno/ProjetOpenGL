@@ -75,8 +75,8 @@ class World
 
         void addEntity(Entity* entity);
         void addEntityItem(EntityItem* entityItem);
-        void removeEntity(Entity* entity);
-        void removeEntityItem(EntityItem* entityItem);
+        void killEntity(Entity* entity);
+        void killEntityItem(EntityItem* entityItem);
 
         Entity* getFirstEntityCollidingWithRay(vec3 startingPos, vec3 ray);
         Block* getFirstBlockCollidingWithRay(vec3 startingPos, vec3 ray);
@@ -87,6 +87,8 @@ class World
         void spawnBlockAt(vec3 pos, Texture* tex);
         void despawnBlockAt(vec3 pos);
         void checkEntityTimerDespawns();
+        void checkEntityDeaths();
+        void checkEntityDeathDespawns();
         Chunk* getChunkAt(vec3 pos);
         Block* getBlockAt(vec3 pos);
         vec3 getPosAdjacentToLookedFace(Block* block, vec3 raySource, vec3 ray);

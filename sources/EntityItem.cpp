@@ -27,15 +27,14 @@ int EntityItem::getAttackImmuneFrameConst()
     return PICKUP_TIMER_FRAME;
 }
 
+void EntityItem::getAttackedBy(Entity* attacker)
+{
+    setRed(false);
+}
+
 void EntityItem::doAnimation()
 {
     this->rotate(Shape::ROT_Y, Entity::RADIAN_CIRCLE / 90.0f);
-}
-
-void EntityItem::Delete()
-{
-    delete(this->itemCube);
-    delete(this);
 }
     
 function<void(void)> EntityItem::getDefaultClassBehavior()

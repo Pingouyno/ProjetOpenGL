@@ -334,7 +334,7 @@ void EventManager::checkMoveAndPhysics(GLFWwindow* window)
 			{	
 				//mettre à jour la texture
 				world->setHeldItemSlot(world->gameOverlay->getActiveHotBarSlot());
-				world->removeEntityItem(item);
+				world->killEntityItem(item);
 			}
 			break;
 		}

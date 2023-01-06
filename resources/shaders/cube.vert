@@ -6,12 +6,16 @@ layout (location = 2) in vec2 texMap;
 
 out vec3 cubeTexCoord;
 out float brightness;
+out float redFactor;
 
 //matrices
 uniform mat4 camMatrix;
 
 void main()
 {  
+   //on applique rouge si texmap[0] == 3.0f, et skymap si texmap[0] == 2.0f
+   redFactor = 0.0f;
+
    //définit la position de la caméra
    vec4 pos = camMatrix * vec4(aPos, 1.0f);
 
@@ -20,7 +24,16 @@ void main()
    {
       gl_Position = vec4(pos.x, pos.y, pos.w, pos.w);
       brightness = 1.0f;
-   }else
+   }
+   //sinon regarder le facteur de ROUGE si texmap[0] == 3.0f 
+   else if (texMap[0] == 3.0f)
+   {
+      gl_Position = pos;
+      brightness = 1.0f;
+      redFactor = texMap[1];
+   }
+   //sinon regarder la luminosité
+   else
    {
       gl_Position = pos;
       brightness = texMap[1];

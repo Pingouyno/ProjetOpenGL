@@ -40,9 +40,9 @@ void Snowman::setAnimation(AnimationType animationType)
 
 void Snowman::setTargetEntity(Entity* targetEntity)
 {
-    if (targetEntity != nullptr)
+    if (this->targetEntity != nullptr && this->targetEntity != targetEntity)
     {
-        removeReference(targetEntity);
+        removeReference(this->targetEntity);
     }
     this->targetEntity = targetEntity;
     this->targetPos = &targetEntity->getPos();
@@ -50,7 +50,7 @@ void Snowman::setTargetEntity(Entity* targetEntity)
 }
 
 void Snowman::findNewRandomTargetPos()
-{
+{   
     const vec3 selfPos = getPos();
 
     const float range = 16;
@@ -63,14 +63,37 @@ void Snowman::findNewRandomTargetPos()
     const float newY = Chunk::getPerlinHeightOf(newX, newZ) + 2;
 
     selfContainedTargetPos = vec3(newX, newY, newZ);
+    this->targetPos = &selfContainedTargetPos;
+}
+
+void Snowman::removeReferenceSingle(Entity* entityToDereference)
+{
+    Entity::removeReferenceSingle(entityToDereference);
+    if (entityToDereference == this->targetEntity)
+    {
+        this->targetEntity = nullptr;
+        this->phase = ROAMING;
+        findNewRandomTargetPos();
+    }
+    
+}
+
+void Snowman::die()
+{
+    Entity::die();
+    this->animationType = DYING;
 }
 
 void Snowman::getAttackedBy(Entity* attacker)
 {
-    this->phase = AGGRO;
-    setTargetEntity(attacker);
-    
-    PlaySound::playSnowManHitSound(this->getPos());
+    Entity::getAttackedBy(attacker);
+
+    if (!this->isDead)
+    {
+        this->phase = AGGRO;
+        setTargetEntity(attacker);
+        PlaySound::playSnowManHitSound(this->getPos());
+    }
 }
 
 void Snowman::doAnimation()
@@ -79,6 +102,9 @@ void Snowman::doAnimation()
     {
         case WALKING:
             doWalkingAnimation();
+            break;
+        case DYING:
+            doDeathAnimation();
             break;
     };
 }
@@ -183,7 +209,7 @@ void Snowman::doWalkingAnimation()
     //si la vélocité est nulle alors on peut figer les bras à la position neutre
     if (!(articulationTimer == 0 && !(velocity.x || velocity.z)))
     {
-        const int animationLength = 30;
+        const int animationLength = 25;
         const float rotation = (RADIAN_CIRCLE / 4) / animationLength;
 
         //animation des articulations
@@ -199,6 +225,11 @@ void Snowman::doWalkingAnimation()
             articulationDirection = -articulationDirection;
         }
     }
+}
+
+void Snowman::playDeathSound()
+{
+    PlaySound::playSnowManDeathSound(getPos());
 }
 
 void Snowman::initSnowman()

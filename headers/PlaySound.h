@@ -19,6 +19,7 @@ class PlaySound {
         //jouer des sons
         static void playLandSound();
         static void playSnowManHitSound(glm::vec3 &snowmanPos);
+        static void playSnowManDeathSound(glm::vec3 &snowmanPos);
         static void playPlayerHitSound();
         static void playBlockBreakSound();
 };

@@ -24,6 +24,8 @@ class Cube3D : public Cube {
         int getVerticeCount();
         int getIndiceCount();
         void setToBackground();
+        void setToBrightness(float brightness);
+        void setToRed(float redness);
         bool isCollidingOtherCubeVelocity(vec3 &velocity, Cube3D* otherCube);
 
     protected:

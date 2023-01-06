@@ -15,8 +15,8 @@ class EntityItem : public Entity
         EntityItem(vec3 pos, Texture* tex);
 
         int getAttackImmuneFrameConst();
+        void getAttackedBy(Entity* attacker);
         void doAnimation();
-        void Delete();
 
         function<void(void)> getDefaultClassBehavior();
 };

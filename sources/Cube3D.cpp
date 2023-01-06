@@ -80,6 +80,29 @@ void Cube3D::setToBackground()
     }  
 }
 
+//le shade considère la brightness (de texmap[1]) si texmap[0] != 2.0f et != 3.0f
+void Cube3D::setToBrightness(float brightness)
+{
+    //itérer à travers les 8 vertex
+    for (int i = 0 ; i < getVerticeCount() ; i++)
+    {
+        //6 =offset de texMap[0] dans layout de vertex
+        vertices[indexInVertices + 8*i + 6] = 0.0f;
+        vertices[indexInVertices + 8*i + 7] = brightness;
+    }  
+}
+
+//le shader considère le rouge (de texmap[1]) si texmap[0] == 3.0f
+void Cube3D::setToRed(float redness)
+{
+    for (int i = 0 ; i < getVerticeCount() ; i++)
+    {
+        //6 =offset de texMap[0] dans layout de vertex
+        vertices[indexInVertices + 8*i + 6] = 3.0f;
+        vertices[indexInVertices + 8*i + 7] = redness;
+    }  
+}
+
 bool Cube3D::isCollidingOtherCubeVelocity(vec3 &velocity, Cube3D* otherCube)
 {
     const vec3 otherPos = otherCube->pos + velocity;

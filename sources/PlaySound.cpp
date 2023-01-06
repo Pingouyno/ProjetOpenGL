@@ -39,6 +39,16 @@ void PlaySound::playSnowManHitSound(glm::vec3 &snowmanPos)
 	}
 }
 
+void PlaySound::playSnowManDeathSound(glm::vec3 &snowmanPos)
+{
+	string fileName = "mob_villager_death.ogg";
+
+	if (glm::distance(snowmanPos, *externPlayerPos) <= HEARING_RANGE)
+	{
+    	soundEngine->play2D((SOUND_PATH + fileName).c_str());
+	}
+}
+
 void PlaySound::playPlayerHitSound()
 {
 	string fileName = "damage_hit1.ogg";

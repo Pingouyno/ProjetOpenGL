@@ -9,7 +9,7 @@ class Snowman : public Entity
        ROAMING lorsqu'il se balade, 
        AGGRO   lorsqu'il pourchasse une entité et veut l'attaquer */
     enum Phase : int {CHASING = 0, ROAMING = 1, AGGRO = 2};
-    enum AnimationType : int {WALKING = 0};
+    enum AnimationType : int {WALKING = 0, DYING = 1};
 
     const float FLYING_MAX_SPEED = DEFAULT_MAX_SPEED / 4;
 
@@ -28,7 +28,7 @@ class Snowman : public Entity
         Phase phase;
         
         //ATTENTION : est parfois nullptr
-        Entity* targetEntity;
+        Entity* targetEntity = nullptr;
         vec3* targetPos;
 
         //formes du cube
@@ -52,14 +52,17 @@ class Snowman : public Entity
         //OBLIGATOIREMENT UTILISER, ne pas modifier directement
         void setTargetEntity(Entity* targetEntity);
         void findNewRandomTargetPos();
-        void getAttackedBy(Entity* attacker);
 
         //fonctions redéfinies
+        void die();
+        void getAttackedBy(Entity* attacker);
+        void removeReferenceSingle(Entity* entityToDereference);
         void doAnimation();
         function <void(void)> getDefaultClassBehavior();
 
     private:
         void doWalkingAnimation();
+        void playDeathSound();
         void initSnowman();
 };
 #endif

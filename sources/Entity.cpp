@@ -10,6 +10,10 @@ const float Entity::DEFAULT_MAX_SPEED = 2.0f/60.0f; //2 blocs par seconde
 
 const int Entity::ATTACK_COOLDOWN_FRAME = 60.0f/2.0f; //une demie de seconde, car en frames
 
+const int Entity::DEFAULT_HEALTH = 10;
+
+const int Entity::DEATH_TIMER_FRAME = 35;
+
 Entity::Entity(glm::vec3 pos)
 {
     this->pos = pos;
@@ -27,6 +31,7 @@ Entity::Entity(glm::vec3 pos)
     this->maxSpeed = DEFAULT_MAX_SPEED;
     this->collisionLog = vec3(NAN);
     this->canGetPlacedBlockOn = false;
+    this->health = getDefaultHealth();
     //utilisé pour les classes anonymes
     initEntity();
 }
@@ -75,6 +80,7 @@ void Entity::render3DCubes()
     }
 }
 
+//à la fin de l'immunité on arrête d'être rouge
 void Entity::checkEndOfAttackImmuneTimer()
 {
     this->framesUntilattackImmuneEnd--;
@@ -82,6 +88,7 @@ void Entity::checkEndOfAttackImmuneTimer()
     if (this->isAttackImmune && this->framesUntilattackImmuneEnd == 0)
     {
         this->isAttackImmune = false;
+        setRed(false);
     }
 }
 
@@ -89,6 +96,29 @@ void Entity::doBehavior()
 {
 	checkEndOfAttackImmuneTimer();
     this->behavior();
+}
+
+void Entity::setRed(bool isRed)
+{
+    for (Entity* subEntity : this->subEntities)
+    {
+        subEntity->setRed(isRed);
+    }
+
+    if (isRed)
+    {
+        for (Cube3D* cube : this->entityCubes3D)
+        {
+            cube->setToRed(255.0f);
+        }
+    }
+    else
+    {
+        for (Cube3D* cube : this->entityCubes3D)
+        {
+            cube->setToBrightness(1.0f);
+        }
+    }
 }
 
 void Entity::setBehavior(function<void(void)> behavior)
@@ -220,7 +250,24 @@ void Entity::addReference(Entity* entityToReference)
     entityToReference->referencedEntities.push_back(this);
 }
 
+//n'est PAS la méthode pour despawn, mais celle pour spawner le loot, faire le son, etc...
+void Entity::die()
+{
+    this->isDead = true;
+    this->framesUntilattackImmuneEnd = Entity::DEATH_TIMER_FRAME;
+	this->setBehavior(this->getDeathBehavior());
+    playDeathSound();
+}
+
+//déréférencement réciproque : on appelle la fonction ici ET chez l'autre
 void Entity::removeReference(Entity* entityToDereference)
+{
+    this->removeReferenceSingle(entityToDereference);
+    entityToDereference->removeReferenceSingle(this);
+}
+
+//déréférencement simple : pour éviter la récursivité
+void Entity::removeReferenceSingle(Entity* entityToDereference)
 {
     for (int i = 0 ; i < this->referencedEntities.size() ; i++)
     {
@@ -228,15 +275,6 @@ void Entity::removeReference(Entity* entityToDereference)
         {
             this->referencedEntities[i] = this->referencedEntities.back();
             this->referencedEntities.pop_back();
-            i--;
-        }
-    }
-    for (int i = 0 ; i < entityToDereference->referencedEntities.size() ; i++)
-    {
-        if (entityToDereference->referencedEntities[i] == this)
-        {
-            entityToDereference->referencedEntities[i] = entityToDereference->referencedEntities.back();
-            entityToDereference->referencedEntities.pop_back();
             i--;
         }
     }
@@ -267,7 +305,7 @@ void Entity::rotate(vec3 axis, float radians)
 void Entity::rotateAround(vec3 pos, vec3 axis, float radians)
 {
     //obtention de la formule de rotation d'un vecteur autour d'un axe
-    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis); //R
+    glm::mat4 rotationMat = glm::rotate(mat4(1), radians, axis);
     originTransposition = rotationMat * originTransposition;
     for (Shape* shape : entityShapes)
     {
@@ -402,12 +440,16 @@ int Entity::getAttackImmuneFrameConst()
     return ATTACK_COOLDOWN_FRAME;
 }
 
-void Entity::getAttackedBy(Entity* attacker)
+int Entity::getDefaultHealth()
 {
-    
+    return DEFAULT_HEALTH;
 }
 
-//FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
+void Entity::getAttackedBy(Entity* attacker)
+{
+    this->health--;
+    setRed(true);
+}
 
 void Entity::doAnimation()
 {
@@ -416,7 +458,51 @@ void Entity::doAnimation()
 
 void Entity::Delete()
 {
-    cout << "\n\nERREUR : fonction Entity::Dlete() non redéfinie dans la classe enfant!\n\n";
+    for (Entity* referencedEntity : this->referencedEntities)
+    {
+        removeReference(referencedEntity);
+    }
+
+    for (Entity* subEntity : this->subEntities)
+    {
+        subEntity->Delete();
+    }
+    for (Shape* subShape : this->entityShapes)
+    {
+        delete(subShape);
+    }
+    for (Cube3D* subCube : this->entityCubes3D)
+    {
+        delete(subCube);
+    }
+    delete(this);
+}
+
+function<void(void)> Entity::getDeathBehavior()
+{
+    return [this](){
+        if (this->isTouchingGround())
+        {
+            setVelocity(vec3(0));
+        }
+        doAnimation();
+    };
+}
+
+//rotationne avec un dégradé dépendamment du timer d'invincibilité
+void Entity::doDeathAnimation()
+{
+    const vec3 rotPoint = getPos() - vec3(0, hitBoxDimensions.y, 0);
+    const vec3 rotAxis = glm::normalize(getZAxis());  
+    const float DEG90 = M_PI / 2;		
+	this->rotateAround(rotPoint, rotAxis, DEG90 / DEATH_TIMER_FRAME);
+}
+
+//FONCTIONS À REDÉFINIR OBLIGATOIREMENT_______________________________
+
+void Entity::playDeathSound()
+{
+    cout << "\n\nERREUR : fonction Entity::playDeathSound() non redéfinie dans la classe enfant!\n\n";
 }
 
 function<void(void)> Entity::getDefaultClassBehavior()
