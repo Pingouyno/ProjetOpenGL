@@ -10,9 +10,9 @@ const float Entity::DEFAULT_MAX_SPEED = 2.0f/60.0f; //2 blocs par seconde
 
 const int Entity::ATTACK_COOLDOWN_FRAME = 60.0f/2.0f; //une demie de seconde, car en frames
 
-const int Entity::DEFAULT_HEALTH = 10;
+const int Entity::DEFAULT_HEALTH = 3;
 
-const int Entity::DEATH_TIMER_FRAME = 35;
+const int Entity::DEATH_TIMER_FRAME = 45;
 
 Entity::Entity(glm::vec3 pos)
 {
@@ -492,7 +492,7 @@ function<void(void)> Entity::getDeathBehavior()
 //rotationne avec un dégradé dépendamment du timer d'invincibilité
 void Entity::doDeathAnimation()
 {
-    const vec3 rotPoint = getPos() - vec3(0, hitBoxDimensions.y, 0);
+    const vec3 rotPoint = getPos() - vec3(0, hitBoxDimensions.y/2, 0);
     const vec3 rotAxis = glm::normalize(getZAxis());  
     const float DEG90 = M_PI / 2;		
 	this->rotateAround(rotPoint, rotAxis, DEG90 / DEATH_TIMER_FRAME);
