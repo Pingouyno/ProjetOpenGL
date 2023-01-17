@@ -32,6 +32,7 @@ Entity::Entity(glm::vec3 pos)
     this->collisionLog = vec3(NAN);
     this->canGetPlacedBlockOn = false;
     this->health = getDefaultHealth();
+    this->isDead = false;
     //utilisé pour les classes anonymes
     initEntity();
 }

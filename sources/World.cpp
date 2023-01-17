@@ -207,7 +207,7 @@ void World::killEntityItem(EntityItem* entityItem)
 			break;
 		}
 	}
-	killEntity(entityItem);
+	entityItem->die();
 }
 
 //Trouve la première entité qui entre en collision avec le rayon du joueur, max range = PLAYER_RANGE

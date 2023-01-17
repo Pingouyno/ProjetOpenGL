@@ -22,6 +22,12 @@ EntityItem::EntityItem(vec3 pos, Texture* tex) : Entity(pos)
     resetAttackImmuneTimer();
 }
 
+void EntityItem::die()
+{
+    Entity::die();
+    this->framesUntilattackImmuneEnd = 0;
+}
+
 int EntityItem::getAttackImmuneFrameConst()
 {
     return PICKUP_TIMER_FRAME;
@@ -35,6 +41,11 @@ void EntityItem::getAttackedBy(Entity* attacker)
 void EntityItem::doAnimation()
 {
     this->rotate(Shape::ROT_Y, Entity::RADIAN_CIRCLE / 90.0f);
+}
+
+void EntityItem::playDeathSound()
+{
+    //TODO : trouver un son de pickup ici
 }
     
 function<void(void)> EntityItem::getDefaultClassBehavior()

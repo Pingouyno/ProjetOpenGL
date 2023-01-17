@@ -14,10 +14,12 @@ class EntityItem : public Entity
         Cube3D* itemCube;
         EntityItem(vec3 pos, Texture* tex);
 
+        void die();
         int getAttackImmuneFrameConst();
         void getAttackedBy(Entity* attacker);
-        void doAnimation();
 
+        void doAnimation();
+        void playDeathSound();
         function<void(void)> getDefaultClassBehavior();
 };
 #endif
