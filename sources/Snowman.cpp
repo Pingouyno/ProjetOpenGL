@@ -150,10 +150,17 @@ function <void(void)> Snowman::getDefaultClassBehavior()
         {
             this->maxSpeed = Entity::DEFAULT_MAX_SPEED;
             setVelocity(vec3(DEFAULT_MAX_SPEED * factX, velocity.y, DEFAULT_MAX_SPEED * factZ));
-        }else
+        }else 
         {
+
             this->maxSpeed = FLYING_MAX_SPEED;
-            addVelocityCapped(vec3(DEFAULT_MAX_SPEED/4 * factX, 0, FLYING_MAX_SPEED * factZ));
+            //on ne le met pas car on dirait que les steve reculent dans le mauvais sens si frappés par joueur
+            //addVelocityCapped(vec3(FLYING_MAX_SPEED / 8 * factX, 0, FLYING_MAX_SPEED / 8 * factZ));
+        
+            //hotfix pour quand même bouger sur bord de mur
+            if (collisionLog.x != 0 || collisionLog.z != 0) {
+                addVelocityCapped(vec3(FLYING_MAX_SPEED / 8 * factX, 0, FLYING_MAX_SPEED / 8 * factZ));
+            }
         }
 
         //un dégradé de la rotation pour être plus naturel

@@ -11,7 +11,7 @@ class Snowman : public Entity
     enum Phase : int {CHASING = 0, ROAMING = 1, AGGRO = 2};
     enum AnimationType : int {WALKING = 0, DYING = 1};
 
-    const float FLYING_MAX_SPEED = DEFAULT_MAX_SPEED / 4;
+    const float FLYING_MAX_SPEED = DEFAULT_MAX_SPEED / 8;
 
     private:
         const static float size;

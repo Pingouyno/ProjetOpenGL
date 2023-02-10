@@ -745,6 +745,7 @@ void World::setupEntities()
 
 	Snowman* lastSnowman = firstSnowman;
 	Snowman* newSnowman;
+	
 	for (int i = 0 ; i < 25 ; i++)
 	{
 		vec3 pos = lastSnowman->getPos() + vec3(2, 0, 0);

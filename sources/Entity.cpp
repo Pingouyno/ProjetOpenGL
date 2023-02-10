@@ -237,7 +237,7 @@ void Entity::attackEntity(Entity* attackedEntity)
 {
     if (!attackedEntity->isAttackImmune)
     {
-        vec3 attackingVelocity = glm::normalize(attackedEntity->getPos() - this->getPos()) / 4.0f;
+        vec3 attackingVelocity = glm::normalize(attackedEntity->getPos() - this->getPos()) / 8.0f;
         attackingVelocity.y = JUMPING_VELOCITY.y / 1.5f;
         attackedEntity->setVelocity(attackingVelocity);
         attackedEntity->getAttackedBy(this);
